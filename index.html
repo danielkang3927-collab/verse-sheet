@@ -119,6 +119,10 @@ label{font-size:13px}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--head);border-top:1px solid var(--grid);display:flex;gap:2px;align-items:flex-end;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-bottom:env(safe-area-inset-bottom,0px);overflow-x:auto;z-index:5}
 .tab{font:inherit;font-size:13px;padding:7px 14px;border:1px solid transparent;border-top:0;background:none;color:var(--muted);cursor:pointer;white-space:nowrap;margin-top:-1px}
 .tab[aria-selected="true"]{background:var(--surface);color:var(--fg);border-color:var(--grid);box-shadow:inset 0 -2px 0 var(--accent);font-weight:500}
+#gate{position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+#gate .card{background:var(--surface);border:1px solid var(--grid);padding:28px 24px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:14px}
+#gate h2{font-size:17px;margin:0;display:flex;align-items:center;gap:8px}
+#gate .btn.primary{padding:10px 14px;font-size:14px;width:100%}
 #cover{position:fixed;inset:0;background:var(--bg);z-index:40;padding:16px max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px));overflow:auto}
 #cover h2{font-size:15px;margin:0 0 10px}
 @media (prefers-reduced-motion: no-preference){.fb{animation:fi .18s ease-out}@keyframes fi{from{opacity:.4}to{opacity:1}}}
@@ -228,6 +232,14 @@ label{font-size:13px}
   <button class="tab" role="tab" data-v="guide" aria-selected="false">사용법</button>
 </nav>
 
+<div id="gate">
+  <div class="card">
+    <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
+    <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
+    <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
+  </div>
+</div>
+
 <div id="cover" hidden>
   <h2>4분기 진행 현황</h2>
   <div class="tw"><table class="sheet"><thead><tr><th class="rn"></th><th>항목</th><th>담당</th><th>기한</th><th>진행</th></tr></thead>
@@ -273,7 +285,7 @@ const ADVICE={
  '문장부호':'쉼표 같은 문장부호를 놓칩니다. 문장부호 자리에서 한 박자 쉬며 읽으세요.',
  '띄어쓰기':'글자는 맞는데 띄어쓰기가 다릅니다. 노란 표시가 난 자리만 따로 다시 확인하세요.',
  '구절 혼동':'비슷한 구절끼리 섞입니다. 아래 혼동 구절 쌍을 번갈아 연습하세요.'};
-const KEY='verse-sheet-v1';
+let KEY='verse-sheet-v1';
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pad=n=>String(n).padStart(2,'0');
@@ -679,16 +691,16 @@ $('rows').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)re
 $('rows').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('tr')){cur=makeItem(e.target.dataset.ref,'free',3);lastFb=null;renderAll();}});
 
 $('today').textContent=today().replace(/-/g,'.');
-cur=nextItem();renderAll();
 
 
 
-/* 계정 동기화: Firebase (Google 로그인, 사용자별 분리 저장) */
+
+/* 계정 동기화: Firebase (Google 로그인 필수, 사용자별 분리 저장) */
 (function(){
-  const el=$('sync'),btn=$('acct');
+  const el=$('sync'),btn=$('acct'),gate=$('gate'),gbtn=$('gateBtn'),gmsg=$('gateMsg');
   function setSync(cls,txt){el.className='sync'+(cls?' '+cls:'');el.textContent=txt;}
   function setMsg(t){const m=$('acctMsg');if(m)m.textContent=t;}
-  if(!window.firebase){setSync('','이 기기에만 저장');btn.hidden=true;return;}
+  if(!window.firebase){gbtn.textContent='로그인 기능을 불러오지 못했습니다';gmsg.textContent='인터넷 연결을 확인하고 새로고침해 주세요.';return;}
   firebase.initializeApp({apiKey:"AIzaSyB44Yx-dl4QpipsNQzBEiLDGpqJICwgeto",authDomain:"verse-sheet.firebaseapp.com",projectId:"verse-sheet",appId:"1:792068515925:web:aa1375d9a36dcd73bbccdc"});
   const auth=firebase.auth(),fs=firebase.firestore();
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
@@ -717,7 +729,12 @@ cur=nextItem();renderAll();
   const baseSave=save;
   save=function(){S.updatedAt=Date.now();baseSave();if(uid)schedule();};
   async function onLogin(user){
-    uid=user.uid;btn.textContent=(user.displayName||'계정')+' · 로그아웃';
+    uid=user.uid;KEY='verse-sheet-v1:'+uid;
+    // 로그인 전(옛 버전)에 이 기기에 쌓인 기록이 있으면 첫 로그인 계정으로 한 번만 가져옴
+    try{const old=localStorage.getItem('verse-sheet-v1');if(old&&!localStorage.getItem(KEY)){localStorage.setItem(KEY,old);}localStorage.removeItem('verse-sheet-v1');}catch(e){}
+    S=load();cur=null;lastFb=null;drill=null;cur=nextItem();renderAll();
+    gate.hidden=true;
+    btn.textContent=(user.displayName||'계정')+' · 로그아웃';
     setMsg(`${user.displayName||''} (${user.email||''}) 계정으로 로그인됨. 이 계정의 기록만 보입니다.`);
     setSync('busy','동기화 중');
     try{
@@ -733,24 +750,27 @@ cur=nextItem();renderAll();
       let er=null;try{const e=await ref('errors').get();er=e.exists?e.data():null;}catch(x){}
       applyRemote(d,er);
     },()=>setSync('','동기화 끊김 · 이 기기에만 저장'));
+    const a=$('ans');if(a)a.focus({preventScroll:true});
   }
   function onLogout(){
-    if(unsub){unsub();unsub=null;}uid=null;btn.textContent='Google로 로그인';setSync('','이 기기에만 저장');
-    setMsg('로그인하지 않은 상태입니다. 상단 「Google로 로그인」을 누르면 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 사람마다 기록은 완전히 분리됩니다.');
+    if(unsub){unsub();unsub=null;}uid=null;KEY='verse-sheet-v1:none';
+    btn.textContent='로그인';setSync('','로그인 필요');
+    gate.hidden=false;gbtn.disabled=false;gbtn.textContent='Google로 로그인';
   }
   auth.onAuthStateChanged(u=>{if(u)onLogin(u);else onLogout();});
-  auth.getRedirectResult().catch(()=>{});
-  btn.onclick=async()=>{
-    if(uid){
-      // 로그아웃: 이 기기에서 계정 기록을 지우고 빈 상태로
-      await auth.signOut();
-      try{localStorage.removeItem(KEY);}catch(e){}
-      S=load();cur=nextItem();lastFb=null;drill=null;renderAll();return;
-    }
-    const p=new firebase.auth.GoogleAuthProvider();
+  auth.getRedirectResult().catch(e=>{gmsg.textContent='로그인에 실패했습니다: '+(e&&e.message||'');});
+  async function login(){
+    gbtn.disabled=true;gbtn.textContent='로그인 중…';
+    const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
     const mobile=/iPhone|iPad|Android/i.test(navigator.userAgent)||window.matchMedia('(display-mode: standalone)').matches;
     try{if(mobile)await auth.signInWithRedirect(p);else await auth.signInWithPopup(p);}
-    catch(e){try{await auth.signInWithRedirect(p);}catch(e2){setSync('','로그인 실패');}}
+    catch(e){try{await auth.signInWithRedirect(p);}catch(e2){gbtn.disabled=false;gbtn.textContent='Google로 로그인';gmsg.textContent='로그인에 실패했습니다: '+(e2&&e2.message||e&&e.message||'');}}
+  }
+  gbtn.onclick=login;
+  btn.onclick=async()=>{
+    if(!uid){gate.hidden=false;return;}
+    await auth.signOut();
+    S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
 
