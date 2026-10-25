@@ -146,6 +146,7 @@ label{font-size:13px}
     <div class="doc"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
+    <button class="btn" id="acct">Google로 로그인</button>
     <button class="btn" id="hideBtn" title="화면 가리기">가리기<kbd>Esc</kbd></button>
   </header>
   <div class="fbar" aria-hidden="true"><span class="cell" id="fCell">A1</span><span class="fx">fx</span><span class="val" id="fVal"></span></div>
@@ -174,16 +175,14 @@ label{font-size:13px}
       <textarea id="listText" rows="12" spellcheck="false"></textarea>
       <div class="row"><button class="btn primary" id="applyList">목록 바꾸기</button><span class="note" id="listMsg"></span></div>
       <div class="row" id="listConfirm" hidden></div>
-      <h2 style="margin-top:8px">기기 동기화 (GitHub Gist)</h2>
-      <p class="note">GitHub 토큰(Gist 읽기·쓰기 권한)을 붙여 넣으면 진도와 오답 기록이 비공개 Gist에 저장되어 휴대폰·노트북에서 이어집니다. 토큰은 이 브라우저에만 저장됩니다.</p>
-      <div class="row"><input type="password" id="ghTok" placeholder="github_pat_… 또는 ghp_…" autocomplete="off" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;flex:1;min-width:0"><button class="btn primary" id="ghSave">연결</button><button class="btn" id="ghOff">해제</button></div>
-      <p class="note" id="ghMsg"></p>
+      <h2 style="margin-top:8px">계정과 동기화</h2>
+      <p class="note" id="acctMsg">로그인하지 않은 상태입니다. 상단 「Google로 로그인」을 누르면 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 사람마다 기록은 완전히 분리됩니다.</p>
       <h2 style="margin-top:8px">설정</h2>
       <div class="row"><label for="newPer">하루 새 구절</label><select id="newPer"><option>3</option><option>5</option><option>7</option><option>10</option></select>
         <label><input type="checkbox" id="strictSp"> 띄어쓰기까지 채점</label></div>
       <p class="note">띄어쓰기 채점을 끄면 글자·문장부호만 맞으면 통과하고, 띄어쓰기 차이는 노란 표시로만 알려 줍니다.</p>
       <div class="row"><button class="btn danger" id="resetBtn">학습 기록 지우기</button><span id="resetConfirm"></span></div>
-      <p class="note">기록은 이 브라우저에 저장되고, 위의 Gist 동기화를 연결하면 다른 기기에서도 이어집니다.</p>
+      <p class="note">로그인 전에는 이 브라우저에만 저장되고, 로그인하면 계정에 함께 저장됩니다.</p>
     </div>
   </section>
 
@@ -212,7 +211,7 @@ label{font-size:13px}
       </ul>
       <p>약점은 주소만 보고 틀림없이 쓰면 1점, 빈칸 단계에서 맞히면 0.5점씩 줄어 0이 되면 사라집니다. 「오답 노트」 탭에서 유형 통계, 반복 실수, 약점 구절, 헷갈린 쌍을 보고 「약점 집중 연습」으로 바로 들어갈 수 있습니다.</p>
       <h3>기기 동기화</h3>
-      <p>「구절 목록」 탭에서 GitHub 토큰을 연결하면 진도·오답 기록이 비공개 Gist에 저장되어 휴대폰과 노트북이 함께 갑니다. 기기마다 한 번씩 같은 토큰을 넣으면 됩니다. 상단 초록 점이 동기화 상태이고, 두 기기에서 동시에 쓰면 마지막에 저장한 쪽이 남습니다.</p>
+      <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰과 노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어집니다. 서로의 기록은 볼 수 없습니다. 상단 초록 점이 동기화 상태이고, 두 기기에서 동시에 쓰면 마지막에 저장한 쪽이 남습니다.</p>
       <h3>단축키</h3>
       <ul><li><b>Enter</b> 채점 · <b>Tab</b> 다음 어절 힌트(복습에서 쓰면 간격이 늘지 않음) · <b>Esc</b> 화면 가리기</li></ul>
       <h3>음성과 타이핑</h3>
@@ -243,6 +242,9 @@ label{font-size:13px}
   <p class="note" style="margin-top:10px">Esc를 누르면 돌아갑니다.</p>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 
 const SAMPLE = `고전 13:1 내가 사람의 방언과 천사의 말을 할지라도 사랑이 없으면 소리 나는 구리와 울리는 꽹과리가 되고
@@ -475,7 +477,7 @@ function fbHTML(){
   if(!lastFb)return '';
   const f=lastFb,r=f.r;let hd,body='';
   if(r.pass){hd=`<b>통과</b><span>${esc(f.ref)} · ${esc(f.label)}</span>`;
-    if(!r.spaceOk)body=`<div class="diff">${r.html}</div><div class="legend">띄어쓰기 차이: <span class="spm">␣</span> 띄어 써야 함 · <span class="spx">|</span> 붙여 써야 함</div>`;}
+    if(!r.spaceOk){const ws=analyze(r).map(e=>e.wi+1);body=`<div class="legend">띄어쓰기 차이 ${ws.length}곳: ${ws.join('·')}번째 어절 (글자는 모두 맞음)</div>`;}}
   else{hd=`<b>다시</b><span>${esc(f.ref)} · 일치 ${r.acc}%</span>`+(diffOpen?'':' <button class="link" id="openDiff">틀린 곳 다시 보기</button>');
     body=anaHTML(f);
     if(diffOpen)body+=`<div class="diff">${r.html}</div><div class="legend">${r.charOk?'<span class="spm">␣</span> 띄어 써야 함 · <span class="spx">|</span> 붙여 써야 함':'<b class="miss">밑줄</b> 빠뜨리거나 틀린 정답 글자 · <s class="ins">취소선</s> 잘못 쓴 글자'} · 다시 치면 접힙니다</div>`;
@@ -680,81 +682,77 @@ $('today').textContent=today().replace(/-/g,'.');
 cur=nextItem();renderAll();
 
 
-/* 기기 동기화: GitHub Gist */
+
+/* 계정 동기화: Firebase (Google 로그인, 사용자별 분리 저장) */
 (function(){
-  const el=$('sync'),TK='verse-sheet-gh',FILE='verse-sheet.json';
+  const el=$('sync'),btn=$('acct');
   function setSync(cls,txt){el.className='sync'+(cls?' '+cls:'');el.textContent=txt;}
-  let cfg=null;try{cfg=JSON.parse(localStorage.getItem(TK));}catch(e){}
-  let writing=false,dirty=false,timer=null,remoteAt=0;
-  const H=()=>({'Authorization':'Bearer '+cfg.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'});
-  function saveCfg(){try{if(cfg)localStorage.setItem(TK,JSON.stringify(cfg));else localStorage.removeItem(TK);}catch(e){}}
-  function applyRemote(d){
-    if(!d||!(d.updatedAt>(S.updatedAt||0)))return false;
-    S=migrate({verses:d.verses,progress:d.progress||{},settings:Object.assign({newPerDay:5,strictSpace:false},d.settings||{}),daily:d.daily||{},sample:!!d.sample,errors:d.errors||[],updatedAt:d.updatedAt});
+  function setMsg(t){const m=$('acctMsg');if(m)m.textContent=t;}
+  if(!window.firebase){setSync('','이 기기에만 저장');btn.hidden=true;return;}
+  firebase.initializeApp({apiKey:"AIzaSyB44Yx-dl4QpipsNQzBEiLDGpqJICwgeto",authDomain:"verse-sheet.firebaseapp.com",projectId:"verse-sheet",appId:"1:792068515925:web:aa1375d9a36dcd73bbccdc"});
+  const auth=firebase.auth(),fs=firebase.firestore();
+  let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
+  const ref=k=>fs.doc('users/'+uid+'/data/'+k);
+  function applyRemote(st,er){
+    if(!st||!(st.updatedAt>(S.updatedAt||0)))return;
+    S=migrate({verses:st.verses,progress:st.progress||{},settings:Object.assign({newPerDay:5,strictSpace:false},st.settings||{}),daily:st.daily||{},sample:!!st.sample,errors:(er&&er.errors)||[],updatedAt:st.updatedAt});
     try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
-    remoteAt=d.updatedAt;drill=null;
+    remoteAt=st.updatedAt;drill=null;
     if(!cur||!verseOf(cur.ref))cur=nextItem();
     if(!$('v-learn').hidden)renderAll();else if(!$('v-notes').hidden)renderNotes();else if(!$('v-list').hidden)renderList();
-    return true;
-  }
-  async function findOrCreate(){
-    const r=await fetch('https://api.github.com/gists?per_page=100',{headers:H()});
-    if(r.status===401)throw new Error('토큰이 올바르지 않습니다.');
-    if(!r.ok)throw new Error('GitHub 응답 오류 '+r.status);
-    const list=await r.json();const g=list.find(x=>x.files&&x.files[FILE]);
-    if(g)return g.id;
-    const body={description:'구절 검토 시트 동기화',public:false,files:{[FILE]:{content:JSON.stringify({updatedAt:0})}}};
-    const c=await fetch('https://api.github.com/gists',{method:'POST',headers:H(),body:JSON.stringify(body)});
-    if(!c.ok)throw new Error('Gist 생성 실패 '+c.status+(c.status===403||c.status===404?' · 토큰에 Gist 쓰기 권한이 있는지 확인하세요.':''));
-    return (await c.json()).id;
-  }
-  async function pull(){
-    const r=await fetch('https://api.github.com/gists/'+cfg.gist,{headers:H(),cache:'no-store'});
-    if(r.status===404){cfg.gist=await findOrCreate();saveCfg();return pull();}
-    if(!r.ok)throw new Error('불러오기 실패 '+r.status);
-    const g=await r.json(),f=g.files[FILE];let txt=f.content;
-    if(f.truncated){txt=await (await fetch(f.raw_url,{cache:'no-store'})).text();}
-    let d=null;try{d=JSON.parse(txt);}catch(e){}
-    return d;
   }
   async function push(){
-    const at=S.updatedAt;const body={files:{[FILE]:{content:JSON.stringify(Object.assign({},S,{errors:S.errors.slice(-1200)}))}}};
-    const r=await fetch('https://api.github.com/gists/'+cfg.gist,{method:'PATCH',headers:H(),body:JSON.stringify(body)});
-    if(!r.ok)throw new Error('저장 실패 '+r.status);
+    const at=S.updatedAt;const {errors,...rest}=S;
+    await ref('state').set(Object.assign({},rest,{updatedAt:at}));
+    await ref('errors').set({errors:(errors||[]).slice(-1200),updatedAt:at});
     remoteAt=at;
   }
   async function flush(){
-    if(!cfg||!cfg.gist)return;if(writing){dirty=true;return;}
+    if(!uid)return;if(writing){dirty=true;return;}
     writing=true;dirty=false;setSync('busy','동기화 중');
     try{await push();setSync('on','동기화됨');}catch(e){setSync('','동기화 실패 · 이 기기에만 저장');}
     writing=false;if(dirty)schedule();
   }
-  function schedule(){clearTimeout(timer);timer=setTimeout(flush,2500);}
+  function schedule(){clearTimeout(timer);timer=setTimeout(flush,1500);}
   const baseSave=save;
-  save=function(){S.updatedAt=Date.now();baseSave();if(cfg&&cfg.gist)schedule();};
-  async function sync(first){
-    if(!cfg||!cfg.gist)return;
+  save=function(){S.updatedAt=Date.now();baseSave();if(uid)schedule();};
+  async function onLogin(user){
+    uid=user.uid;btn.textContent=(user.displayName||'계정')+' · 로그아웃';
+    setMsg(`${user.displayName||''} (${user.email||''}) 계정으로 로그인됨. 이 계정의 기록만 보입니다.`);
     setSync('busy','동기화 중');
-    try{const d=await pull();
-      if(d&&d.updatedAt>(S.updatedAt||0))applyRemote(d);
-      else if((S.updatedAt||0)>(d&&d.updatedAt||0))await push();
+    try{
+      const [s,e]=await Promise.all([ref('state').get(),ref('errors').get()]);
+      if(s.exists&&s.data().updatedAt>(S.updatedAt||0))applyRemote(s.data(),e.exists?e.data():null);
+      else{S.updatedAt=S.updatedAt||Date.now();await push();}
       setSync('on','동기화됨');
-    }catch(e){setSync('','동기화 실패 · 이 기기에만 저장');}
+    }catch(err){setSync('','동기화 실패 · 이 기기에만 저장');}
+    if(unsub)unsub();
+    unsub=ref('state').onSnapshot(async snap=>{
+      if(!snap.exists||snap.metadata.hasPendingWrites)return;
+      const d=snap.data();if(!(d.updatedAt>(S.updatedAt||0))||d.updatedAt===remoteAt)return;
+      let er=null;try{const e=await ref('errors').get();er=e.exists?e.data():null;}catch(x){}
+      applyRemote(d,er);
+    },()=>setSync('','동기화 끊김 · 이 기기에만 저장'));
   }
-  window.__ghConnect=async function(token){
-    const msg=$('ghMsg');token=(token||'').trim();if(!token){msg.textContent='토큰을 붙여 넣으세요.';return;}
-    cfg={token};msg.textContent='연결 중…';
-    try{cfg.gist=await findOrCreate();saveCfg();await sync(true);msg.textContent='연결되었습니다. 다른 기기에서도 같은 토큰을 넣으면 이어집니다.';$('ghTok').value='';}
-    catch(e){cfg=null;saveCfg();msg.textContent=e.message;setSync('','이 기기에만 저장');}
+  function onLogout(){
+    if(unsub){unsub();unsub=null;}uid=null;btn.textContent='Google로 로그인';setSync('','이 기기에만 저장');
+    setMsg('로그인하지 않은 상태입니다. 상단 「Google로 로그인」을 누르면 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 사람마다 기록은 완전히 분리됩니다.');
+  }
+  auth.onAuthStateChanged(u=>{if(u)onLogin(u);else onLogout();});
+  auth.getRedirectResult().catch(()=>{});
+  btn.onclick=async()=>{
+    if(uid){
+      // 로그아웃: 이 기기에서 계정 기록을 지우고 빈 상태로
+      await auth.signOut();
+      try{localStorage.removeItem(KEY);}catch(e){}
+      S=load();cur=nextItem();lastFb=null;drill=null;renderAll();return;
+    }
+    const p=new firebase.auth.GoogleAuthProvider();
+    const mobile=/iPhone|iPad|Android/i.test(navigator.userAgent)||window.matchMedia('(display-mode: standalone)').matches;
+    try{if(mobile)await auth.signInWithRedirect(p);else await auth.signInWithPopup(p);}
+    catch(e){try{await auth.signInWithRedirect(p);}catch(e2){setSync('','로그인 실패');}}
   };
-  window.__ghOff=function(){cfg=null;saveCfg();setSync('','이 기기에만 저장');$('ghMsg').textContent='해제했습니다. 이 기기 기록은 그대로 남습니다.';};
-  window.__ghStatus=()=>cfg&&cfg.gist?'연결됨':'';
-  if(cfg&&cfg.gist){sync(true);}else setSync('','이 기기에만 저장');
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&cfg&&cfg.gist)sync();});
-  setInterval(()=>{if(!document.hidden&&cfg&&cfg.gist)sync();},90000);
 })();
-$('ghSave').onclick=()=>window.__ghConnect($('ghTok').value);
-$('ghOff').onclick=()=>window.__ghOff();
 
 </script>
 
