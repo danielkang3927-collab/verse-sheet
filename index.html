@@ -266,7 +266,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v11</p>
+    <p class="note" style="margin:0;text-align:right">v12</p>
   </div>
 </div>
 
@@ -284,6 +284,11 @@ label{font-size:13px}
   <p class="note" style="margin-top:10px">Esc를 누르면 돌아갑니다.</p>
 </div>
 
+<script>
+/* iOS/iPadOS WebKit: IndexedDB open이 멈추는 결함 때문에 Firebase Auth 초기화가 끝나지 않음 → 이 기기들에서는 IndexedDB를 숨겨 localStorage 저장소를 쓰게 함 */
+(function(){var ua=navigator.userAgent||'';var ios=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+if(ios){try{Object.defineProperty(window,'indexedDB',{get:function(){return undefined;},configurable:true});}catch(e){}}})();
+</script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
