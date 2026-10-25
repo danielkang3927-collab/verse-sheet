@@ -729,6 +729,8 @@ $('today').textContent=today().replace(/-/g,'.');
   const baseSave=save;
   save=function(){S.updatedAt=Date.now();baseSave();if(uid)schedule();};
   async function onLogin(user){
+    if(uid===user.uid&&gate.hidden)return;
+    try{
     uid=user.uid;KEY='verse-sheet-v1:'+uid;
     // 로그인 전(옛 버전)에 이 기기에 쌓인 기록이 있으면 첫 로그인 계정으로 한 번만 가져옴
     try{const old=localStorage.getItem('verse-sheet-v1');if(old&&!localStorage.getItem(KEY)){localStorage.setItem(KEY,old);}localStorage.removeItem('verse-sheet-v1');}catch(e){}
@@ -751,6 +753,7 @@ $('today').textContent=today().replace(/-/g,'.');
       applyRemote(d,er);
     },()=>setSync('','동기화 끊김 · 이 기기에만 저장'));
     const a=$('ans');if(a)a.focus({preventScroll:true});
+    }catch(err){gate.hidden=false;gbtn.disabled=false;gbtn.textContent='다시 시도';gmsg.textContent='화면을 여는 중 오류: '+(err&&err.message||err);}
   }
   function onLogout(){
     if(unsub){unsub();unsub=null;}uid=null;KEY='verse-sheet-v1:none';
@@ -758,13 +761,19 @@ $('today').textContent=today().replace(/-/g,'.');
     gate.hidden=false;gbtn.disabled=false;gbtn.textContent='Google로 로그인';
   }
   auth.onAuthStateChanged(u=>{if(u)onLogin(u);else onLogout();});
-  auth.getRedirectResult().catch(e=>{gmsg.textContent='로그인에 실패했습니다: '+(e&&e.message||'');});
   async function login(){
     gbtn.disabled=true;gbtn.textContent='로그인 중…';
     const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
-    const mobile=/iPhone|iPad|Android/i.test(navigator.userAgent)||window.matchMedia('(display-mode: standalone)').matches;
-    try{if(mobile)await auth.signInWithRedirect(p);else await auth.signInWithPopup(p);}
-    catch(e){try{await auth.signInWithRedirect(p);}catch(e2){gbtn.disabled=false;gbtn.textContent='Google로 로그인';gmsg.textContent='로그인에 실패했습니다: '+(e2&&e2.message||e&&e.message||'');}}
+    try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(e){}
+    try{const res=await auth.signInWithPopup(p);if(res&&res.user)await onLogin(res.user);}
+    catch(e){
+      const code=e&&e.code||'';
+      if(code==='auth/popup-blocked'||code==='auth/operation-not-supported-in-this-environment'){
+        gmsg.textContent='이 브라우저는 팝업을 막았습니다. 팝업을 허용하거나 Safari/Chrome에서 직접 열어 주세요.';
+      }else if(code==='auth/popup-closed-by-user'||code==='auth/cancelled-popup-request'){gmsg.textContent='로그인 창이 닫혔습니다. 다시 시도해 주세요.';}
+      else gmsg.textContent='로그인에 실패했습니다: '+code+' '+(e&&e.message||'');
+      gbtn.disabled=false;gbtn.textContent='Google로 로그인';
+    }
   }
   gbtn.onclick=login;
   btn.onclick=async()=>{
