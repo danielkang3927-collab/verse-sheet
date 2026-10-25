@@ -237,7 +237,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v5 · 팝업 로그인</p>
+    <p class="note" style="margin:0;text-align:right">v6</p>
   </div>
 </div>
 
@@ -702,7 +702,7 @@ $('today').textContent=today().replace(/-/g,'.');
   function setSync(cls,txt){el.className='sync'+(cls?' '+cls:'');el.textContent=txt;}
   function setMsg(t){const m=$('acctMsg');if(m)m.textContent=t;}
   if(!window.firebase){gbtn.textContent='로그인 기능을 불러오지 못했습니다';gmsg.textContent='인터넷 연결을 확인하고 새로고침해 주세요.';return;}
-  firebase.initializeApp({apiKey:"AIzaSyB44Yx-dl4QpipsNQzBEiLDGpqJICwgeto",authDomain:"verse-sheet.firebaseapp.com",projectId:"verse-sheet",appId:"1:792068515925:web:aa1375d9a36dcd73bbccdc"});
+  firebase.initializeApp({apiKey:"AIzaSyB44Yx-dl4QpipsNQzBEiLDGpqJICwgeto",authDomain:"verse-sheet.web.app",projectId:"verse-sheet",appId:"1:792068515925:web:aa1375d9a36dcd73bbccdc"});
   const auth=firebase.auth(),fs=firebase.firestore();
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
@@ -762,10 +762,14 @@ $('today').textContent=today().replace(/-/g,'.');
     gate.hidden=false;gbtn.disabled=false;gbtn.textContent='Google로 로그인';
   }
   auth.onAuthStateChanged(u=>{if(u)onLogin(u);else onLogout();});
+  auth.getRedirectResult().then(r=>{if(r&&r.user)onLogin(r.user);}).catch(e=>{gmsg.textContent='로그인에 실패했습니다: '+(e&&e.code||'')+' '+(e&&e.message||'');});
   async function login(){
     gbtn.disabled=true;gbtn.textContent='로그인 중…';
     const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
     try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(e){}
+    const sameOrigin=location.hostname==='verse-sheet.web.app'||location.hostname==='verse-sheet.firebaseapp.com';
+    const mobile=/iPhone|iPad|Android|Macintosh.*Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent))||window.matchMedia('(display-mode: standalone)').matches;
+    if(sameOrigin&&mobile){try{await auth.signInWithRedirect(p);return;}catch(e){}}
     try{const res=await auth.signInWithPopup(p);if(res&&res.user)await onLogin(res.user);}
     catch(e){
       const code=e&&e.code||'';
