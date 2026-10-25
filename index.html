@@ -266,7 +266,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v9</p>
+    <p class="note" style="margin:0;text-align:right">v10</p>
   </div>
 </div>
 
@@ -838,6 +838,19 @@ $('today').textContent=today().replace(/-/g,'.');
   const el=$('sync'),btn=$('acct'),gate=$('gate'),gbtn=$('gateBtn'),gmsg=$('gateMsg');
   function setSync(cls,txt){el.className='sync'+(cls?' '+cls:'');el.textContent=txt;}
   function setMsg(t){const m=$('acctMsg');if(m)m.textContent=t;}
+  // 카카오톡·네이버·인스타그램 등 내장 브라우저: Google 로그인이 막히므로 외부 브라우저로 안내
+  const ua=navigator.userAgent||'';const inApp=/KAKAOTALK|NAVER\(inapp|Instagram|FBAN|FBAV|Line\/|DaumApps|; wv\)/i.test(ua);
+  if(inApp){
+    const here=location.href.split('#')[0];
+    gmsg.innerHTML='카카오톡 같은 앱 안의 브라우저에서는 Google 로그인이 되지 않습니다. 아래 버튼으로 Chrome/Safari에서 여세요. 홈 화면에 추가해 두면 다음부터 바로 열립니다.<br><span style="font-family:var(--mono);font-size:12px;user-select:all">'+esc(here)+'</span>';
+    gbtn.disabled=false;gbtn.textContent='Chrome/Safari로 열기';
+    gbtn.onclick=()=>{
+      if(/KAKAOTALK/i.test(ua))location.href='kakaotalk://web/openExternal?url='+encodeURIComponent(here);
+      else if(/Android/i.test(ua))location.href='intent://'+here.replace(/^https?:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;end';
+      else{try{navigator.clipboard.writeText(here);}catch(e){}gmsg.innerHTML='주소를 복사했습니다. Safari나 Chrome을 열고 주소창에 붙여 넣으세요.<br><span style="font-family:var(--mono);font-size:12px;user-select:all">'+esc(here)+'</span>';}
+    };
+    return;
+  }
   if(!window.firebase){gbtn.textContent='로그인 기능을 불러오지 못했습니다';gmsg.textContent='인터넷 연결을 확인하고 새로고침해 주세요.';return;}
   firebase.initializeApp({apiKey:"AIzaSyB44Yx-dl4QpipsNQzBEiLDGpqJICwgeto",authDomain:"verse-sheet.firebaseapp.com",projectId:"verse-sheet",appId:"1:792068515925:web:aa1375d9a36dcd73bbccdc"});
   const auth=firebase.auth(),fs=firebase.firestore();
@@ -944,6 +957,7 @@ $('today').textContent=today().replace(/-/g,'.');
     S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
+
 
 
 
