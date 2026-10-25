@@ -78,6 +78,7 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .badge{border:1px solid var(--grid);padding:8px 10px;font-size:12px;display:flex;flex-direction:column;gap:2px}
 .badge .n{font-weight:600}.badge .d{color:var(--muted);font-family:var(--mono);font-size:11px}
 .badge.locked{opacity:.45}
+.me td{font-weight:600}
 .quote{border-left:3px solid var(--accent);padding:6px 12px;font-size:13px;color:var(--muted)}
 .bar i{display:block;height:100%;background:var(--accent);width:0}
 .tw{overflow-x:auto}
@@ -239,6 +240,7 @@ label{font-size:13px}
       </ul>
       <p>약점은 주소만 보고 틀림없이 쓰면 1점, 빈칸 단계에서 맞히면 0.5점씩 줄어 0이 되면 사라집니다. 「오답 노트」 탭에서 유형 통계, 반복 실수, 약점 구절, 헷갈린 쌍을 보고 「약점 집중 연습」으로 바로 들어갈 수 있습니다.</p>
       <h3>매일 이어가기</h3>
+      <p>「기록」 탭의 「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·연속일·숙달 수·오늘 점수만 한 표에서 봅니다. 끄면 내 줄이 바로 내려갑니다.</p>
       <p>하루 목표는 「오늘 복습 전부 + 새 구절(기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다. 「기록」 탭에서 12주 출석 잔디, 배지, 주간 요약, 완주 예상일을 볼 수 있습니다.</p>
       <h3>기기 동기화</h3>
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰과 노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어집니다. 서로의 기록은 볼 수 없습니다. 상단 초록 점이 동기화 상태이고, 두 기기에서 동시에 쓰면 마지막에 저장한 쪽이 남습니다.</p>
@@ -264,7 +266,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v8</p>
+    <p class="note" style="margin:0;text-align:right">v9</p>
   </div>
 </div>
 
@@ -343,7 +345,7 @@ function load(){
   if(!d||!Array.isArray(d.verses)||!d.verses.length){
     d={verses:parseList(SAMPLE).items,progress:{},settings:{},daily:{},sample:false};
   }
-  d.settings=Object.assign({newPerDay:5,strictSpace:false},d.settings||{});
+  d.settings=Object.assign({newPerDay:5,strictSpace:false,share:false,nick:''},d.settings||{});
   d.progress=d.progress||{};d.daily=d.daily||{};d.errors=d.errors||[];d.stats=d.stats||{days:{},badges:{}};d.stats.days=d.stats.days||{};d.stats.badges=d.stats.badges||{};
   return migrate(d);
 }
@@ -772,10 +774,23 @@ function renderLog(){
     <p class="note">진한 칸이 하루 목표를 마친 날입니다. 연한 칸은 일부만 한 날.</p>
     <h3>배지</h3>
     <div class="badges">${BADGES.map(([id,n,desc])=>{const d=S.stats.badges[id];return `<div class="badge ${d?'':'locked'}"><span class="n">${n}</span><span class="d">${d?d.replace(/-/g,'.'):desc||'아직'}</span></div>`;}).join('')}</div>
+    <h3>함께 보기</h3>
+    <div class="row"><label><input type="checkbox" id="shareOn" ${S.settings.share?'checked':''}> 내 기록을 함께 보기에 올리기</label>
+      <input id="nick" placeholder="표시 이름" value="${esc(S.settings.nick||'')}" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:140px"><button class="btn" id="nickSave">이름 저장</button></div>
+    <p class="note">올리는 것은 이름·연속일·숙달 수·오늘 점수뿐입니다. 오답이나 진도 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
+    <div class="tw" id="boardWrap"><p class="note">불러오는 중…</p></div>
     <h3>최근 14일</h3>
     <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>복습</th><th>새 구절</th><th>첫 시도</th><th>점수</th><th>완료</th></tr></thead><tbody>
       ${Array.from({length:14},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x)return '';const [,m,dd]=d.split('-');return `<tr><td>${+m}/${+dd}</td><td>${x.rev}</td><td>${x.nw}</td><td>${x.tries?Math.round(x.first/x.tries*100)+'%':'—'}</td><td>${x.done?x.score:'—'}</td><td>${x.done?'<span class="st mst">완료</span>':''}</td></tr>`;}).join('')||'<tr><td colspan="6" class="note">아직 기록이 없습니다.</td></tr>'}
     </tbody></table></div>`;
+  $('shareOn').onchange=e=>{S.settings.share=e.target.checked;save();if(window.__pushBoard)window.__pushBoard(true);};
+  $('nickSave').onclick=()=>{S.settings.nick=$('nick').value.trim().slice(0,12);save();if(window.__pushBoard)window.__pushBoard(true);$('nickSave').textContent='저장됨';setTimeout(()=>{if($('nickSave'))$('nickSave').textContent='이름 저장';},1200);};
+  if(window.__loadBoard)window.__loadBoard();
+}
+function boardHTML(rows,myUid){
+  if(!rows.length)return '<p class="note">아직 아무도 올리지 않았습니다. 위에서 켜면 내 줄이 먼저 생깁니다.</p>';
+  rows.sort((a,b)=>(b.streak-a.streak)||(b.mastered-a.mastered));
+  return `<table class="sheet"><thead><tr><th>이름</th><th>연속</th><th>숙달</th><th>오늘</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.streak}일</td><td>${r.mastered}/${r.total}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
 }
 
 /* 목록·설정 */
@@ -828,6 +843,25 @@ $('today').textContent=today().replace(/-/g,'.');
   const auth=firebase.auth(),fs=firebase.firestore();
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
+  let boardTimer=null,lastBoard='';
+  window.__pushBoard=function(now){
+    if(!uid)return;clearTimeout(boardTimer);
+    const run=async()=>{try{
+      const b=fs.doc('board/'+uid);
+      if(!S.settings.share){if(lastBoard!=='off'){await b.delete();lastBoard='off';}if(!$('v-log').hidden)window.__loadBoard();return;}
+      const d=D(),{streak}=streakInfo();
+      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now()};
+      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date]);
+      if(key===lastBoard)return;await b.set(row);lastBoard=key;if(!$('v-log').hidden)window.__loadBoard();
+    }catch(e){}};
+    if(now)run();else boardTimer=setTimeout(run,2000);
+  };
+  window.__loadBoard=async function(){
+    const w=$('boardWrap');if(!w||!uid)return;
+    try{const snap=await fs.collection('board').orderBy('updatedAt','desc').limit(50).get();
+      const rows=snap.docs.map(x=>Object.assign({uid:x.id},x.data()));w.innerHTML=boardHTML(rows,uid);}
+    catch(e){w.innerHTML='<p class="note">함께 보기를 불러오지 못했습니다.</p>';}
+  };
   function applyRemote(st,er){
     if(!st||!(st.updatedAt>(S.updatedAt||0)))return;
     S=migrate({verses:st.verses,progress:st.progress||{},settings:Object.assign({newPerDay:5,strictSpace:false},st.settings||{}),daily:st.daily||{},sample:!!st.sample,errors:(er&&er.errors)||[],stats:st.stats||{days:{},badges:{}},updatedAt:st.updatedAt});
@@ -850,7 +884,7 @@ $('today').textContent=today().replace(/-/g,'.');
   }
   function schedule(){clearTimeout(timer);timer=setTimeout(flush,1500);}
   const baseSave=save;
-  save=function(){S.updatedAt=Date.now();baseSave();if(uid)schedule();};
+  save=function(){S.updatedAt=Date.now();baseSave();if(uid){schedule();window.__pushBoard();}};
   async function onLogin(user){
     if(uid===user.uid&&gate.hidden)return;
     try{
@@ -876,6 +910,7 @@ $('today').textContent=today().replace(/-/g,'.');
       applyRemote(d,er);
     },()=>setSync('','동기화 끊김 · 이 기기에만 저장'));
     const a=$('ans');if(a)a.focus({preventScroll:true});
+    lastBoard='';window.__pushBoard(true);
     }catch(err){gate.hidden=false;gbtn.disabled=false;gbtn.textContent='다시 시도';gmsg.textContent='화면을 여는 중 오류: '+(err&&err.message||err);}
   }
   function onLogout(){
@@ -909,6 +944,7 @@ $('today').textContent=today().replace(/-/g,'.');
     S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
+
 
 
 </script>
