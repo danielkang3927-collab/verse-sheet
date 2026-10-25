@@ -266,7 +266,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v10</p>
+    <p class="note" style="margin:0;text-align:right">v11</p>
   </div>
 </div>
 
@@ -854,6 +854,11 @@ $('today').textContent=today().replace(/-/g,'.');
   if(!window.firebase){gbtn.textContent='로그인 기능을 불러오지 못했습니다';gmsg.textContent='인터넷 연결을 확인하고 새로고침해 주세요.';return;}
   firebase.initializeApp({apiKey:"AIzaSyB44Yx-dl4QpipsNQzBEiLDGpqJICwgeto",authDomain:"verse-sheet.firebaseapp.com",projectId:"verse-sheet",appId:"1:792068515925:web:aa1375d9a36dcd73bbccdc"});
   const auth=firebase.auth(),fs=firebase.firestore();
+  let authReady=false;const diag=[];
+  function showDiag(){const d=diag.slice(-3).join(' | ');if(d)gmsg.textContent=gmsg.textContent.split(' ⟂')[0]+' ⟂ '+d;}
+  window.addEventListener('error',e=>{diag.push('오류: '+(e.message||''));showDiag();});
+  window.addEventListener('unhandledrejection',e=>{const r=e.reason;diag.push('거부: '+((r&&(r.code||r.message))||String(r)));showDiag();});
+  setTimeout(()=>{if(!authReady&&gate&&!gate.hidden){gbtn.disabled=false;gbtn.textContent='Google로 로그인';diag.push('로그인 상태 확인이 7초 안에 끝나지 않아 바로 진행합니다 (SDK '+firebase.SDK_VERSION+')');showDiag();}},7000);
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
   let boardTimer=null,lastBoard='';
@@ -931,12 +936,12 @@ $('today').textContent=today().replace(/-/g,'.');
     btn.textContent='로그인';setSync('','로그인 필요');
     gate.hidden=false;gbtn.disabled=false;gbtn.textContent='Google로 로그인';
   }
-  auth.onAuthStateChanged(u=>{if(u)onLogin(u);else onLogout();});
-  auth.getRedirectResult().then(r=>{if(r&&r.user)onLogin(r.user);}).catch(e=>{gmsg.textContent='로그인에 실패했습니다: '+(e&&e.code||'')+' '+(e&&e.message||'');});
+  auth.onAuthStateChanged(u=>{authReady=true;if(u)onLogin(u);else onLogout();},e=>{diag.push('인증 오류: '+(e&&(e.code||e.message)));showDiag();gbtn.disabled=false;gbtn.textContent='Google로 로그인';});
+  auth.getRedirectResult().then(r=>{if(r&&r.user)onLogin(r.user);}).catch(e=>{diag.push('복귀 오류: '+(e&&e.code||'')+' '+(e&&e.message||''));showDiag();gbtn.disabled=false;gbtn.textContent='Google로 로그인';});
   async function login(){
     gbtn.disabled=true;gbtn.textContent='로그인 중…';
     const p=new firebase.auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
-    try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(e){}
+    try{await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(e){try{await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);}catch(e2){}}
     const sameOrigin=location.hostname==='verse-sheet.firebaseapp.com';
     const mobile=/iPhone|iPad|Android|Macintosh.*Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent))||window.matchMedia('(display-mode: standalone)').matches;
     if(sameOrigin&&mobile){try{await auth.signInWithRedirect(p);return;}catch(e){}}
@@ -957,6 +962,7 @@ $('today').textContent=today().replace(/-/g,'.');
     S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
+
 
 
 
