@@ -57,7 +57,28 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .panel{background:var(--surface);border:1px solid var(--grid)}
 .sum{display:flex;gap:16px;flex-wrap:wrap;padding:10px 12px;border-bottom:1px solid var(--grid);font-size:13px}
 .sum b{font-family:var(--mono);font-weight:500}
-.bar{height:4px;background:var(--head);margin:0 12px 10px}
+.bar{height:4px;background:var(--head);margin:0 12px 6px}
+.today{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:0 12px 10px;font-size:12px;color:var(--muted)}
+.today b{font-family:var(--mono);font-weight:500;color:var(--fg)}
+.today .combo{color:var(--accent)}
+.grass{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,10px);gap:3px;width:max-content}
+.grass i{width:10px;height:10px;background:var(--head);border-radius:2px}
+.grass i.l1{background:color-mix(in srgb,var(--accent) 35%,var(--head))}.grass i.l2{background:color-mix(in srgb,var(--accent) 65%,var(--head))}.grass i.l3{background:var(--accent)}
+.grass i.today{outline:1.5px solid var(--fg);outline-offset:-1px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.kpi{border:1px solid var(--grid);padding:10px 12px}
+.kpi .l{font-size:11px;color:var(--muted);letter-spacing:.04em}
+.kpi .v{font-family:var(--mono);font-size:20px;margin-top:2px}
+.kpi .s{font-size:11px;color:var(--muted)}
+.grade{font-family:var(--mono);font-size:34px;line-height:1}
+.scorecard{border:1px solid var(--grid);padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:center}
+.scorecard .line{font-size:13px;color:var(--muted)}
+.scorecard .line b{color:var(--fg);font-family:var(--mono);font-weight:500}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.badge{border:1px solid var(--grid);padding:8px 10px;font-size:12px;display:flex;flex-direction:column;gap:2px}
+.badge .n{font-weight:600}.badge .d{color:var(--muted);font-family:var(--mono);font-size:11px}
+.badge.locked{opacity:.45}
+.quote{border-left:3px solid var(--accent);padding:6px 12px;font-size:13px;color:var(--muted)}
 .bar i{display:block;height:100%;background:var(--accent);width:0}
 .tw{overflow-x:auto}
 table.sheet{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
@@ -161,12 +182,15 @@ label{font-size:13px}
       <div class="panel side">
         <div class="sum" id="sum"></div>
         <div class="bar"><i id="barI"></i></div>
+        <div class="today" id="todayBar"></div>
         <div class="tw"><table class="sheet"><thead><tr><th class="rn"></th><th>주소</th><th>상태</th><th>다음 복습</th><th>정답률</th><th>약점</th></tr></thead><tbody id="rows"></tbody></table></div>
       </div>
     </div>
   </section>
 
   <section class="view panel" id="v-exam" hidden><div class="box" id="examBox"></div></section>
+
+  <section class="view panel" id="v-log" hidden><div class="box" id="logBox"></div></section>
 
   <section class="view panel" id="v-notes" hidden><div class="box" id="notesBox"></div></section>
 
@@ -214,6 +238,8 @@ label{font-size:13px}
         <li><b>미리 경고</b> — 주소만 보고 쓰기 전에 지난 오답 자리와 헷갈렸던 구절을 한 줄로 알려 줍니다.</li>
       </ul>
       <p>약점은 주소만 보고 틀림없이 쓰면 1점, 빈칸 단계에서 맞히면 0.5점씩 줄어 0이 되면 사라집니다. 「오답 노트」 탭에서 유형 통계, 반복 실수, 약점 구절, 헷갈린 쌍을 보고 「약점 집중 연습」으로 바로 들어갈 수 있습니다.</p>
+      <h3>매일 이어가기</h3>
+      <p>하루 목표는 「오늘 복습 전부 + 새 구절(기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다. 「기록」 탭에서 12주 출석 잔디, 배지, 주간 요약, 완주 예상일을 볼 수 있습니다.</p>
       <h3>기기 동기화</h3>
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰과 노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어집니다. 서로의 기록은 볼 수 없습니다. 상단 초록 점이 동기화 상태이고, 두 기기에서 동시에 쓰면 마지막에 저장한 쪽이 남습니다.</p>
       <h3>단축키</h3>
@@ -227,6 +253,7 @@ label{font-size:13px}
 <nav class="tabs" role="tablist" aria-label="시트">
   <button class="tab" role="tab" data-v="learn" aria-selected="true">학습</button>
   <button class="tab" role="tab" data-v="exam" aria-selected="false">모의시험</button>
+  <button class="tab" role="tab" data-v="log" aria-selected="false">기록</button>
   <button class="tab" role="tab" data-v="notes" aria-selected="false">오답 노트</button>
   <button class="tab" role="tab" data-v="list" aria-selected="false">구절 목록</button>
   <button class="tab" role="tab" data-v="guide" aria-selected="false">사용법</button>
@@ -237,7 +264,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v7</p>
+    <p class="note" style="margin:0;text-align:right">v8</p>
   </div>
 </div>
 
@@ -317,13 +344,14 @@ function load(){
     d={verses:parseList(SAMPLE).items,progress:{},settings:{},daily:{},sample:false};
   }
   d.settings=Object.assign({newPerDay:5,strictSpace:false},d.settings||{});
-  d.progress=d.progress||{};d.daily=d.daily||{};d.errors=d.errors||[];
+  d.progress=d.progress||{};d.daily=d.daily||{};d.errors=d.errors||[];d.stats=d.stats||{days:{},badges:{}};d.stats.days=d.stats.days||{};d.stats.badges=d.stats.badges||{};
   return migrate(d);
 }
 function migrate(d){if(d.sample){d.verses=parseList(SAMPLE).items;d.progress={};d.errors=[];d.daily={};d.sample=false;d.updatedAt=Date.now();}return d;}
 let S=load();
 let save=function(){try{localStorage.setItem(KEY,JSON.stringify(S));$('saved').textContent='자동 저장됨';}catch(e){$('saved').textContent='이 화면에서는 저장되지 않음';}}
 function ensureDaily(){const t=today();if(S.daily.date!==t)S.daily={date:t,started:[],reviewed:0,extra:0};}
+function D(date){const d=date||today();return S.stats.days[d]||(S.stats.days[d]={tries:0,first:0,rev:0,nw:0,hint:0,fail:0,done:false,score:0});}
 function P(ref){const p=S.progress[ref]||(S.progress[ref]={box:0,stage:0,due:null,tries:0,ok:0,lapse:false});p.weak=p.weak||{};return p;}
 const verseOf=ref=>S.verses.find(v=>v.ref===ref);
 const idxOf=ref=>S.verses.findIndex(v=>v.ref===ref);
@@ -507,7 +535,8 @@ function renderWork(){
   const w=$('work');
   if(!cur){
     const q=buildQueue(),weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
-    w.innerHTML=`<div class="done"><h2>오늘 분량을 마쳤습니다</h2><p class="tip">내일 복습할 구절은 시트의 「다음 복습」 열에서 볼 수 있습니다.</p>
+    markDone();
+    w.innerHTML=`<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
       <div class="acts">${weakN?`<button class="btn primary" id="drillGo2">약점 집중 연습 (${Math.min(10,weakN)}구절)</button>`:''}${q.freshLeft?`<button class="btn${weakN?'':' primary'}" id="moreNew">새 구절 ${Math.min(S.settings.newPerDay,q.freshLeft)}개 더</button>`:''}</div>${fbHTML()}</div>`;
     const mn=$('moreNew');if(mn)mn.onclick=()=>{S.daily.extra=(S.daily.extra||0)+S.settings.newPerDay;save();cur=nextItem();lastFb=null;renderAll();};
     const dg=$('drillGo2');if(dg)dg.onclick=startDrill;
@@ -534,7 +563,7 @@ function renderWork(){
   if(!$('v-learn').hidden&&$('cover').hidden)ta.focus({preventScroll:true});
 }
 function bindOpenDiff(){const b=$('openDiff');if(b)b.onclick=()=>{diffOpen=true;const fb=$('work').querySelector('.fb');if(fb)fb.outerHTML=fbHTML();bindOpenDiff();};}
-function renderAll(){renderSheet();renderWork();renderFbar();}
+function renderAll(){renderSheet();renderWork();renderFbar();renderToday();}
 
 function hint(){if(!cur||cur.stage===0)return;const n=verseOf(cur.ref).text.split(' ').length;if(cur.hints<n){cur.hints++;$('work').querySelector('.cue .txt').innerHTML=cueHTML(cur);}$('ans').focus();}
 
@@ -546,6 +575,69 @@ function attachEnter(ta,fn){
 }
 function guard(){const now=Date.now();if(now-lastSubmit<250)return false;lastSubmit=now;return true;}
 
+
+/* 출석·점수·배지 */
+const BADGES=[
+ ['first_master','첫 숙달','구절 하나를 14일 간격까지 끌어올림'],
+ ['streak3','3일 연속','사흘 연속 하루 목표 완료'],
+ ['streak7','7일 연속','일주일 연속 하루 목표 완료'],
+ ['streak30','30일 연속','한 달 연속 하루 목표 완료'],
+ ['perfect','완벽한 하루','오답 없이 하루 목표 완료'],
+ ['m10','10구절 숙달',''],['m50','50구절 숙달',''],['m100','100구절 숙달',''],
+ ['exam100','모의시험 만점','10문항 이상에서 전부 통과'],
+ ['noweak','약점 해소','약점이 남은 구절 0'],
+];
+const QUOTES=['주의 말씀은 내 발에 등이요 내 길에 빛이니이다 (시 119:105)','내가 주께 범죄하지 아니하려 하여 주의 말씀을 내 마음에 두었나이다 (시 119:11)','그의 율법을 주야로 묵상하는도다 (시 1:2)','하나님의 말씀은 살아 있고 활력이 있어 (히 4:12)','주의 말씀의 맛이 내게 어찌 그리 단지요 (시 119:103)','풀은 마르고 꽃은 시드나 우리 하나님의 말씀은 영원히 서리라 (사 40:8)','그리스도의 말씀이 너희 속에 풍성히 거하여 (골 3:16)'];
+let sessionCombo=0;
+function masteredCount(){return S.verses.filter(v=>P(v.ref).box>=4).length;}
+function dayTarget(){const q=buildQueue();const d=D();return {rev:d.rev+q.rev.length,nw:Math.max(d.nw,Math.min(S.settings.newPerDay,d.nw+q.fresh.length+q.prog.length))};}
+function dayScore(d){const acc=d.tries?d.first/d.tries:0;const tg=dayTarget();const goal=(tg.rev+tg.nw)?Math.min(1,(d.rev+d.nw)/(tg.rev+tg.nw)):1;return Math.round(acc*70+goal*30);}
+function gradeOf(s){return s>=90?['A','탁월합니다']:s>=75?['B','좋습니다']:s>=60?['C','꾸준히 가고 있습니다']:['D','시작이 반입니다'];}
+function streakInfo(){
+  const days=S.stats.days,t=today(),isDone=d=>!!(days[d]&&days[d].done);
+  const dates=Object.keys(days).filter(isDone).sort();
+  if(!dates.length)return {streak:0,best:0};
+  let best=0,run=0,prev=null;dates.forEach(d=>{run=(prev&&addDays(prev,1)===d)?run+1:1;best=Math.max(best,run);prev=d;});
+  let d=isDone(t)?t:addDays(t,-1),streak=0,shieldLeft=1,sinceShield=0;
+  if(!isDone(d)){if(isDone(addDays(d,-1))){shieldLeft=0;d=addDays(d,-1);}else return {streak:0,best};}
+  while(true){
+    if(isDone(d)){streak++;d=addDays(d,-1);sinceShield++;if(sinceShield>=7){shieldLeft=1;sinceShield=0;}continue;}
+    if(shieldLeft&&isDone(addDays(d,-1))){shieldLeft=0;sinceShield=0;d=addDays(d,-1);continue;}
+    break;
+  }
+  return {streak,best:Math.max(best,streak)};
+}
+function award(id){if(!S.stats.badges[id]){S.stats.badges[id]=today();return true;}return false;}
+function checkBadges(){
+  const m=masteredCount(),{streak}=streakInfo();
+  if(m>=1)award('first_master');if(m>=10)award('m10');if(m>=50)award('m50');if(m>=100)award('m100');
+  if(streak>=3)award('streak3');if(streak>=7)award('streak7');if(streak>=30)award('streak30');
+  if(S.verses.length&&S.verses.some(v=>P(v.ref).tries)&&!S.verses.some(v=>weakSum(P(v.ref))))award('noweak');
+}
+function markDone(){const d=D();if(d.done)return;const q=buildQueue();if(q.rev.length||q.prog.length||q.fresh.length)return;if(!(d.rev+d.nw))return;d.done=true;d.score=dayScore(d);if(!d.fail)award('perfect');checkBadges();save();}
+function etaText(){
+  const left=S.verses.length-masteredCount();if(!left)return '완주';
+  const t=today();let gained=0,seen=0;for(let i=1;i<=7;i++){const d=S.stats.days[addDays(t,-i)];if(d){gained+=d.nw||0;seen++;}}
+  const rate=seen?Math.max(gained/7,0.5):S.settings.newPerDay;const days=Math.ceil(left/rate)+14;const [y,m,dd]=addDays(t,days).split('-');return `${+m}/${+dd} 무렵`;
+}
+function renderToday(){
+  const el=$('todayBar');if(!el)return;const d=D(),tg=dayTarget(),{streak}=streakInfo();
+  const acc=d.tries?Math.round(d.first/d.tries*100):null;
+  el.innerHTML=`<span>오늘 <b>${d.rev+d.nw}/${tg.rev+tg.nw}</b></span>${acc!==null?`<span>첫 시도 <b>${acc}%</b></span>`:''}${sessionCombo>=3?`<span class="combo">연속 통과 <b>${sessionCombo}</b></span>`:''}<span>연속 <b>${streak}일</b></span><span style="margin-left:auto">완주 예상 <b>${etaText()}</b></span>`;
+}
+function doneHTML(){
+  const d=D(),t=today(),y=S.stats.days[addDays(t,-1)],{streak,best}=streakInfo(),[g,word]=gradeOf(d.score||dayScore(d));
+  const acc=d.tries?Math.round(d.first/d.tries*100):0;
+  const tomorrow=S.verses.filter(v=>{const p=P(v.ref);return p.box>=1&&p.due&&p.due<=addDays(t,1);}).length;
+  const cmp=y&&y.done?(d.score-y.score>0?`어제보다 +${d.score-y.score}`:d.score-y.score<0?`어제보다 ${d.score-y.score}`:'어제와 같음'):'첫 기록';
+  const q=QUOTES[(parseInt(t.replace(/-/g,''))+streak)%QUOTES.length];
+  return `<div class="scorecard"><div class="grade">${g}</div><div>
+    <div class="line">오늘 점수 <b>${d.score||dayScore(d)}</b> · ${word} · ${cmp}</div>
+    <div class="line">첫 시도 정확도 <b>${acc}%</b> · 복습 <b>${d.rev}</b> · 새 구절 <b>${d.nw}</b>${d.hint?` · 힌트 <b>${d.hint}</b>`:''}</div>
+    <div class="line">연속 <b>${streak}일</b> (최장 ${best}일) · 숙달 <b>${masteredCount()}/${S.verses.length}</b> · 내일 복습 <b>${tomorrow}</b>개</div>
+  </div></div><p class="quote">${esc(q)}</p>`;
+}
+
 function intervalFor(p){let d=INT[p.box];if(weakSum(p)>=2)d=Math.min(d,3);return d;}
 function submit(){
   const ta=$('ans');if(!cur||!ta||!norm(ta.value)||!guard())return;
@@ -556,12 +648,13 @@ function submit(){
   else if(!cur.hints&&cur.stage>=2)decayWeak(ref,cur.stage===3?1:.5);
   lastFb={ref,label:kindLabel(cur.kind)+' · '+STAGES[cur.stage],r,a};diffOpen=true;
   if(cur.kind!=='free'){p.tries++;if(r.pass)p.ok++;}
+  if((cur.kind==='learn'&&cur.stage>=1)||cur.kind==='review'){const d=D();d.tries++;if(cur.hints)d.hint++;if(r.pass&&!cur.failed&&!cur.hints){d.first++;sessionCombo++;}else if(!r.pass){d.fail++;sessionCombo=0;}}
   const toWeak=(kind)=>{const it=makeItem(ref,kind,4);it.failed=true;lastFb.next='틀린 자리만 가린 「약점 빈칸」으로 다시 쓴 뒤, 주소만 보고 한 번 더 씁니다.';return it;};
   if(cur.kind==='learn'){
     if(r.pass){
       if(cur.stage===4){cur=makeItem(ref,'learn',3);cur.failed=true;}
       else{p.stage=cur.stage+1;
-        if(p.stage>=4){p.box=1;p.due=addDays(t,1);p.lapse=false;cur=nextItem();}
+        if(p.stage>=4){p.box=1;p.due=addDays(t,1);p.lapse=false;D().nw++;cur=nextItem();}
         else cur=makeItem(ref,'learn',p.stage);}
     }else if(cur.stage===3){cur=toWeak('learn');}
     else{cur.failed=true;cur.hints=0;cur.mask=makeMask(ref,cur.stage);}
@@ -572,14 +665,14 @@ function submit(){
         if(cur.failed||p.lapse){p.box=1;p.lapse=false;p.due=addDays(t,1);}
         else if(cur.hints){p.box=Math.max(1,p.box);p.due=addDays(t,1);}
         else{p.box=Math.min(5,p.box+1);p.due=addDays(t,intervalFor(p));}
-        S.daily.reviewed++;cur=nextItem();}
+        S.daily.reviewed++;D().rev++;cur=nextItem();}
     }else{p.box=1;p.lapse=true;p.due=t;cur=cur.stage===3?toWeak('review'):Object.assign(cur,{failed:true,hints:0,mask:makeMask(ref,4)});}
   }else if(cur.kind==='drill'){
     if(r.pass){if(cur.stage!==3){cur=makeItem(ref,'drill',3);}else cur=nextItem();}
     else if(cur.stage===3){cur=toWeak('drill');cur.kind='drill';}
     else{cur.hints=0;cur.mask=makeMask(ref,cur.stage);}
   }else{cur=makeItem(ref,'free',cur.stage);}
-  save();renderAll();
+  checkBadges();save();renderAll();
 }
 function startDrill(){
   const list=S.verses.map(v=>v.ref).filter(r=>weakSum(P(r))).sort((a,b)=>weakSum(P(b))-weakSum(P(a))).slice(0,10);
@@ -618,6 +711,7 @@ function renderExam(){
     if(!r.pass){const p=P(ref);p.box=Math.min(p.box,1)||0;if(p.box>=1){p.lapse=true;p.due=t;}}
     else if(r.spaceOk)decayWeak(ref,1);
     return {ref,r,a};});
+  if(ex.list.length>=10&&ex.res.every(x=>x.r.pass))award('exam100');
   save();
   const items=ex.res.map(({ref,r,a})=>{if(r.pass)pass++;if(a)a.errs.forEach(e=>tc[e.type]=(tc[e.type]||0)+1);if(a&&a.conf)tc['구절 혼동']=(tc['구절 혼동']||0)+1;
     return `<div class="it"><div class="r">${esc(ref)} · <span style="color:var(${r.pass?'--ok':'--err'})">${r.pass?'통과':'일치 '+r.acc+'%'}</span></div>${a?anaHTML({ref,r,a}):''}${r.pass&&r.spaceOk?'':`<div class="diff">${r.html}</div>`}</div>`;}).join('');
@@ -656,6 +750,34 @@ function renderNotes(){
   b.querySelectorAll('tbody tr[data-ref]').forEach(tr=>{const go=()=>{drill=[tr.dataset.ref];cur=nextItem();lastFb=null;show('learn');};tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go();};});
 }
 
+
+/* 기록 탭 */
+function renderLog(){
+  const b=$('logBox'),t=today(),{streak,best}=streakInfo(),days=S.stats.days;
+  const dow=(s)=>{const [y,m,d]=s.split('-').map(Number);return (new Date(y,m-1,d).getDay()+6)%7;};
+  const end=addDays(t,6-dow(t));const start=addDays(end,-7*12+1);
+  let cells='';for(let i=0;i<84;i++){const d=addDays(start,i);const x=days[d];const lv=!x?0:x.done?3:(x.rev+x.nw)>=3?2:(x.tries?1:0);cells+=`<i class="${lv?'l'+lv:''}${d===t?' today':''}" title="${d}${x?` · ${x.rev+x.nw}개${x.done?' · 완료':''}`:''}"></i>`;}
+  const wk=[];for(let i=6;i>=0;i--){wk.push(days[addDays(t,-i)]||null);}
+  const att=wk.filter(d=>d&&d.done).length,scores=wk.filter(d=>d&&d.done).map(d=>d.score),avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):0,gain=wk.reduce((a,d)=>a+(d?d.nw:0),0);
+  const total=Object.values(days).filter(d=>d.done).length;
+  b.innerHTML=`<h2>기록</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="l">연속 출석</div><div class="v">${streak}일</div><div class="s">최장 ${best}일 · 누적 ${total}일</div></div>
+      <div class="kpi"><div class="l">이번 주</div><div class="v">${att}/7</div><div class="s">평균 점수 ${avg||'—'} · 새로 익힘 ${gain}</div></div>
+      <div class="kpi"><div class="l">숙달</div><div class="v">${masteredCount()}/${S.verses.length}</div><div class="s">완주 예상 ${etaText()}</div></div>
+      <div class="kpi"><div class="l">오늘</div><div class="v">${D().done?gradeOf(D().score)[0]:'—'}</div><div class="s">${D().done?`${D().score}점`:`${D().rev+D().nw}개 진행`}</div></div>
+    </div>
+    <h3>최근 12주 출석</h3>
+    <div class="tw"><div class="grass">${cells}</div></div>
+    <p class="note">진한 칸이 하루 목표를 마친 날입니다. 연한 칸은 일부만 한 날.</p>
+    <h3>배지</h3>
+    <div class="badges">${BADGES.map(([id,n,desc])=>{const d=S.stats.badges[id];return `<div class="badge ${d?'':'locked'}"><span class="n">${n}</span><span class="d">${d?d.replace(/-/g,'.'):desc||'아직'}</span></div>`;}).join('')}</div>
+    <h3>최근 14일</h3>
+    <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>복습</th><th>새 구절</th><th>첫 시도</th><th>점수</th><th>완료</th></tr></thead><tbody>
+      ${Array.from({length:14},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x)return '';const [,m,dd]=d.split('-');return `<tr><td>${+m}/${+dd}</td><td>${x.rev}</td><td>${x.nw}</td><td>${x.tries?Math.round(x.first/x.tries*100)+'%':'—'}</td><td>${x.done?x.score:'—'}</td><td>${x.done?'<span class="st mst">완료</span>':''}</td></tr>`;}).join('')||'<tr><td colspan="6" class="note">아직 기록이 없습니다.</td></tr>'}
+    </tbody></table></div>`;
+}
+
 /* 목록·설정 */
 function renderList(){
   $('listText').value=S.verses.map(v=>v.ref+' '+v.text).join('\n');
@@ -676,14 +798,14 @@ $('applyList').onclick=()=>{
 $('newPer').onchange=e=>{S.settings.newPerDay=+e.target.value;save();renderSheet();};
 $('strictSp').onchange=e=>{S.settings.strictSpace=e.target.checked;save();};
 $('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다.</span> <button class="btn danger" id="rsY">지우기</button> <button class="btn" id="rsN">취소</button>';
-  $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=()=>{S.progress={};S.daily={};S.errors=[];drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다.</span>';};};
+  $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=()=>{S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다.</span>';};};
 
 /* 탭·가리기 */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.v));
 function show(v){
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.v===v)));
-  ['learn','exam','notes','list','guide'].forEach(k=>$('v-'+k).hidden=k!==v);
-  if(v==='learn')renderAll();if(v==='exam')renderExam();if(v==='notes')renderNotes();if(v==='list')renderList();
+  ['learn','exam','log','notes','list','guide'].forEach(k=>$('v-'+k).hidden=k!==v);
+  if(v==='learn')renderAll();if(v==='log')renderLog();if(v==='exam')renderExam();if(v==='notes')renderNotes();if(v==='list')renderList();
 }
 function toggleCover(){const c=$('cover');c.hidden=!c.hidden;if(c.hidden){const a=$('ans')||$('exAns');if(a)a.focus({preventScroll:true});}}
 $('hideBtn').onclick=toggleCover;$('cover').onclick=toggleCover;
@@ -708,11 +830,11 @@ $('today').textContent=today().replace(/-/g,'.');
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
   function applyRemote(st,er){
     if(!st||!(st.updatedAt>(S.updatedAt||0)))return;
-    S=migrate({verses:st.verses,progress:st.progress||{},settings:Object.assign({newPerDay:5,strictSpace:false},st.settings||{}),daily:st.daily||{},sample:!!st.sample,errors:(er&&er.errors)||[],updatedAt:st.updatedAt});
+    S=migrate({verses:st.verses,progress:st.progress||{},settings:Object.assign({newPerDay:5,strictSpace:false},st.settings||{}),daily:st.daily||{},sample:!!st.sample,errors:(er&&er.errors)||[],stats:st.stats||{days:{},badges:{}},updatedAt:st.updatedAt});
     try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
     remoteAt=st.updatedAt;drill=null;
     if(!cur||!verseOf(cur.ref))cur=nextItem();
-    if(!$('v-learn').hidden)renderAll();else if(!$('v-notes').hidden)renderNotes();else if(!$('v-list').hidden)renderList();
+    if(!$('v-learn').hidden)renderAll();else if(!$('v-notes').hidden)renderNotes();else if(!$('v-list').hidden)renderList();else if(!$('v-log').hidden)renderLog();
   }
   async function push(){
     const at=S.updatedAt;const {errors,...rest}=S;
@@ -787,6 +909,7 @@ $('today').textContent=today().replace(/-/g,'.');
     S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
+
 
 </script>
 
