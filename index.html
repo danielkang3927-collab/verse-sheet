@@ -279,7 +279,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v17</p>
+    <p class="note" style="margin:0;text-align:right">v18</p>
   </div>
 </div>
 
@@ -372,6 +372,7 @@ function load(){
 }
 function migrate(d){if(d.verses){const fm={},nm={};parseList(SAMPLE).items.forEach(v=>{fm[v.ref]=v.freq;nm[v.ref]=v.note;});d.verses.forEach(v=>{if(!v.freq&&fm[v.ref])v.freq=fm[v.ref];if(!v.note&&nm[v.ref])v.note=nm[v.ref];});}
   d.settings=Object.assign({examDate:'2027-01-14',finishDate:'2026-12-31',restDay:0,missPerWeek:1,autoPlan:true},d.settings||{});
+  if(d.settings.shareV!==2){d.settings.share=true;d.settings.shareV=2;}
   if(d.sample){d.verses=parseList(SAMPLE).items;d.progress={};d.errors=[];d.daily={};d.sample=false;d.updatedAt=Date.now();}return d;}
 let S=load();
 let save=function(){try{localStorage.setItem(KEY,JSON.stringify(S));$('saved').textContent='자동 저장됨';}catch(e){$('saved').textContent='이 화면에서는 저장되지 않음';}}
