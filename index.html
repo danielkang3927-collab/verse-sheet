@@ -279,7 +279,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v16</p>
+    <p class="note" style="margin:0;text-align:right">v17</p>
   </div>
 </div>
 
@@ -366,7 +366,7 @@ function load(){
   if(!d||!Array.isArray(d.verses)||!d.verses.length){
     d={verses:parseList(SAMPLE).items,progress:{},settings:{},daily:{},sample:false};
   }
-  d.settings=Object.assign({newPerDay:5,strictSpace:false,share:false,nick:''},d.settings||{});
+  d.settings=Object.assign({newPerDay:5,strictSpace:false,share:true,nick:''},d.settings||{});
   d.progress=d.progress||{};d.daily=d.daily||{};d.errors=d.errors||[];d.stats=d.stats||{days:{},badges:{}};d.stats.days=d.stats.days||{};d.stats.badges=d.stats.badges||{};
   return migrate(d);
 }
@@ -701,7 +701,7 @@ function doneHTML(){
 function pScore(p){return (p.box||0)*3+(p.stage||0)+(p.tries||0)*0.1;}
 function mergeState(a,b){
   if(!a)return b;if(!b)return a;
-  const out={verses:[],progress:{},settings:Object.assign({},b.settings||{},a.settings||{}),daily:{},sample:false,errors:[],stats:{days:{},badges:{}},updatedAt:Math.max(a.updatedAt||0,b.updatedAt||0)};
+  const newer=(a.updatedAt||0)>=(b.updatedAt||0)?a:b,older=newer===a?b:a;const out={verses:[],progress:{},settings:Object.assign({},older.settings||{},newer.settings||{}),daily:{},sample:false,errors:[],stats:{days:{},badges:{}},updatedAt:Math.max(a.updatedAt||0,b.updatedAt||0)};
   const av=a.verses||[],bv=b.verses||[];out.verses=(av.length>bv.length||(av.length===bv.length&&(a.updatedAt||0)>=(b.updatedAt||0)))?av:bv;
   const refs=new Set([...Object.keys(a.progress||{}),...Object.keys(b.progress||{})]);
   refs.forEach(r=>{const pa=(a.progress||{})[r],pb=(b.progress||{})[r];
@@ -1079,7 +1079,7 @@ $('today').textContent=today().replace(/-/g,'.');
     if(!uid){gate.hidden=false;return;}
     try{await flush();}catch(e){}
     await auth.signOut();
-    S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
+    S=load();S.updatedAt=0;cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
 
