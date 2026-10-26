@@ -211,7 +211,11 @@ label{font-size:13px}
       <div class="row"><label for="newPer">하루 새 구절</label><select id="newPer"><option>3</option><option>5</option><option>7</option><option>10</option></select>
         <label><input type="checkbox" id="strictSp"> 띄어쓰기까지 채점</label></div>
       <p class="note">띄어쓰기 채점을 끄면 글자·문장부호만 맞으면 통과하고, 띄어쓰기 차이는 노란 표시로만 알려 줍니다.</p>
-      <div class="row"><button class="btn danger" id="resetBtn">학습 기록 지우기</button><span id="resetConfirm"></span></div>
+      <h2 style="margin-top:8px">백업과 복구</h2>
+      <p class="note">매일 첫 접속과 하루 완료 때 계정 저장소에 자동 백업(30일 보관). 기기 간 기록이 다르면 지우지 않고 합칩니다.</p>
+      <div class="row"><button class="btn" id="bkNow">지금 백업</button><span class="note" id="bkMsg"></span></div>
+      <div class="tw" id="backupWrap"></div>
+      <div class="row" style="margin-top:8px"><button class="btn danger" id="resetBtn">학습 기록 지우기</button><span id="resetConfirm"></span></div>
       <p class="note">로그인 전에는 이 브라우저에만 저장되고, 로그인하면 계정에 함께 저장됩니다.</p>
     </div>
   </section>
@@ -267,7 +271,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v14</p>
+    <p class="note" style="margin:0;text-align:right">v15</p>
   </div>
 </div>
 
@@ -626,7 +630,7 @@ function checkBadges(){
   if(streak>=3)award('streak3');if(streak>=7)award('streak7');if(streak>=30)award('streak30');
   if(S.verses.length&&S.verses.some(v=>P(v.ref).tries)&&!S.verses.some(v=>weakSum(P(v.ref))))award('noweak');
 }
-function markDone(){const d=D();if(d.done)return;const q=buildQueue();if(q.rev.length||q.prog.length||q.fresh.length)return;if(!(d.rev+d.nw))return;d.done=true;d.score=dayScore(d);if(!d.fail)award('perfect');checkBadges();save();}
+function markDone(){const d=D();if(d.done)return;const q=buildQueue();if(q.rev.length||q.prog.length||q.fresh.length)return;if(!(d.rev+d.nw))return;d.done=true;d.score=dayScore(d);if(!d.fail)award('perfect');checkBadges();save();if(window.__backupNow)setTimeout(window.__backupNow,3000);}
 function etaText(){
   const left=S.verses.length-masteredCount();if(!left)return '완주';
   const t=today();let gained=0,seen=0;for(let i=1;i<=7;i++){const d=S.stats.days[addDays(t,-i)];if(d){gained+=d.nw||0;seen++;}}
@@ -649,6 +653,32 @@ function doneHTML(){
     <div class="line">연속 <b>${streak}일</b> (최장 ${best}일) · 숙달 <b>${masteredCount()}/${S.verses.length}</b> · 내일 복습 <b>${tomorrow}</b>개</div>
   </div></div><p class="quote">${esc(q)}</p>`;
 }
+
+
+/* 기록 합치기: 어느 쪽도 버리지 않는다 */
+function pScore(p){return (p.box||0)*3+(p.stage||0)+(p.tries||0)*0.1;}
+function mergeState(a,b){
+  if(!a)return b;if(!b)return a;
+  const out={verses:[],progress:{},settings:Object.assign({},b.settings||{},a.settings||{}),daily:{},sample:false,errors:[],stats:{days:{},badges:{}},updatedAt:Math.max(a.updatedAt||0,b.updatedAt||0)};
+  const av=a.verses||[],bv=b.verses||[];out.verses=(av.length>bv.length||(av.length===bv.length&&(a.updatedAt||0)>=(b.updatedAt||0)))?av:bv;
+  const refs=new Set([...Object.keys(a.progress||{}),...Object.keys(b.progress||{})]);
+  refs.forEach(r=>{const pa=(a.progress||{})[r],pb=(b.progress||{})[r];
+    if(!pa){out.progress[r]=pb;return;}if(!pb){out.progress[r]=pa;return;}
+    const base=pScore(pa)>=pScore(pb)?pa:pb,other=base===pa?pb:pa;
+    const m=Object.assign({},base);m.tries=Math.max(pa.tries||0,pb.tries||0);m.ok=Math.max(pa.ok||0,pb.ok||0);
+    m.weak=Object.assign({},other.weak||{},base.weak||{});out.progress[r]=m;});
+  const t=today();const da=a.daily||{},db=b.daily||{};
+  out.daily=(da.date===t&&db.date===t)?{date:t,started:[...new Set([...(da.started||[]),...(db.started||[])])],reviewed:Math.max(da.reviewed||0,db.reviewed||0),extra:Math.max(da.extra||0,db.extra||0)}:(da.date===t?da:(db.date===t?db:((da.date||'')>=(db.date||'')?da:db)));
+  const seen=new Set();[...(a.errors||[]),...(b.errors||[])].forEach(e=>{const k=[e.ref,e.wi,e.got,e.type,e.d,e.m].join('|');if(!seen.has(k)){seen.add(k);out.errors.push(e);}});
+  out.errors.sort((x,y)=>(x.d||'').localeCompare(y.d||''));out.errors=out.errors.slice(-1200);
+  const ad=(a.stats&&a.stats.days)||{},bd=(b.stats&&b.stats.days)||{};
+  new Set([...Object.keys(ad),...Object.keys(bd)]).forEach(d=>{const x=ad[d],y=bd[d];if(!x){out.stats.days[d]=y;return;}if(!y){out.stats.days[d]=x;return;}
+    out.stats.days[d]={tries:Math.max(x.tries||0,y.tries||0),first:Math.max(x.first||0,y.first||0),rev:Math.max(x.rev||0,y.rev||0),nw:Math.max(x.nw||0,y.nw||0),hint:Math.max(x.hint||0,y.hint||0),fail:Math.max(x.fail||0,y.fail||0),done:!!(x.done||y.done),score:Math.max(x.score||0,y.score||0)};});
+  const ab=(a.stats&&a.stats.badges)||{},bb=(b.stats&&b.stats.badges)||{};
+  new Set([...Object.keys(ab),...Object.keys(bb)]).forEach(k=>{out.stats.badges[k]=[ab[k],bb[k]].filter(Boolean).sort()[0];});
+  return out;
+}
+function stateFingerprint(st){return JSON.stringify([Object.keys(st.progress||{}).map(k=>[k,pScore(st.progress[k])]).sort(),Object.keys((st.stats&&st.stats.days)||{}).sort(),(st.verses||[]).length]);}
 
 function intervalFor(p){let d=INT[p.box];if(weakSum(p)>=2)d=Math.min(d,3);return d;}
 function submit(){
@@ -807,7 +837,7 @@ function boardHTML(rows,myUid){
 function renderList(){
   $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text).join('\n');
   $('sampleWarn').hidden=!S.sample;$('newPer').value=String(S.settings.newPerDay);$('strictSp').checked=!!S.settings.strictSpace;
-  $('listMsg').textContent=`${S.verses.length}개 구절`;if(window.__ghStatus&&window.__ghStatus())$('ghMsg').textContent='연결됨 · 상단 초록 점이 동기화 상태입니다.';$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';
+  $('listMsg').textContent=`${S.verses.length}개 구절`;$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';renderBackups();
 }
 $('applyList').onclick=()=>{
   const {items,errs}=parseList($('listText').value);const c=$('listConfirm');
@@ -820,10 +850,16 @@ $('applyList').onclick=()=>{
     S.errors=S.errors.filter(e=>refs.has(e.ref));
     S.verses=items;S.sample=false;ensureDaily();S.daily.started=S.daily.started.filter(r=>refs.has(r));drill=null;save();cur=nextItem();lastFb=null;renderList();renderAll();$('listMsg').textContent=`${items.length}개 구절로 바꿨습니다.`;};
 };
+$('bkNow').onclick=async()=>{if(!window.__backupNow){$('bkMsg').textContent='로그인 후 가능합니다.';return;}$('bkMsg').textContent='백업 중…';await window.__backupNow();$('bkMsg').textContent='백업했습니다.';renderBackups();};
 $('newPer').onchange=e=>{S.settings.newPerDay=+e.target.value;save();renderSheet();};
 $('strictSp').onchange=e=>{S.settings.strictSpace=e.target.checked;save();};
-$('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다.</span> <button class="btn danger" id="rsY">지우기</button> <button class="btn" id="rsN">취소</button>';
-  $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=()=>{S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다.</span>';};};
+$('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다. 지우기 전에 오늘 날짜 백업을 먼저 만듭니다. 확인하려면 <b>지우기</b>라고 입력하세요.</span> <input id="rsTxt" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);width:90px"> <button class="btn danger" id="rsY">실행</button> <button class="btn" id="rsN">취소</button>';
+  $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
+async function renderBackups(){const w=$('backupWrap');if(!w)return;if(!window.__listBackups){w.innerHTML='<p class="note">로그인하면 백업 목록이 보입니다.</p>';return;}
+  const list=await window.__listBackups();if(!list.length){w.innerHTML='<p class="note">아직 백업이 없습니다. 매일 첫 접속과 하루 완료 때 자동으로 만들어집니다.</p>';return;}
+  w.innerHTML=`<table class="sheet"><thead><tr><th>날짜</th><th>숙달</th><th>출석일</th><th>구절 수</th><th></th></tr></thead><tbody>${list.map(b=>{const d=b.data;const m=Object.values(d.progress||{}).filter(p=>(p.box||0)>=4).length;const days=Object.values((d.stats&&d.stats.days)||{}).filter(x=>x.done).length;return `<tr><td>${b.id}</td><td>${m}</td><td>${days}</td><td>${(d.verses||[]).length}</td><td><button class="btn" data-bk="${b.id}">이 시점으로 복구</button></td></tr>`;}).join('')}</tbody></table><p class="note">복구하면 현재 상태를 먼저 백업한 뒤, 선택한 날의 기록으로 되돌립니다.</p>`;
+  w.querySelectorAll('button[data-bk]').forEach(b=>b.onclick=async()=>{b.textContent='복구 중…';const ok=await window.__restoreBackup(b.dataset.bk);b.textContent=ok?'복구됨':'실패';renderList();});}
+
 
 /* 탭·가리기 */
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.v));
@@ -871,6 +907,22 @@ $('today').textContent=today().replace(/-/g,'.');
   setTimeout(()=>{if(!authReady&&gate&&!gate.hidden){gbtn.disabled=false;gbtn.textContent='Google로 로그인';diag.push('로그인 상태 확인이 7초 안에 끝나지 않아 바로 진행합니다 (SDK '+firebase.SDK_VERSION+')');showDiag();}},7000);
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
+  async function backupDaily(force){
+    if(!uid)return;const t=today();
+    try{const bref=fs.doc('users/'+uid+'/backups/'+t);
+      if(!force){const ex=await bref.get();if(ex.exists)return;}
+      const {errors,...rest}=S;await bref.set(Object.assign({},rest,{errors:(errors||[]).slice(-600),savedAt:Date.now()}));
+      const old=await fs.collection('users/'+uid+'/backups').orderBy('savedAt','desc').get();
+      const docs=old.docs;for(let i=30;i<docs.length;i++){try{await docs[i].ref.delete();}catch(x){}}
+    }catch(e){}
+  }
+  window.__listBackups=async function(){if(!uid)return[];try{const q=await fs.collection('users/'+uid+'/backups').orderBy('savedAt','desc').limit(30).get();return q.docs.map(d=>({id:d.id,data:d.data()}));}catch(e){return[];}};
+  window.__restoreBackup=async function(id){if(!uid)return false;try{const d=await fs.doc('users/'+uid+'/backups/'+id).get();if(!d.exists)return false;
+    await backupDaily(true);
+    S=migrate(mergeState(d.data(),{}));S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(x){}
+    await push();cur=nextItem();lastFb=null;drill=null;renderAll();return true;}catch(e){return false;}};
+  window.__backupNow=()=>backupDaily(true);
+
   const weightOf=st=>{let w=0;const pr=(st&&st.progress)||{};Object.keys(pr).forEach(k=>{w+=(pr[k].tries||0)+(pr[k].box||0)*3+(pr[k].stage||0);});const dy=(st&&st.stats&&st.stats.days)||{};w+=Object.keys(dy).length*2;return w;};
   let boardTimer=null,lastBoard='';
   window.__pushBoard=function(now){
@@ -925,23 +977,29 @@ $('today').textContent=today().replace(/-/g,'.');
     setMsg(`${user.displayName||''} (${user.email||''}) 계정으로 로그인됨. 이 계정의 기록만 보입니다.`);
     setSync('busy','동기화 중');gbtn.textContent='기록 불러오는 중…';
     // 계정 저장소를 먼저 읽고 나서 화면을 그린다. 내용이 적은 쪽은 많은 쪽을 절대 덮어쓰지 않는다.
-    let remoteApplied=false;
+    let ok=false;
     try{
       const [s,e]=await Promise.all([ref('state').get(),ref('errors').get()]);
-      if(s.exists){const rd=s.data();const rw=weightOf(rd),lw=weightOf(S);
-        if(rw>lw||(rw===lw&&rd.updatedAt>(S.updatedAt||0))){S.updatedAt=0;applyRemote(rd,e.exists?e.data():null);remoteApplied=true;}
-        else if(lw>rw){S.updatedAt=Date.now();await push();}
+      if(s.exists){const rd=Object.assign({},s.data(),{errors:(e.exists&&e.data().errors)||[]});
+        const before=stateFingerprint(rd);
+        S=migrate(mergeState(S,rd));
+        try{localStorage.setItem(KEY,JSON.stringify(S));}catch(x){}
+        if(stateFingerprint(S)!==before){S.updatedAt=Date.now();await push();}else remoteAt=S.updatedAt;
       }else if(weightOf(S)>0){S.updatedAt=Date.now();await push();}
-      setSync('on','동기화됨');
+      ok=true;setSync('on','동기화됨');
     }catch(err){setSync('','동기화 실패 · 이 기기에만 저장');}
-    if(!remoteApplied){cur=nextItem();renderAll();}
+    cur=nextItem();lastFb=null;renderAll();
     gate.hidden=true;
+    if(ok)backupDaily();
     if(unsub)unsub();
     unsub=ref('state').onSnapshot(async snap=>{
       if(!snap.exists||snap.metadata.hasPendingWrites)return;
-      const d=snap.data();if(!(d.updatedAt>(S.updatedAt||0))||d.updatedAt===remoteAt)return;if(weightOf(d)<weightOf(S))return;
+      const d=snap.data();if(!(d.updatedAt>(S.updatedAt||0))||d.updatedAt===remoteAt)return;
       let er=null;try{const e=await ref('errors').get();er=e.exists?e.data():null;}catch(x){}
-      applyRemote(d,er);
+      const rd=Object.assign({},d,{errors:(er&&er.errors)||[]});
+      S=migrate(mergeState(S,rd));try{localStorage.setItem(KEY,JSON.stringify(S));}catch(x){}
+      remoteAt=d.updatedAt;drill=null;cur=nextItem();lastFb=null;
+      if(!$('v-learn').hidden)renderAll();else if(!$('v-notes').hidden)renderNotes();else if(!$('v-list').hidden)renderList();else if(!$('v-log').hidden)renderLog();
     },()=>setSync('','동기화 끊김 · 이 기기에만 저장'));
     const a=$('ans');if(a)a.focus({preventScroll:true});
     lastBoard='';window.__pushBoard(true);
@@ -974,6 +1032,7 @@ $('today').textContent=today().replace(/-/g,'.');
   gbtn.onclick=login;
   btn.onclick=async()=>{
     if(!uid){gate.hidden=false;return;}
+    try{await flush();}catch(e){}
     await auth.signOut();
     S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
