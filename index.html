@@ -279,7 +279,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v18</p>
+    <p class="note" style="margin:0;text-align:right">v19</p>
   </div>
 </div>
 
@@ -721,7 +721,7 @@ function mergeState(a,b){
   new Set([...Object.keys(ab),...Object.keys(bb)]).forEach(k=>{out.stats.badges[k]=[ab[k],bb[k]].filter(Boolean).sort()[0];});
   return out;
 }
-function stateFingerprint(st){return JSON.stringify([Object.keys(st.progress||{}).map(k=>[k,pScore(st.progress[k])]).sort(),Object.keys((st.stats&&st.stats.days)||{}).sort(),(st.verses||[]).length]);}
+function stateFingerprint(st){const s=st.settings||{};return JSON.stringify([Object.keys(st.progress||{}).map(k=>[k,pScore(st.progress[k])]).sort(),Object.keys((st.stats&&st.stats.days)||{}).sort(),(st.verses||[]).length,[s.share,s.shareV,s.nick,s.examDate,s.finishDate,s.restDay,s.missPerWeek,s.autoPlan,s.newPerDay,s.strictSpace]]);}
 
 function intervalFor(p){let d=INT[p.box];if(weakSum(p)>=2)d=Math.min(d,3);return d;}
 function submit(){
