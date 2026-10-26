@@ -150,6 +150,7 @@ label{font-size:13px}
 @media (prefers-reduced-motion: no-preference){.fb{animation:fi .18s ease-out}@keyframes fi{from{opacity:.4}to{opacity:1}}}
 
 .cue .blank.wk{border-bottom-style:dotted;border-bottom-color:var(--err);border-bottom-width:2px}
+.cue .why{font-size:12px;color:var(--muted);margin-top:3px;word-break:keep-all}
 .cue .warn{font-size:12px;color:var(--warn);margin-top:4px}
 .ana{display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-size:12px;padding:1px 8px;border-radius:10px;background:var(--err-soft);color:var(--err);font-weight:500}
@@ -208,7 +209,12 @@ label{font-size:13px}
       <h2 style="margin-top:8px">계정과 동기화</h2>
       <p class="note" id="acctMsg">로그인하지 않은 상태입니다. 상단 「Google로 로그인」을 누르면 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 사람마다 기록은 완전히 분리됩니다.</p>
       <h2 style="margin-top:8px">설정</h2>
-      <div class="row"><label for="newPer">하루 새 구절</label><select id="newPer"><option>3</option><option>5</option><option>7</option><option>10</option></select>
+      <div class="row"><label for="examDate">시험일</label><input type="date" id="examDate" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px">
+        <label for="finishDate">암송 완료 목표</label><input type="date" id="finishDate" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px">
+        <label for="restDay">쉬는 날</label><select id="restDay"><option value="0">주일</option><option value="6">토요일</option><option value="-1">없음</option></select>
+        <label for="missPerWeek">주당 결석 허용</label><select id="missPerWeek"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select></div>
+      <p class="note" id="planMsg"></p>
+      <div class="row"><label><input type="checkbox" id="autoPlan"> 하루 새 구절을 계획에 맞춰 자동 조정</label><label for="newPer">수동 하루 새 구절</label><select id="newPer"><option>3</option><option>4</option><option>5</option><option>7</option><option>10</option></select>
         <label><input type="checkbox" id="strictSp"> 띄어쓰기까지 채점</label></div>
       <p class="note">띄어쓰기 채점을 끄면 글자·문장부호만 맞으면 통과하고, 띄어쓰기 차이는 노란 표시로만 알려 줍니다.</p>
       <h2 style="margin-top:8px">백업과 복구</h2>
@@ -244,6 +250,8 @@ label{font-size:13px}
         <li><b>미리 경고</b> — 주소만 보고 쓰기 전에 지난 오답 자리와 헷갈렸던 구절을 한 줄로 알려 줍니다.</li>
       </ul>
       <p>약점은 주소만 보고 틀림없이 쓰면 1점, 빈칸 단계에서 맞히면 0.5점씩 줄어 0이 되면 사라집니다. 「오답 노트」 탭에서 유형 통계, 반복 실수, 약점 구절, 헷갈린 쌍을 보고 「약점 집중 연습」으로 바로 들어갈 수 있습니다.</p>
+      <h3>학습 계획</h3>
+      <p>「구절 목록」 탭에서 시험일·완료 목표일·쉬는 날·주당 결석 허용을 정하면, 매일 「남은 새 구절 ÷ 남은 학습일」로 하루 분량을 다시 계산합니다. 밀리면 늘고 앞서면 줄어듭니다. 쉬는 날은 새 구절이 나오지 않고 연속일도 끊기지 않습니다. 완료 목표일이 지나면 자동으로 「약점 보강 기간」이 되어 새 구절 없이 복습 + 오답 노트 상위 약점 10구절 연습이 하루 목표가 되고, 시험 D-day가 표시됩니다.</p>
       <h3>매일 이어가기</h3>
       <p>「기록」 탭의 「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·연속일·숙달 수·오늘 점수만 한 표에서 봅니다. 끄면 내 줄이 바로 내려갑니다.</p>
       <p>하루 목표는 「오늘 복습 전부 + 새 구절(기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다. 「기록」 탭에서 12주 출석 잔디, 배지, 주간 요약, 완주 예상일을 볼 수 있습니다.</p>
@@ -271,7 +279,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v15</p>
+    <p class="note" style="margin:0;text-align:right">v16</p>
   </div>
 </div>
 
@@ -299,19 +307,19 @@ if(ios){try{Object.defineProperty(window,'indexedDB',{get:function(){return unde
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script>
 
-const SAMPLE = `고전 13:1 [3] 내가 사람의 방언과 천사의 말을 할지라도 사랑이 없으면 소리 나는 구리와 울리는 꽹과리가 되고
-고전 13:2 [3] 내가 예언하는 능력이 있어 모든 비밀과 모든 지식을 알고 또 산을 옮길 만한 모든 믿음이 있을지라도 사랑이 없으면 내가 아무 것도 아니요
-고전 13:3 [3] 내가 내게 있는 모든 것으로 구제하고 또 내 몸을 불사르게 내줄지라도 사랑이 없으면 내게 아무 유익이 없느니라
-고전 13:4 [5] 사랑은 오래 참고 사랑은 온유하며 시기하지 아니하며 사랑은 자랑하지 아니하며 교만하지 아니하며
-고전 13:5 [4] 무례히 행하지 아니하며 자기의 유익을 구하지 아니하며 성내지 아니하며 악한 것을 생각하지 아니하며
-고전 13:6 [4] 불의를 기뻐하지 아니하며 진리와 함께 기뻐하고
-고전 13:7 [4] 모든 것을 참으며 모든 것을 믿으며 모든 것을 바라며 모든 것을 견디느니라
-고전 13:8 [2] 사랑은 언제까지나 떨어지지 아니하되 예언도 폐하고 방언도 그치고 지식도 폐하리라
-고전 13:9 [1] 우리는 부분적으로 알고 부분적으로 예언하니
-고전 13:10 [1] 온전한 것이 올 때에는 부분적으로 하던 것이 폐하리라
-고전 13:11 [2] 내가 어렸을 때에는 말하는 것이 어린 아이와 같고 깨닫는 것이 어린 아이와 같고 생각하는 것이 어린 아이와 같다가 장성한 사람이 되어서는 어린 아이의 일을 버렸노라
-고전 13:12 [3] 우리가 지금은 거울로 보는 것 같이 희미하나 그 때에는 얼굴과 얼굴을 대하여 볼 것이요 지금은 내가 부분적으로 아나 그 때에는 주께서 나를 아신 것 같이 내가 온전히 알리라
-고전 13:13 [5] 그런즉 믿음, 소망, 사랑, 이 세 가지는 항상 있을 것인데 그 중의 제일은 사랑이라`;
+const SAMPLE = `고전 13:1 [3] 내가 사람의 방언과 천사의 말을 할지라도 사랑이 없으면 소리 나는 구리와 울리는 꽹과리가 되고 // 사랑 없는 은사는 소음이라는 선언. 13장 전체의 논지를 여는 구절.
+고전 13:2 [3] 내가 예언하는 능력이 있어 모든 비밀과 모든 지식을 알고 또 산을 옮길 만한 모든 믿음이 있을지라도 사랑이 없으면 내가 아무 것도 아니요 // 예언·지식·믿음(산을 옮길 만한)도 사랑 없이는 "아무 것도 아님". 은사 과시에 대한 가장 강한 경고.
+고전 13:3 [3] 내가 내게 있는 모든 것으로 구제하고 또 내 몸을 불사르게 내줄지라도 사랑이 없으면 내게 아무 유익이 없느니라 // 구제와 순교까지도 사랑 없이는 무익. 행위의 크기가 아니라 동기를 묻는 구절.
+고전 13:4 [5] 사랑은 오래 참고 사랑은 온유하며 시기하지 아니하며 사랑은 자랑하지 아니하며 교만하지 아니하며 // 사랑의 정의가 시작되는 구절. 오래 참음·온유·시기 않음·자랑 않음·교만 않음. 결혼식과 설교에서 가장 자주 인용.
+고전 13:5 [4] 무례히 행하지 아니하며 자기의 유익을 구하지 아니하며 성내지 아니하며 악한 것을 생각하지 아니하며 // 사랑의 부정형 네 가지(무례·자기 유익·성냄·악한 생각). 4절과 한 묶음으로 자주 출제.
+고전 13:6 [4] 불의를 기뻐하지 아니하며 진리와 함께 기뻐하고 // 사랑과 진리의 관계. 불의를 기뻐하지 않고 진리와 함께 기뻐함.
+고전 13:7 [4] 모든 것을 참으며 모든 것을 믿으며 모든 것을 바라며 모든 것을 견디느니라 // "모든 것을" 네 번 반복. 사랑의 인내와 소망을 요약하는 구절.
+고전 13:8 [2] 사랑은 언제까지나 떨어지지 아니하되 예언도 폐하고 방언도 그치고 지식도 폐하리라 // 사랑은 폐하지 않으나 은사(예언·방언·지식)는 폐함. 영원한 것과 잠정적인 것의 대비.
+고전 13:9 [1] 우리는 부분적으로 알고 부분적으로 예언하니 // 현재 지식의 부분성. 10절과 짝을 이루는 짧은 구절.
+고전 13:10 [1] 온전한 것이 올 때에는 부분적으로 하던 것이 폐하리라 // 온전한 것이 올 때 부분적인 것은 폐함. 종말론적 완성을 말하는 구절.
+고전 13:11 [2] 내가 어렸을 때에는 말하는 것이 어린 아이와 같고 깨닫는 것이 어린 아이와 같고 생각하는 것이 어린 아이와 같다가 장성한 사람이 되어서는 어린 아이의 일을 버렸노라 // 어린 아이와 장성한 사람의 비유. 성숙의 이미지로 설교에 자주 쓰임.
+고전 13:12 [3] 우리가 지금은 거울로 보는 것 같이 희미하나 그 때에는 얼굴과 얼굴을 대하여 볼 것이요 지금은 내가 부분적으로 아나 그 때에는 주께서 나를 아신 것 같이 내가 온전히 알리라 // 거울과 얼굴, 부분적 앎과 온전한 앎. 종말의 완전한 인식을 노래하는 명구.
+고전 13:13 [5] 그런즉 믿음, 소망, 사랑, 이 세 가지는 항상 있을 것인데 그 중의 제일은 사랑이라 // 믿음·소망·사랑 중 제일은 사랑. 13장의 결론이자 가장 유명한 구절.`;
 
 const INT=[0,1,3,7,14,30];
 const STAGES=['따라 쓰기','첫 글자','빈칸','주소만','약점 빈칸'];
@@ -345,7 +353,8 @@ function parseList(text){
       if(items.some(x=>x.ref===ref)){errs.push(`${i+1}번째 줄: ${ref} 중복`);return;}
       let body=m[2],freq=0;const fm=body.match(/^\s*(?:\[(\d+)\]|★(\d+)|x(\d+)|빈도\s*(\d+))\s*/);
       if(fm){freq=+(fm[1]||fm[2]||fm[3]||fm[4]);body=body.slice(fm[0].length);}
-      items.push({ref,text:norm(body),freq});
+      let note='';const ni=body.indexOf(' // ');if(ni>=0){note=norm(body.slice(ni+4));body=body.slice(0,ni);}
+      items.push({ref,text:norm(body),freq,note});
     }else if(items.length){items[items.length-1].text=norm(items[items.length-1].text+' '+line);}
     else errs.push(`${i+1}번째 줄: 주소를 찾지 못함`);
   });
@@ -361,17 +370,45 @@ function load(){
   d.progress=d.progress||{};d.daily=d.daily||{};d.errors=d.errors||[];d.stats=d.stats||{days:{},badges:{}};d.stats.days=d.stats.days||{};d.stats.badges=d.stats.badges||{};
   return migrate(d);
 }
-function migrate(d){if(d.verses){const fm={};parseList(SAMPLE).items.forEach(v=>fm[v.ref]=v.freq);d.verses.forEach(v=>{if(!v.freq&&fm[v.ref])v.freq=fm[v.ref];});}
+function migrate(d){if(d.verses){const fm={},nm={};parseList(SAMPLE).items.forEach(v=>{fm[v.ref]=v.freq;nm[v.ref]=v.note;});d.verses.forEach(v=>{if(!v.freq&&fm[v.ref])v.freq=fm[v.ref];if(!v.note&&nm[v.ref])v.note=nm[v.ref];});}
+  d.settings=Object.assign({examDate:'2027-01-14',finishDate:'2026-12-31',restDay:0,missPerWeek:1,autoPlan:true},d.settings||{});
   if(d.sample){d.verses=parseList(SAMPLE).items;d.progress={};d.errors=[];d.daily={};d.sample=false;d.updatedAt=Date.now();}return d;}
 let S=load();
 let save=function(){try{localStorage.setItem(KEY,JSON.stringify(S));$('saved').textContent='자동 저장됨';}catch(e){$('saved').textContent='이 화면에서는 저장되지 않음';}}
-function ensureDaily(){const t=today();if(S.daily.date!==t)S.daily={date:t,started:[],reviewed:0,extra:0};}
+function ensureDaily(){const t=today();if(S.daily.date!==t)S.daily={date:t,started:[],reviewed:0,extra:0,drilled:[]};S.daily.drilled=S.daily.drilled||[];}
 function D(date){const d=date||today();return S.stats.days[d]||(S.stats.days[d]={tries:0,first:0,rev:0,nw:0,hint:0,fail:0,done:false,score:0});}
 function P(ref){const p=S.progress[ref]||(S.progress[ref]={box:0,stage:0,due:null,tries:0,ok:0,lapse:false});p.weak=p.weak||{};return p;}
 const verseOf=ref=>S.verses.find(v=>v.ref===ref);
 const idxOf=ref=>S.verses.findIndex(v=>v.ref===ref);
 const weakSum=p=>Object.values(p.weak||{}).reduce((a,b)=>a+b,0);
 const weakIdx=p=>Object.keys(p.weak||{}).map(Number).sort((a,b)=>a-b);
+
+
+/* 학습 계획: 시험일·완료일·쉬는 날·주 1회 결석 허용으로 하루 분량 자동 계산 */
+function dowOf(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).getDay();}
+function isRest(s){return dowOf(s)===(S.settings.restDay??0);}
+function phase(){const t=today();return t>(S.settings.finishDate||'2026-12-31')?'exam':'learn';}
+function studyDaysBetween(from,to){let n=0,weeks=0,d=from;while(d<=to){if(!isRest(d))n++;d=addDays(d,1);}
+  const span=Math.max(1,Math.round((new Date(to)-new Date(from))/86400000)+1);weeks=span/7;
+  return Math.max(1,Math.round(n-weeks*(S.settings.missPerWeek??1)));}
+function planInfo(){
+  const t=today(),fin=S.settings.finishDate||'2026-12-31',exam=S.settings.examDate||'2027-01-14';
+  const left=S.verses.filter(v=>{const p=P(v.ref);return p.box<1&&p.stage===0&&!S.daily.started.includes(v.ref);}).length;
+  const days=t<=fin?studyDaysBetween(t,fin):0;
+  const perDay=days?Math.max(1,Math.ceil(left/days)):0;
+  const dExam=Math.round((new Date(exam)-new Date(t))/86400000);
+  return {left,days,perDay,dExam,fin,exam};
+}
+function effectiveNewPerDay(){
+  if(phase()==='exam')return 0;
+  if(isRest(today()))return 0;
+  if(S.settings.autoPlan){const pi=planInfo();return pi.days?Math.min(12,pi.perDay):S.settings.newPerDay;}
+  return S.settings.newPerDay;
+}
+function drillTargets(){
+  if(phase()!=='exam')return [];
+  return S.verses.map(v=>v.ref).filter(r=>weakSum(P(r))>0).sort((a,b)=>weakSum(P(b))-weakSum(P(a))).slice(0,10);
+}
 
 function buildQueue(){
   ensureDaily();const t=today(),rev=[],prog=[],fresh=[];
@@ -380,7 +417,7 @@ function buildQueue(){
     else if(p.stage>0||S.daily.started.includes(v.ref))prog.push(v.ref);
     else fresh.push(v.ref);});
   rev.sort((a,b)=>P(a).due.localeCompare(P(b).due)||weakSum(P(b))-weakSum(P(a)));
-  const allow=Math.max(0,S.settings.newPerDay+(S.daily.extra||0)-S.daily.started.length);
+  const allow=Math.max(0,effectiveNewPerDay()+(S.daily.extra||0)-S.daily.started.length);
   fresh.sort((a,b)=>((verseOf(b).freq||0)-(verseOf(a).freq||0))||(idxOf(a)-idxOf(b)));
   return {rev,prog,fresh:fresh.slice(0,allow),freshLeft:fresh.length};
 }
@@ -403,6 +440,7 @@ function nextItem(){
   if(q.rev.length)return makeItem(q.rev[0],'review',3);
   if(q.prog.length)return makeItem(q.prog[0],'learn',Math.min(P(q.prog[0]).stage,3));
   if(q.fresh.length){S.daily.started.push(q.fresh[0]);save();return makeItem(q.fresh[0],'learn',0);}
+  if(phase()==='exam'){const left=drillTargets().filter(r=>!S.daily.drilled.includes(r));if(left.length){const r=left[0];const it=makeItem(r,'drill',weakIdx(P(r)).length?4:2);it.planned=true;return it;}}
   return null;
 }
 
@@ -552,7 +590,8 @@ function renderWork(){
   if(!cur){
     const q=buildQueue(),weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
     markDone();
-    w.innerHTML=`<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
+    const restToday=isRest(today())&&!D().done;
+    w.innerHTML=`<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">1월은 약점 보강 기간입니다. 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
       <div class="acts">${weakN?`<button class="btn primary" id="drillGo2">약점 집중 연습 (${Math.min(10,weakN)}구절)</button>`:''}${q.freshLeft?`<button class="btn${weakN?'':' primary'}" id="moreNew">새 구절 ${Math.min(S.settings.newPerDay,q.freshLeft)}개 더</button>`:''}</div>${fbHTML()}</div>`;
     const mn=$('moreNew');if(mn)mn.onclick=()=>{S.daily.extra=(S.daily.extra||0)+S.settings.newPerDay;save();cur=nextItem();lastFb=null;renderAll();};
     const dg=$('drillGo2');if(dg)dg.onclick=startDrill;
@@ -563,7 +602,7 @@ function renderWork(){
   const sub=cur.kind==='review'?`복습 ${P(cur.ref).box}단계`:free?'자유 연습 · 일정에 반영 안 됨':cur.kind==='drill'?'약점 집중 연습':'새 구절 학습';
   w.innerHTML=`
     <div class="steps ${free?'free':''}">${single&&!free?`<span class="step on" style="flex:1">${kindLabel(cur.kind)} · ${STAGES[cur.stage]}</span>`:steps}</div>
-    <div class="cue"><div class="ref">${esc(cur.ref)}<span>${sub}</span></div>${warnLine(cur)}<div class="txt">${cueHTML(cur)}</div></div>
+    <div class="cue"><div class="ref">${esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${warnLine(cur)}<div class="txt">${cueHTML(cur)}</div></div>
     <textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="입력 후 Enter"></textarea>
     <div class="acts"><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button><span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
     ${fbHTML()}
@@ -606,8 +645,8 @@ const BADGES=[
 const QUOTES=['주의 말씀은 내 발에 등이요 내 길에 빛이니이다 (시 119:105)','내가 주께 범죄하지 아니하려 하여 주의 말씀을 내 마음에 두었나이다 (시 119:11)','그의 율법을 주야로 묵상하는도다 (시 1:2)','하나님의 말씀은 살아 있고 활력이 있어 (히 4:12)','주의 말씀의 맛이 내게 어찌 그리 단지요 (시 119:103)','풀은 마르고 꽃은 시드나 우리 하나님의 말씀은 영원히 서리라 (사 40:8)','그리스도의 말씀이 너희 속에 풍성히 거하여 (골 3:16)'];
 let sessionCombo=0;
 function masteredCount(){return S.verses.filter(v=>P(v.ref).box>=4).length;}
-function dayTarget(){const q=buildQueue();const d=D();return {rev:d.rev+q.rev.length,nw:Math.max(d.nw,Math.min(S.settings.newPerDay,d.nw+q.fresh.length+q.prog.length))};}
-function dayScore(d){const acc=d.tries?d.first/d.tries:0;const tg=dayTarget();const goal=(tg.rev+tg.nw)?Math.min(1,(d.rev+d.nw)/(tg.rev+tg.nw)):1;return Math.round(acc*70+goal*30);}
+function dayTarget(){const q=buildQueue();const d=D();const dr=phase()==='exam'?drillTargets().length:0;return {rev:d.rev+q.rev.length,nw:Math.max(d.nw,Math.min(effectiveNewPerDay(),d.nw+q.fresh.length+q.prog.length)),dr};}
+function dayScore(d){const acc=d.tries?d.first/d.tries:0;const tg=dayTarget();const tot=tg.rev+tg.nw+(tg.dr||0);const goal=tot?Math.min(1,(d.rev+d.nw+(d.dr||0))/tot):1;return Math.round(acc*70+goal*30);}
 function gradeOf(s){return s>=90?['A','탁월합니다']:s>=75?['B','좋습니다']:s>=60?['C','꾸준히 가고 있습니다']:['D','시작이 반입니다'];}
 function streakInfo(){
   const days=S.stats.days,t=today(),isDone=d=>!!(days[d]&&days[d].done);
@@ -615,9 +654,11 @@ function streakInfo(){
   if(!dates.length)return {streak:0,best:0};
   let best=0,run=0,prev=null;dates.forEach(d=>{run=(prev&&addDays(prev,1)===d)?run+1:1;best=Math.max(best,run);prev=d;});
   let d=isDone(t)?t:addDays(t,-1),streak=0,shieldLeft=1,sinceShield=0;
-  if(!isDone(d)){if(isDone(addDays(d,-1))){shieldLeft=0;d=addDays(d,-1);}else return {streak:0,best};}
+  while(!isDone(d)&&isRest(d))d=addDays(d,-1);
+  if(!isDone(d)){const d2=addDays(d,-1),d3=addDays(d2,-1);if(isDone(d2)){shieldLeft=0;d=d2;}else if(isRest(d2)&&isDone(d3)){shieldLeft=0;d=d3;}else return {streak:0,best};}
   while(true){
     if(isDone(d)){streak++;d=addDays(d,-1);sinceShield++;if(sinceShield>=7){shieldLeft=1;sinceShield=0;}continue;}
+    if(isRest(d)){d=addDays(d,-1);continue;}
     if(shieldLeft&&isDone(addDays(d,-1))){shieldLeft=0;sinceShield=0;d=addDays(d,-1);continue;}
     break;
   }
@@ -630,7 +671,7 @@ function checkBadges(){
   if(streak>=3)award('streak3');if(streak>=7)award('streak7');if(streak>=30)award('streak30');
   if(S.verses.length&&S.verses.some(v=>P(v.ref).tries)&&!S.verses.some(v=>weakSum(P(v.ref))))award('noweak');
 }
-function markDone(){const d=D();if(d.done)return;const q=buildQueue();if(q.rev.length||q.prog.length||q.fresh.length)return;if(!(d.rev+d.nw))return;d.done=true;d.score=dayScore(d);if(!d.fail)award('perfect');checkBadges();save();if(window.__backupNow)setTimeout(window.__backupNow,3000);}
+function markDone(){const d=D();if(d.done)return;const q=buildQueue();if(q.rev.length||q.prog.length||q.fresh.length)return;if(phase()==='exam'&&drillTargets().some(r=>!S.daily.drilled.includes(r)))return;if(!(d.rev+d.nw+(d.dr||0)))return;d.done=true;d.score=dayScore(d);if(!d.fail)award('perfect');checkBadges();save();if(window.__backupNow)setTimeout(window.__backupNow,3000);}
 function etaText(){
   const left=S.verses.length-masteredCount();if(!left)return '완주';
   const t=today();let gained=0,seen=0;for(let i=1;i<=7;i++){const d=S.stats.days[addDays(t,-i)];if(d){gained+=d.nw||0;seen++;}}
@@ -639,7 +680,8 @@ function etaText(){
 function renderToday(){
   const el=$('todayBar');if(!el)return;const d=D(),tg=dayTarget(),{streak}=streakInfo();
   const acc=d.tries?Math.round(d.first/d.tries*100):null;
-  el.innerHTML=`<span>오늘 <b>${d.rev+d.nw}/${tg.rev+tg.nw}</b></span>${acc!==null?`<span>첫 시도 <b>${acc}%</b></span>`:''}${sessionCombo>=3?`<span class="combo">연속 통과 <b>${sessionCombo}</b></span>`:''}<span>연속 <b>${streak}일</b></span><span style="margin-left:auto">완주 예상 <b>${etaText()}</b></span>`;
+  const pi=planInfo();const ph=phase();
+  el.innerHTML=`<span>오늘 <b>${d.rev+d.nw+(d.dr||0)}/${tg.rev+tg.nw+(tg.dr||0)}</b></span>${ph==='exam'?`<span>약점 보강 <b>${d.dr||0}/${tg.dr}</b></span>`:''}${acc!==null?`<span>첫 시도 <b>${acc}%</b></span>`:''}${sessionCombo>=3?`<span class="combo">연속 통과 <b>${sessionCombo}</b></span>`:''}<span>연속 <b>${streak}일</b></span><span style="margin-left:auto">${ph==='exam'?`시험 <b>D-${pi.dExam}</b>`:isRest(today())?'<b>쉬는 날</b>':`계획 <b>하루 ${pi.perDay}</b> · 남은 학습일 <b>${pi.days}</b> · 시험 <b>D-${pi.dExam}</b>`}</span>`;
 }
 function doneHTML(){
   const d=D(),t=today(),y=S.stats.days[addDays(t,-1)],{streak,best}=streakInfo(),[g,word]=gradeOf(d.score||dayScore(d));
@@ -710,7 +752,7 @@ function submit(){
         S.daily.reviewed++;D().rev++;cur=nextItem();}
     }else{p.box=1;p.lapse=true;p.due=t;cur=cur.stage===3?toWeak('review'):Object.assign(cur,{failed:true,hints:0,mask:makeMask(ref,4)});}
   }else if(cur.kind==='drill'){
-    if(r.pass){if(cur.stage!==3){cur=makeItem(ref,'drill',3);}else cur=nextItem();}
+    if(r.pass){if(cur.stage!==3){const nx=makeItem(ref,'drill',3);nx.planned=cur.planned;cur=nx;}else{if(cur.planned&&!S.daily.drilled.includes(ref)){S.daily.drilled.push(ref);D().dr=(D().dr||0)+1;}cur=nextItem();}}
     else if(cur.stage===3){cur=toWeak('drill');cur.kind='drill';}
     else{cur.hints=0;cur.mask=makeMask(ref,cur.stage);}
   }else{cur=makeItem(ref,'free',cur.stage);}
@@ -835,9 +877,10 @@ function boardHTML(rows,myUid){
 
 /* 목록·설정 */
 function renderList(){
-  $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text).join('\n');
+  $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text+(v.note?' // '+v.note:'')).join('\n');
   $('sampleWarn').hidden=!S.sample;$('newPer').value=String(S.settings.newPerDay);$('strictSp').checked=!!S.settings.strictSpace;
   $('listMsg').textContent=`${S.verses.length}개 구절`;$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';renderBackups();
+  $('examDate').value=S.settings.examDate;$('finishDate').value=S.settings.finishDate;$('restDay').value=String(S.settings.restDay??0);$('missPerWeek').value=String(S.settings.missPerWeek??1);$('autoPlan').checked=!!S.settings.autoPlan;renderPlanMsg();
 }
 $('applyList').onclick=()=>{
   const {items,errs}=parseList($('listText').value);const c=$('listConfirm');
@@ -851,7 +894,9 @@ $('applyList').onclick=()=>{
     S.verses=items;S.sample=false;ensureDaily();S.daily.started=S.daily.started.filter(r=>refs.has(r));drill=null;save();cur=nextItem();lastFb=null;renderList();renderAll();$('listMsg').textContent=`${items.length}개 구절로 바꿨습니다.`;};
 };
 $('bkNow').onclick=async()=>{if(!window.__backupNow){$('bkMsg').textContent='로그인 후 가능합니다.';return;}$('bkMsg').textContent='백업 중…';await window.__backupNow();$('bkMsg').textContent='백업했습니다.';renderBackups();};
-$('newPer').onchange=e=>{S.settings.newPerDay=+e.target.value;save();renderSheet();};
+$('newPer').onchange=e=>{S.settings.newPerDay=+e.target.value;save();renderSheet();renderPlanMsg();};
+function renderPlanMsg(){const m=$('planMsg');if(!m)return;const pi=planInfo();m.textContent=phase()==='exam'?`완료 목표일이 지나 약점 보강 기간입니다. 새 구절 없음 · 시험 D-${pi.dExam}.`:`남은 새 구절 ${pi.left}개 ÷ 남은 학습일 ${pi.days}일(쉬는 날·결석 허용 제외) = 하루 ${pi.perDay}구절. 시험 D-${pi.dExam}.`;}
+['examDate','finishDate','restDay','missPerWeek','autoPlan'].forEach(id=>{$(id).onchange=e=>{if(id==='autoPlan')S.settings.autoPlan=e.target.checked;else if(id==='restDay'||id==='missPerWeek')S.settings[id]=+e.target.value;else S.settings[id]=e.target.value;save();renderPlanMsg();renderSheet();};});
 $('strictSp').onchange=e=>{S.settings.strictSpace=e.target.checked;save();};
 $('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다. 지우기 전에 오늘 날짜 백업을 먼저 만듭니다. 확인하려면 <b>지우기</b>라고 입력하세요.</span> <input id="rsTxt" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);width:90px"> <button class="btn danger" id="rsY">실행</button> <button class="btn" id="rsN">취소</button>';
   $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
