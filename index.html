@@ -154,6 +154,7 @@ label{font-size:13px}
 .ana{display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-size:12px;padding:1px 8px;border-radius:10px;background:var(--err-soft);color:var(--err);font-weight:500}
 .chip.plain{background:var(--head);color:var(--muted);font-weight:400}
+.fq{font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--sel);padding:0 6px;border-radius:8px}
 .wkdot{font-family:var(--mono);font-size:11px;color:var(--err);background:var(--err-soft);padding:0 6px;border-radius:8px}
 .advice{border-left:3px solid var(--warn);padding:6px 12px;margin:0;font-size:13px;background:var(--bg)}
 .advice b{color:var(--warn);margin-right:6px}
@@ -184,7 +185,7 @@ label{font-size:13px}
         <div class="sum" id="sum"></div>
         <div class="bar"><i id="barI"></i></div>
         <div class="today" id="todayBar"></div>
-        <div class="tw"><table class="sheet"><thead><tr><th class="rn"></th><th>주소</th><th>상태</th><th>다음 복습</th><th>정답률</th><th>약점</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="tw"><table class="sheet"><thead><tr><th class="rn"></th><th>주소</th><th>빈도</th><th>상태</th><th>다음 복습</th><th>정답률</th><th>약점</th></tr></thead><tbody id="rows"></tbody></table></div>
       </div>
     </div>
   </section>
@@ -200,7 +201,7 @@ label{font-size:13px}
       <h2>구절 목록</h2>
       <div class="warnbox" id="sampleWarn" hidden></div>
       <p class="note">현재 본문: 개역개정 고린도전서 13:1–13. 수련목 170구절 목록을 받으면 아래에 붙여 넣고 「목록 바꾸기」를 누르세요.</p>
-      <p class="note">한 줄에 한 구절씩, <b>주소 뒤에 본문</b>을 적습니다. 예) <span style="font-family:var(--mono)">요 3:16 하나님이 세상을…</span> · 주소 없는 줄은 앞 구절에 이어 붙습니다. 주소가 같은 구절은 학습 기록이 유지됩니다.</p>
+      <p class="note">한 줄에 한 구절씩, <b>주소 뒤에 본문</b>을 적습니다. 예) <span style="font-family:var(--mono)">요 3:16 하나님이 세상을…</span> · 출제 빈도는 주소 뒤에 대괄호 숫자로: <span style="font-family:var(--mono)">요 3:16 [7] 하나님이…</span> — 새 구절은 빈도 높은 순으로 나옵니다. · 주소 없는 줄은 앞 구절에 이어 붙습니다. 주소가 같은 구절은 학습 기록이 유지됩니다.</p>
       <textarea id="listText" rows="12" spellcheck="false"></textarea>
       <div class="row"><button class="btn primary" id="applyList">목록 바꾸기</button><span class="note" id="listMsg"></span></div>
       <div class="row" id="listConfirm" hidden></div>
@@ -266,7 +267,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v12</p>
+    <p class="note" style="margin:0;text-align:right">v13</p>
   </div>
 </div>
 
@@ -338,7 +339,9 @@ function parseList(text){
     if(m){
       const ref=m[1].replace(/\s+/g,'').replace('：',':').replace(/[~–]/,'-').replace(/^(\D+?)(\d)/,'$1 $2');
       if(items.some(x=>x.ref===ref)){errs.push(`${i+1}번째 줄: ${ref} 중복`);return;}
-      items.push({ref,text:norm(m[2])});
+      let body=m[2],freq=0;const fm=body.match(/^\s*(?:\[(\d+)\]|★(\d+)|x(\d+)|빈도\s*(\d+))\s*/);
+      if(fm){freq=+(fm[1]||fm[2]||fm[3]||fm[4]);body=body.slice(fm[0].length);}
+      items.push({ref,text:norm(body),freq});
     }else if(items.length){items[items.length-1].text=norm(items[items.length-1].text+' '+line);}
     else errs.push(`${i+1}번째 줄: 주소를 찾지 못함`);
   });
@@ -373,6 +376,7 @@ function buildQueue(){
     else fresh.push(v.ref);});
   rev.sort((a,b)=>P(a).due.localeCompare(P(b).due)||weakSum(P(b))-weakSum(P(a)));
   const allow=Math.max(0,S.settings.newPerDay+(S.daily.extra||0)-S.daily.started.length);
+  fresh.sort((a,b)=>((verseOf(b).freq||0)-(verseOf(a).freq||0))||(idxOf(a)-idxOf(b)));
   return {rev,prog,fresh:fresh.slice(0,allow),freshLeft:fresh.length};
 }
 
@@ -499,7 +503,7 @@ function dueLabel(p){if(!p.due)return '—';const t=today();if(p.due<=t)return '
 
 function renderSheet(){
   $('rows').innerHTML=S.verses.map((v,i)=>{const p=P(v.ref),[s,c]=statusOf(v.ref),ws=weakSum(p);
-    return `<tr data-ref="${esc(v.ref)}" tabindex="0" class="${cur&&cur.ref===v.ref?'cur':''}"><td class="rn">${i+2}</td><td class="ref">${esc(v.ref)}</td><td><span class="st ${c}">${s}</span></td><td>${dueLabel(p)}</td><td>${p.tries?Math.round(p.ok/p.tries*100)+'%':'—'}</td><td>${ws?`<span class="wkdot">${weakIdx(p).length}</span>`:''}</td></tr>`;}).join('');
+    return `<tr data-ref="${esc(v.ref)}" tabindex="0" class="${cur&&cur.ref===v.ref?'cur':''}"><td class="rn">${i+2}</td><td class="ref">${esc(v.ref)}</td><td>${v.freq?`<span class="fq">${v.freq}</span>`:''}</td><td><span class="st ${c}">${s}</span></td><td>${dueLabel(p)}</td><td>${p.tries?Math.round(p.ok/p.tries*100)+'%':'—'}</td><td>${ws?`<span class="wkdot">${weakIdx(p).length}</span>`:''}</td></tr>`;}).join('');
   const q=buildQueue(),mast=S.verses.filter(v=>P(v.ref).box>=4).length;
   $('sum').innerHTML=`<span>복습 <b>${q.rev.length}</b></span><span>학습 중 <b>${q.prog.length}</b></span><span>새 구절 <b>${q.fresh.length}</b></span>${drill?`<span>약점 연습 <b>${drill.length+1}</b></span>`:''}<span style="margin-left:auto">숙달 <b>${mast}/${S.verses.length}</b></span>`;
   $('barI').style.width=(S.verses.length?mast/S.verses.length*100:0)+'%';
@@ -800,7 +804,7 @@ function boardHTML(rows,myUid){
 
 /* 목록·설정 */
 function renderList(){
-  $('listText').value=S.verses.map(v=>v.ref+' '+v.text).join('\n');
+  $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text).join('\n');
   $('sampleWarn').hidden=!S.sample;$('newPer').value=String(S.settings.newPerDay);$('strictSp').checked=!!S.settings.strictSpace;
   $('listMsg').textContent=`${S.verses.length}개 구절`;if(window.__ghStatus&&window.__ghStatus())$('ghMsg').textContent='연결됨 · 상단 초록 점이 동기화 상태입니다.';$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';
 }
@@ -866,6 +870,7 @@ $('today').textContent=today().replace(/-/g,'.');
   setTimeout(()=>{if(!authReady&&gate&&!gate.hidden){gbtn.disabled=false;gbtn.textContent='Google로 로그인';diag.push('로그인 상태 확인이 7초 안에 끝나지 않아 바로 진행합니다 (SDK '+firebase.SDK_VERSION+')');showDiag();}},7000);
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
+  const weightOf=st=>{let w=0;const pr=(st&&st.progress)||{};Object.keys(pr).forEach(k=>{w+=(pr[k].tries||0)+(pr[k].box||0)*3+(pr[k].stage||0);});const dy=(st&&st.stats&&st.stats.days)||{};w+=Object.keys(dy).length*2;return w;};
   let boardTimer=null,lastBoard='';
   window.__pushBoard=function(now){
     if(!uid)return;clearTimeout(boardTimer);
@@ -890,7 +895,7 @@ $('today').textContent=today().replace(/-/g,'.');
     S=migrate({verses:st.verses,progress:st.progress||{},settings:Object.assign({newPerDay:5,strictSpace:false},st.settings||{}),daily:st.daily||{},sample:!!st.sample,errors:(er&&er.errors)||[],stats:st.stats||{days:{},badges:{}},updatedAt:st.updatedAt});
     try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}
     remoteAt=st.updatedAt;drill=null;
-    if(!cur||!verseOf(cur.ref))cur=nextItem();
+    cur=nextItem();lastFb=null;
     if(!$('v-learn').hidden)renderAll();else if(!$('v-notes').hidden)renderNotes();else if(!$('v-list').hidden)renderList();else if(!$('v-log').hidden)renderLog();
   }
   async function push(){
@@ -914,21 +919,26 @@ $('today').textContent=today().replace(/-/g,'.');
     uid=user.uid;KEY='verse-sheet-v1:'+uid;
     // 로그인 전(옛 버전)에 이 기기에 쌓인 기록이 있으면 첫 로그인 계정으로 한 번만 가져옴
     try{const old=localStorage.getItem('verse-sheet-v1');if(old&&!localStorage.getItem(KEY)){localStorage.setItem(KEY,old);}localStorage.removeItem('verse-sheet-v1');}catch(e){}
-    S=load();cur=null;lastFb=null;drill=null;cur=nextItem();renderAll();
-    gate.hidden=true;
+    S=load();cur=null;lastFb=null;drill=null;
     btn.textContent=(user.displayName||'계정')+' · 로그아웃';
     setMsg(`${user.displayName||''} (${user.email||''}) 계정으로 로그인됨. 이 계정의 기록만 보입니다.`);
-    setSync('busy','동기화 중');
+    setSync('busy','동기화 중');gbtn.textContent='기록 불러오는 중…';
+    // 계정 저장소를 먼저 읽고 나서 화면을 그린다. 내용이 적은 쪽은 많은 쪽을 절대 덮어쓰지 않는다.
+    let remoteApplied=false;
     try{
       const [s,e]=await Promise.all([ref('state').get(),ref('errors').get()]);
-      if(s.exists&&s.data().updatedAt>(S.updatedAt||0))applyRemote(s.data(),e.exists?e.data():null);
-      else{S.updatedAt=S.updatedAt||Date.now();await push();}
+      if(s.exists){const rd=s.data();const rw=weightOf(rd),lw=weightOf(S);
+        if(rw>lw||(rw===lw&&rd.updatedAt>(S.updatedAt||0))){S.updatedAt=0;applyRemote(rd,e.exists?e.data():null);remoteApplied=true;}
+        else if(lw>rw){S.updatedAt=Date.now();await push();}
+      }else if(weightOf(S)>0){S.updatedAt=Date.now();await push();}
       setSync('on','동기화됨');
     }catch(err){setSync('','동기화 실패 · 이 기기에만 저장');}
+    if(!remoteApplied){cur=nextItem();renderAll();}
+    gate.hidden=true;
     if(unsub)unsub();
     unsub=ref('state').onSnapshot(async snap=>{
       if(!snap.exists||snap.metadata.hasPendingWrites)return;
-      const d=snap.data();if(!(d.updatedAt>(S.updatedAt||0))||d.updatedAt===remoteAt)return;
+      const d=snap.data();if(!(d.updatedAt>(S.updatedAt||0))||d.updatedAt===remoteAt)return;if(weightOf(d)<weightOf(S))return;
       let er=null;try{const e=await ref('errors').get();er=e.exists?e.data():null;}catch(x){}
       applyRemote(d,er);
     },()=>setSync('','동기화 끊김 · 이 기기에만 저장'));
@@ -967,6 +977,7 @@ $('today').textContent=today().replace(/-/g,'.');
     S=load();cur=null;lastFb=null;drill=null;$('work').innerHTML='';$('rows').innerHTML='';
   };
 })();
+
 
 
 
