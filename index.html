@@ -279,7 +279,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v20</p>
+    <p class="note" style="margin:0;text-align:right">v21</p>
   </div>
 </div>
 
@@ -525,6 +525,7 @@ function load(){
   return migrate(d);
 }
 function migrate(d){if(!d.verses||!d.verses.some(v=>v.ref==='창 1:1')){d.verses=parseList(SAMPLE).items;if(d.daily&&d.daily.started)d.daily.started=d.daily.started.filter(r=>d.verses.some(v=>v.ref===r));}
+  if(d.verses&&d.daily&&d.daily.started){const rs=new Set(d.verses.map(v=>v.ref));d.daily.started=d.daily.started.filter(r=>rs.has(r));}
   if(d.verses){const fm={},nm={};parseList(SAMPLE).items.forEach(v=>{fm[v.ref]=v.freq;nm[v.ref]=v.note;});d.verses.forEach(v=>{if(!v.freq&&fm[v.ref])v.freq=fm[v.ref];if(!v.note&&nm[v.ref])v.note=nm[v.ref];});}
   d.settings=Object.assign({examDate:'2027-01-14',finishDate:'2026-12-31',restDay:0,missPerWeek:1,autoPlan:true},d.settings||{});
   if(d.settings.shareV!==2){d.settings.share=true;d.settings.shareV=2;}
