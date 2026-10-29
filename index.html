@@ -251,7 +251,7 @@ label{font-size:13px}
       </ul>
       <p>약점은 주소만 보고 틀림없이 쓰면 1점, 빈칸 단계에서 맞히면 0.5점씩 줄어 0이 되면 사라집니다. 「오답 노트」 탭에서 유형 통계, 반복 실수, 약점 구절, 헷갈린 쌍을 보고 「약점 집중 연습」으로 바로 들어갈 수 있습니다.</p>
       <h3>학습 계획</h3>
-      <p>「구절 목록」 탭에서 시험일·완료 목표일·쉬는 날·주당 결석 허용을 정하면, 매일 「남은 새 구절 ÷ 남은 학습일」로 하루 분량을 다시 계산합니다. 밀리면 늘고 앞서면 줄어듭니다. 쉬는 날은 새 구절이 나오지 않고 연속일도 끊기지 않습니다. 완료 목표일이 지나면 자동으로 「약점 보강 기간」이 되어 새 구절 없이 복습 + 오답 노트 상위 약점 10구절 연습이 하루 목표가 되고, 시험 D-day가 표시됩니다.</p>
+      <p>「구절 목록」 탭에서 시험일·완료 목표일·쉬는 날·주당 결석 허용을 정하면, 매일 「남은 새 구절 ÷ 남은 학습일」로 하루 분량을 다시 계산합니다. 밀리면 늘고 앞서면 줄어듭니다. 쉬는 날은 새 구절이 나오지 않고 연속일도 끊기지 않습니다. 완료 목표일(기본 12/15)이 지나면 자동으로 「약점 보강 기간」이 되어 새 구절 없이 복습 + 오답 노트 상위 약점 10구절 연습이 하루 목표가 되고, 시험 D-day가 표시됩니다.</p>
       <h3>매일 이어가기</h3>
       <p>「기록」 탭의 「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·연속일·숙달 수·오늘 점수만 한 표에서 봅니다. 끄면 내 줄이 바로 내려갑니다.</p>
       <p>하루 목표는 「오늘 복습 전부 + 새 구절(기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다. 「기록」 탭에서 12주 출석 잔디, 배지, 주간 요약, 완주 예상일을 볼 수 있습니다.</p>
@@ -279,7 +279,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v21</p>
+    <p class="note" style="margin:0;text-align:right">v22</p>
   </div>
 </div>
 
@@ -527,7 +527,8 @@ function load(){
 function migrate(d){if(!d.verses||!d.verses.some(v=>v.ref==='창 1:1')){d.verses=parseList(SAMPLE).items;if(d.daily&&d.daily.started)d.daily.started=d.daily.started.filter(r=>d.verses.some(v=>v.ref===r));}
   if(d.verses&&d.daily&&d.daily.started){const rs=new Set(d.verses.map(v=>v.ref));d.daily.started=d.daily.started.filter(r=>rs.has(r));}
   if(d.verses){const fm={},nm={};parseList(SAMPLE).items.forEach(v=>{fm[v.ref]=v.freq;nm[v.ref]=v.note;});d.verses.forEach(v=>{if(!v.freq&&fm[v.ref])v.freq=fm[v.ref];if(!v.note&&nm[v.ref])v.note=nm[v.ref];});}
-  d.settings=Object.assign({examDate:'2027-01-14',finishDate:'2026-12-31',restDay:0,missPerWeek:1,autoPlan:true},d.settings||{});
+  d.settings=Object.assign({examDate:'2027-01-14',finishDate:'2026-12-15',restDay:0,missPerWeek:1,autoPlan:true},d.settings||{});
+  if(d.settings.planV!==2){d.settings.finishDate='2026-12-15';d.settings.planV=2;}
   if(d.settings.shareV!==2){d.settings.share=true;d.settings.shareV=2;}
   if(d.sample){d.verses=parseList(SAMPLE).items;d.progress={};d.errors=[];d.daily={};d.sample=false;d.updatedAt=Date.now();}return d;}
 let S=load();
@@ -544,12 +545,12 @@ const weakIdx=p=>Object.keys(p.weak||{}).map(Number).sort((a,b)=>a-b);
 /* 학습 계획: 시험일·완료일·쉬는 날·주 1회 결석 허용으로 하루 분량 자동 계산 */
 function dowOf(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).getDay();}
 function isRest(s){return dowOf(s)===(S.settings.restDay??0);}
-function phase(){const t=today();return t>(S.settings.finishDate||'2026-12-31')?'exam':'learn';}
+function phase(){const t=today();return t>(S.settings.finishDate||'2026-12-15')?'exam':'learn';}
 function studyDaysBetween(from,to){let n=0,weeks=0,d=from;while(d<=to){if(!isRest(d))n++;d=addDays(d,1);}
   const span=Math.max(1,Math.round((new Date(to)-new Date(from))/86400000)+1);weeks=span/7;
   return Math.max(1,Math.round(n-weeks*(S.settings.missPerWeek??1)));}
 function planInfo(){
-  const t=today(),fin=S.settings.finishDate||'2026-12-31',exam=S.settings.examDate||'2027-01-14';
+  const t=today(),fin=S.settings.finishDate||'2026-12-15',exam=S.settings.examDate||'2027-01-14';
   const left=S.verses.filter(v=>{const p=P(v.ref);return p.box<1&&p.stage===0&&!S.daily.started.includes(v.ref);}).length;
   const days=t<=fin?studyDaysBetween(t,fin):0;
   const perDay=days?Math.max(1,Math.ceil(left/days)):0;
@@ -748,7 +749,7 @@ function renderWork(){
     const q=buildQueue(),weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
     markDone();
     const restToday=isRest(today())&&!D().done;
-    w.innerHTML=`<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">1월은 약점 보강 기간입니다. 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
+    w.innerHTML=`<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">지금은 약점 보강 기간입니다(새 구절 없음). 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
       <div class="acts">${weakN?`<button class="btn primary" id="drillGo2">약점 집중 연습 (${Math.min(10,weakN)}구절)</button>`:''}${q.freshLeft?`<button class="btn${weakN?'':' primary'}" id="moreNew">새 구절 ${Math.min(S.settings.newPerDay,q.freshLeft)}개 더</button>`:''}</div>${fbHTML()}</div>`;
     const mn=$('moreNew');if(mn)mn.onclick=()=>{S.daily.extra=(S.daily.extra||0)+S.settings.newPerDay;save();cur=nextItem();lastFb=null;renderAll();};
     const dg=$('drillGo2');if(dg)dg.onclick=startDrill;
