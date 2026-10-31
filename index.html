@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v28">
+<meta name="app-build" content="v29">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -225,13 +225,15 @@ label{font-size:13px}
 
   <section class="view panel" id="v-list" hidden>
     <div class="box">
-      <h2>구절 목록</h2>
+      <div id="listAdmin" hidden>
+      <h2>구절 목록 <span class="note">(관리자만)</span></h2>
       <div class="warnbox" id="sampleWarn" hidden></div>
       <p class="note">현재 본문: 개역개정 고린도전서 13:1–13. 수련목 170구절 목록을 받으면 아래에 붙여 넣고 「목록 바꾸기」를 누르세요.</p>
       <p class="note">한 줄에 한 구절씩, <b>주소 뒤에 본문</b>을 적습니다. 예) <span style="font-family:var(--mono)">요 3:16 하나님이 세상을…</span> · 출제 빈도(5 높음~1 낮음, 현재는 예측값)는 주소 뒤에 대괄호 숫자로: <span style="font-family:var(--mono)">요 3:16 [7] 하나님이…</span> — 새 구절은 빈도 높은 순으로 나옵니다. · 주소 없는 줄은 앞 구절에 이어 붙습니다. 주소가 같은 구절은 학습 기록이 유지됩니다.</p>
       <textarea id="listText" rows="12" spellcheck="false"></textarea>
       <div class="row"><button class="btn primary" id="applyList">목록 바꾸기</button><span class="note" id="listMsg"></span></div>
       <div class="row" id="listConfirm" hidden></div>
+      </div>
       <h2 style="margin-top:8px">계정과 동기화</h2>
       <p class="note" id="acctMsg">로그인하지 않은 상태입니다. 상단 「Google로 로그인」을 누르면 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 사람마다 기록은 완전히 분리됩니다.</p>
       <h2 style="margin-top:8px">설정</h2>
@@ -301,7 +303,7 @@ label{font-size:13px}
   <button class="tab" role="tab" data-v="exam" aria-selected="false">모의시험</button>
   <button class="tab" role="tab" data-v="log" aria-selected="false">기록</button>
   <button class="tab" role="tab" data-v="notes" aria-selected="false">오답 노트</button>
-  <button class="tab" role="tab" data-v="list" aria-selected="false">구절 목록</button>
+  <button class="tab" role="tab" data-v="list" aria-selected="false" id="tabList">설정</button>
   <button class="tab" role="tab" data-v="guide" aria-selected="false">사용법</button>
 </nav>
 
@@ -310,7 +312,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v28</p>
+    <p class="note" style="margin:0;text-align:right">v29</p>
   </div>
 </div>
 
@@ -1006,11 +1008,15 @@ document.addEventListener('keydown',e=>{if($('v-cards').hidden||e.target.tagName
 
 /* 모의시험 */
 let ex=null;
+/* 모의시험 채점: 완전 일치 100 · 띄어쓰기만 틀림 95 · 그 외 글자 정확도(100−틀린 글자 비율)에서 10점 추가 감점 */
+function examScore(r){if(r.charOk&&r.spaceOk)return 100;if(r.charOk)return 95;const n=r.st.length;if(!n)return 0;const miss=r.st.filter(x=>!x).length,ins=r.ins.reduce((a,x)=>a+[...x].length,0);const acc=Math.max(0,1-Math.max(miss,ins)/n);return Math.max(0,Math.round(acc*100)-10);}
+function examLabel(r,sc){return sc===100?'통과':sc===95?'띄어쓰기만':`${sc}점`;}
 function renderExam(){
   const b=$('examBox');
   if(!ex){
     const learned=S.verses.filter(v=>P(v.ref).box>=1).length,weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
     b.innerHTML=`<h2>모의시험</h2><p class="note">시험과 같이 주소만 보고 씁니다. 끝날 때까지 채점 결과를 보여 주지 않습니다. 틀린 구절은 오답 노트에 기록되고 오늘 복습에 다시 들어갑니다.</p>
+      <p class="note">채점: 문항마다 완전 일치 100점, 띄어쓰기만 틀리면 95점, 글자가 틀리면 「100 − 틀린 글자 비율(%) − 10」점(최저 0). 총점은 문항 평균입니다.</p>
       <div class="row"><label for="exN">문항</label><select id="exN"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="0">전체</option></select>
       <label for="exR">범위</label><select id="exR"><option value="l">학습한 구절 (${learned})</option><option value="w">약점 있는 구절 (${weakN})</option><option value="a">전체 (${S.verses.length})</option></select>
       <button class="btn primary" id="exGo">시작</button></div><p class="note" id="exMsg"></p>`;
@@ -1037,13 +1043,13 @@ function renderExam(){
     else if(r.spaceOk)decayWeak(ref,1);
     return {ref,r,a};});
   if(ex.list.length>=10&&ex.res.every(x=>x.r.pass))award('exam100');
-  if(!ex.logged){ex.logged=true;const ok=ex.res.filter(x=>x.r.pass).length;const sc=Math.round(ok/ex.list.length*100);S.stats.exams=S.stats.exams||[];S.stats.exams.push({d:today(),n:ex.list.length,ok,score:sc,range:ex.range||'',ts:Date.now()});if(S.stats.exams.length>200)S.stats.exams=S.stats.exams.slice(-200);ex.score=sc;}
+  if(!ex.logged){ex.logged=true;const ok=ex.res.filter(x=>x.r.charOk&&x.r.spaceOk).length;const sc=Math.round(ex.res.reduce((a,x)=>a+examScore(x.r),0)/ex.list.length);S.stats.exams=S.stats.exams||[];S.stats.exams.push({d:today(),n:ex.list.length,ok,score:sc,range:ex.range||'',ts:Date.now()});if(S.stats.exams.length>200)S.stats.exams=S.stats.exams.slice(-200);ex.score=sc;}
   save();
-  const items=ex.res.map(({ref,r,a})=>{if(r.pass)pass++;if(a)a.errs.forEach(e=>tc[e.type]=(tc[e.type]||0)+1);if(a&&a.conf)tc['구절 혼동']=(tc['구절 혼동']||0)+1;
-    return `<div class="it"><div class="r">${esc(ref)} · <span style="color:var(${r.pass?'--ok':'--err'})">${r.pass?'통과':'일치 '+r.acc+'%'}</span></div>${a?anaHTML({ref,r,a}):''}${r.pass&&r.spaceOk?'':`<div class="diff">${r.html}</div>`}</div>`;}).join('');
+  const items=ex.res.map(({ref,r,a})=>{const qs=examScore(r);if(r.charOk&&r.spaceOk)pass++;if(a)a.errs.forEach(e=>tc[e.type]=(tc[e.type]||0)+1);if(a&&a.conf)tc['구절 혼동']=(tc['구절 혼동']||0)+1;
+    return `<div class="it"><div class="r">${esc(ref)} · <span style="color:var(${qs>=95?'--ok':'--err'})">${examLabel(r,qs)}</span></div>${a?anaHTML({ref,r,a}):''}${r.pass&&r.spaceOk?'':`<div class="diff">${r.html}</div>`}</div>`;}).join('');
   const top=Object.entries(tc).sort((x,y)=>y[1]-x[1])[0];
   const prev=(S.stats.exams||[]).slice(0,-1).filter(x=>x.n>=5);const prevAvg=prev.length?Math.round(prev.reduce((a,x)=>a+x.score,0)/prev.length):null;const [eg,ew]=gradeOf(ex.score);
-  b.innerHTML=`<h2>결과</h2><div class="exscore"><div class="pts">${ex.score}점</div><div><div class="line"><b>${eg}</b> · ${ew} · ${pass}/${ex.list.length} 정답 (토씨까지 맞은 구절만)</div><div class="note">${(S.stats.exams||[]).length}회째 · ${prevAvg!==null?`이전 평균 ${prevAvg}점 (${ex.score-prevAvg>=0?'+':''}${ex.score-prevAvg})`:'첫 모의시험'} · 틀린 구절은 오답 노트와 오늘 복습에 들어갑니다</div></div></div>${top?`<p class="advice"><b>${top[0]}</b> ${esc(ADVICE[top[0]])}</p>`:''}<p class="legend"><b class="miss">밑줄</b> 빠뜨리거나 틀린 정답 글자 · <s class="ins">취소선</s> 잘못 쓴 글자 · <span class="spm">␣</span><span class="spx">|</span> 띄어쓰기</p><div class="res">${items}</div><div class="row"><button class="btn primary" id="exAgain">새 시험</button>${top?'<button class="btn" id="exDrill">틀린 구절 약점 연습</button>':''}</div>`;
+  b.innerHTML=`<h2>결과</h2><div class="exscore"><div class="pts">${ex.score}점</div><div><div class="line"><b>${eg}</b> · ${ew} · ${pass}/${ex.list.length} 완전 정답 · 문항별 점수 평균</div><div class="note">${(S.stats.exams||[]).length}회째 · ${prevAvg!==null?`이전 평균 ${prevAvg}점 (${ex.score-prevAvg>=0?'+':''}${ex.score-prevAvg})`:'첫 모의시험'} · 틀린 구절은 오답 노트와 오늘 복습에 들어갑니다</div></div></div>${top?`<p class="advice"><b>${top[0]}</b> ${esc(ADVICE[top[0]])}</p>`:''}<p class="legend"><b class="miss">밑줄</b> 빠뜨리거나 틀린 정답 글자 · <s class="ins">취소선</s> 잘못 쓴 글자 · <span class="spm">␣</span><span class="spx">|</span> 띄어쓰기</p><div class="res">${items}</div><div class="row"><button class="btn primary" id="exAgain">새 시험</button>${top?'<button class="btn" id="exDrill">틀린 구절 약점 연습</button>':''}</div>`;
   $('exAgain').onclick=()=>{ex=null;renderExam();};
   const ed=$('exDrill');if(ed)ed.onclick=()=>{drill=ex.res.filter(x=>!x.r.pass).map(x=>x.ref);ex=null;cur=nextItem();lastFb=null;show('learn');};
 }
@@ -1138,7 +1144,10 @@ function boardHTML(rows,myUid){
 }
 
 /* 목록·설정 */
-function renderList(){
+const ADMIN_EMAILS=['danielkang3927@gmail.com','kangdy@gsmch.org'];
+function isAdmin(){try{const u=firebase.auth().currentUser;return !!(u&&u.email&&ADMIN_EMAILS.includes(u.email.toLowerCase()));}catch(e){return false;}}
+function applyAdminUI(){const a=isAdmin();$('listAdmin').hidden=!a;$('tabList').textContent=a?'구절 목록·설정':'설정';}
+function renderList(){applyAdminUI();
   $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text+(v.note?' // '+v.note:'')).join('\n');
   $('sampleWarn').hidden=!S.sample;$('newPer').value=String(S.settings.newPerDay);$('strictSp').checked=!!S.settings.strictSpace;
   $('listMsg').textContent=`${S.verses.length}개 구절`;$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';renderBackups();
@@ -1322,7 +1331,7 @@ $('today').textContent=today().replace(/-/g,'.');
     btn.textContent='로그인';setSync('','로그인 필요');
     gate.hidden=false;gbtn.disabled=false;gbtn.textContent='Google로 로그인';
   }
-  auth.onAuthStateChanged(u=>{authReady=true;if(u)onLogin(u);else onLogout();},e=>{diag.push('인증 오류: '+(e&&(e.code||e.message)));showDiag();gbtn.disabled=false;gbtn.textContent='Google로 로그인';});
+  auth.onAuthStateChanged(u=>{authReady=true;try{applyAdminUI();}catch(e){}if(u)onLogin(u);else onLogout();},e=>{diag.push('인증 오류: '+(e&&(e.code||e.message)));showDiag();gbtn.disabled=false;gbtn.textContent='Google로 로그인';});
   auth.getRedirectResult().then(r=>{if(r&&r.user)onLogin(r.user);}).catch(e=>{diag.push('복귀 오류: '+(e&&e.code||'')+' '+(e&&e.message||''));showDiag();gbtn.disabled=false;gbtn.textContent='Google로 로그인';});
   async function login(){
     gbtn.disabled=true;gbtn.textContent='로그인 중…';
