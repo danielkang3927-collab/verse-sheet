@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v34">
+<meta name="app-build" content="v35">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -209,7 +209,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v34</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v35</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -326,7 +326,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v34</p>
+    <p class="note" style="margin:0;text-align:right">v35</p>
   </div>
 </div>
 
@@ -1065,23 +1065,25 @@ function renderExam(){
     const learned=S.verses.filter(v=>P(v.ref).box>=1).length,weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
     b.innerHTML=`<h2>모의시험</h2><p class="note">시험과 같이 주소만 보고 씁니다. 끝날 때까지 채점 결과를 보여 주지 않습니다. 틀린 구절은 오답 노트에 기록되고 오늘 복습에 다시 들어갑니다.</p>
       <p class="note">채점: 문항마다 완전 일치 100점, 띄어쓰기만 틀리면 95점, 글자가 틀리면 「100 − 틀린 글자 비율(%) − 10」점(최저 0). 총점은 문항 평균입니다.</p>
-      <div class="row"><label for="exN">문항</label><select id="exN"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="0">전체</option></select>
+      <div class="row"><label for="exN">문항</label><select id="exN"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="0">전체</option><option value="c">직접 입력</option></select><input type="number" id="exNc" min="1" max="999" placeholder="문항 수" hidden style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:80px">
       <label for="exR">범위</label><select id="exR"><option value="l">학습한 구절 (${learned})</option><option value="w">약점 있는 구절 (${weakN})</option><option value="a">전체 (${S.verses.length})</option></select>
       <button class="btn primary" id="exGo">시작</button></div><p class="note" id="exMsg"></p>
       <h3 style="margin-top:18px">종이 시험지 (인쇄·PDF)</h3>
       <p class="note">주소와 첫 어절만 인쇄되고 나머지는 손으로 씁니다. 인쇄 창에서 「PDF로 저장」을 고르면 PDF 파일이 됩니다(아이패드: 인쇄 미리보기에서 두 손가락으로 벌리면 PDF로 열려 공유할 수 있습니다).</p>
-      <div class="row"><label for="ppN">문항</label><select id="ppN"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option><option value="0">전체</option></select>
+      <div class="row"><label for="ppN">문항</label><select id="ppN"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option><option value="0">전체</option><option value="c">직접 입력</option></select><input type="number" id="ppNc" min="1" max="999" placeholder="문항 수" hidden style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:80px">
       <label for="ppR">범위</label><select id="ppR"><option value="l">학습한 구절 (${learned})</option><option value="w">약점 있는 구절 (${weakN})</option><option value="a">전체 (${S.verses.length})</option></select>
       <label for="ppS">글씨 칸</label><select id="ppS"><option value="m">보통 (줄 간격 11mm)</option><option value="l" selected>넉넉히 (줄 간격 13mm)</option><option value="xl">아주 크게 (줄 간격 15mm)</option></select>
       <label><input type="checkbox" id="ppKey" checked> 정답지 마지막 장에 붙이기</label>
       <button class="btn" id="ppGo">시험지 만들기</button></div>`;
     if(!learned){$('exR').value='a';$('ppR').value='a';}
+    const nOf=(sel,inp)=>{const v=$(sel).value;if(v==='c'){const k=parseInt($(inp).value,10);return k>0?k:0;}return +v;};
+    [['exN','exNc'],['ppN','ppNc']].forEach(([a,b])=>{$(a).onchange=()=>{$(b).hidden=$(a).value!=='c';if($(a).value==='c')$(b).focus();};});
     $('ppGo').onclick=()=>{const rg=$('ppR').value;const pool=S.verses.filter(v=>rg==='a'||(rg==='l'?P(v.ref).box>=1:weakSum(P(v.ref))>0)).map(v=>v.ref);
       if(!pool.length){$('exMsg').textContent='해당하는 구절이 없습니다. 범위를 바꾸세요.';return;}
-      pool.sort(()=>Math.random()-.5);const n=+$('ppN').value||pool.length;printSheet(pool.slice(0,n),$('ppS').value,$('ppKey').checked);};
+      pool.sort(()=>Math.random()-.5);const n=nOf('ppN','ppNc')||pool.length;printSheet(pool.slice(0,n),$('ppS').value,$('ppKey').checked);};
     $('exGo').onclick=()=>{const rg=$('exR').value;const pool=S.verses.filter(v=>rg==='a'||(rg==='l'?P(v.ref).box>=1:weakSum(P(v.ref))>0)).map(v=>v.ref);
       if(!pool.length){$('exMsg').textContent='해당하는 구절이 없습니다. 범위를 바꾸세요.';return;}
-      pool.sort(()=>Math.random()-.5);const n=+$('exN').value||pool.length;ex={list:pool.slice(0,n),i:0,ans:[],range:rg};renderExam();};
+      pool.sort(()=>Math.random()-.5);const n=nOf('exN','exNc')||pool.length;ex={list:pool.slice(0,n),i:0,ans:[],range:rg};renderExam();};
     return;
   }
   if(ex.i<ex.list.length){
