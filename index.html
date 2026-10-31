@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v37">
+<meta name="app-build" content="v38">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -209,7 +209,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v37</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v38</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -242,8 +242,8 @@ label{font-size:13px}
       <div id="listAdmin" hidden>
       <h2>구절 목록 <span class="note">(관리자만)</span></h2>
       <div class="warnbox" id="sampleWarn" hidden></div>
-      <p class="note">현재 본문: 개역개정 고린도전서 13:1–13. 수련목 170구절 목록을 받으면 아래에 붙여 넣고 「목록 바꾸기」를 누르세요.</p>
-      <p class="note">한 줄에 한 구절씩, <b>주소 뒤에 본문</b>을 적습니다. 예) <span style="font-family:var(--mono)">요 3:16 하나님이 세상을…</span> · 출제 빈도(5 높음~1 낮음, 현재는 예측값)는 주소 뒤에 대괄호 숫자로: <span style="font-family:var(--mono)">요 3:16 [7] 하나님이…</span> — 새 구절은 빈도 높은 순으로 나옵니다. · 주소 없는 줄은 앞 구절에 이어 붙습니다. 주소가 같은 구절은 학습 기록이 유지됩니다.</p>
+      <p class="note">현재 목록: 기독교대한감리회 수련목회자 시험 공고 기준 암송 구절 167개(개역개정, 대한성서공회 본문 대조). 목록을 고치려면 아래 칸에서 수정한 뒤 「목록 바꾸기」를 누르세요. 주소가 같은 구절은 학습 기록이 그대로 유지됩니다.</p>
+      <p class="note">한 줄에 한 구절씩 <span style="font-family:var(--mono)">주소 [출제 가능성] 본문 // 외워야 하는 이유</span> 순서로 적습니다. 예) <span style="font-family:var(--mono)">요 3:16 [5] 하나님이 세상을… // 출제 1순위. …</span> · 출제 가능성은 5(높음)~1(낮음)이며 새 구절은 이 순서대로 나옵니다. · 주소 없는 줄은 앞 구절에 이어 붙습니다. · 「외워야 하는 이유」에는 본문 단어를 넣지 않습니다(답이 드러남).</p>
       <textarea id="listText" rows="12" spellcheck="false"></textarea>
       <div class="row"><button class="btn primary" id="applyList">목록 바꾸기</button><span class="note" id="listMsg"></span></div>
       <div class="row" id="listConfirm" hidden></div>
@@ -326,7 +326,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v37</p>
+    <p class="note" style="margin:0;text-align:right">v38</p>
   </div>
 </div>
 
