@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v31">
+<meta name="app-build" content="v32">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -192,11 +192,23 @@ label{font-size:13px}
 .sync{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
 .sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--grid)}
 .sync.on::before{background:var(--ok)}.sync.busy::before{background:var(--warn)}
+/* 종이 시험지 */
+#printOv{position:fixed;inset:0;z-index:60;background:#777;overflow:auto;color:#000}
+#printOv .pbar{position:sticky;top:0;display:flex;gap:8px;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #ccc}
+.psheet{background:#fff;color:#000;max-width:210mm;margin:12px auto;padding:16mm 16mm;font-family:"Noto Serif KR","Nanum Myeongjo","Apple SD Gothic Neo",serif}
+.psheet .pt{font-size:18pt;margin:0 0 4mm;font-weight:700}.psheet .pmeta{font-size:11pt;font-weight:400;float:right;margin-top:3pt}
+.psheet .pnote{font-size:10.5pt;margin:0 0 6mm;color:#333}
+.pq{break-inside:avoid;page-break-inside:avoid;margin:0 0 7mm}
+.ph{display:flex;align-items:baseline;gap:8px;font-size:14pt;margin-bottom:2mm}.ph .pn{width:9mm;font-weight:700}.ph .pr{font-weight:700;min-width:30mm}.ph .pf{font-size:14pt;border-bottom:1.5px solid #000;padding:0 3mm 1mm}
+.pl{width:100%;background-image:linear-gradient(to top,#888 0.3mm,transparent 0.3mm);background-repeat:repeat-y}
+.pbreak{page-break-before:always;break-before:page}
+.pk{font-size:10.5pt;line-height:1.7;margin:0 0 2mm;break-inside:avoid}
+@media print{body.printing>*:not(#printOv){display:none!important}#printOv{position:static;background:#fff;overflow:visible}#printOv .noprint{display:none}.psheet{margin:0;padding:0;max-width:none;box-shadow:none}@page{size:A4;margin:16mm}}
 </style>
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v31</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v32</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -313,7 +325,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v31</p>
+    <p class="note" style="margin:0;text-align:right">v32</p>
   </div>
 </div>
 
@@ -1012,6 +1024,20 @@ let ex=null;
 /* 모의시험 채점: 완전 일치 100 · 띄어쓰기만 틀림 95 · 그 외 글자 정확도(100−틀린 글자 비율)에서 10점 추가 감점 */
 function examScore(r){if(r.charOk&&r.spaceOk)return 100;if(r.charOk)return 95;const n=r.st.length;if(!n)return 0;const miss=r.st.filter(x=>!x).length,ins=r.ins.reduce((a,x)=>a+[...x].length,0);const acc=Math.max(0,1-Math.max(miss,ins)/n);return Math.max(0,Math.round(acc*100)-10);}
 function examLabel(r,sc){return sc===100?'통과':sc===95?'띄어쓰기만':`${sc}점`;}
+/* 종이 시험지: 주소·첫 어절 + 손글씨 줄 */
+function printSheet(list,size,withKey){
+  const lh={m:11,l:13,xl:15}[size]||13,cpl={m:24,l:20,xl:17}[size]||20;
+  const q=list.map((ref,i)=>{const v=verseOf(ref);const first=v.text.split(' ')[0];const rest=v.text.length-first.length;const lines=Math.max(2,Math.ceil(rest/cpl)+1);
+    return `<div class="pq"><div class="ph"><span class="pn">${i+1}.</span><span class="pr">${esc(ref)}</span><span class="pf">${esc(first)}</span></div><div class="pl" style="height:${lines*lh}mm;background-size:100% ${lh}mm"></div></div>`;}).join('');
+  const key=withKey?`<div class="pbreak"></div><h2 class="pt">정답</h2>${list.map((ref,i)=>`<div class="pk"><b>${i+1}. ${esc(ref)}</b> ${esc(verseOf(ref).text)}</div>`).join('')}`:'';
+  const d=new Date(),ds=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+  let ov=$('printOv');if(!ov){ov=document.createElement('div');ov.id='printOv';document.body.appendChild(ov);}
+  ov.innerHTML=`<div class="pbar noprint"><button class="btn primary" id="pPrint">인쇄 / PDF로 저장</button><button class="btn" id="pClose">닫기</button><span class="note">${list.length}문항 · 줄 간격 ${lh}mm</span></div>
+    <div class="psheet"><h2 class="pt">성경 암송 시험 <span class="pmeta">${ds} · ${list.length}문항 · 이름: ____________</span></h2><p class="pnote">주소와 첫 어절이 주어집니다. 이어서 본문을 끝까지 쓰세요(개역개정).</p>${q}${key}</div>`;
+  ov.hidden=false;document.body.classList.add('printing');
+  $('pClose').onclick=()=>{ov.hidden=true;document.body.classList.remove('printing');};
+  $('pPrint').onclick=()=>window.print();
+}
 function renderExam(){
   const b=$('examBox');
   if(!ex){
@@ -1020,8 +1046,18 @@ function renderExam(){
       <p class="note">채점: 문항마다 완전 일치 100점, 띄어쓰기만 틀리면 95점, 글자가 틀리면 「100 − 틀린 글자 비율(%) − 10」점(최저 0). 총점은 문항 평균입니다.</p>
       <div class="row"><label for="exN">문항</label><select id="exN"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option><option value="0">전체</option></select>
       <label for="exR">범위</label><select id="exR"><option value="l">학습한 구절 (${learned})</option><option value="w">약점 있는 구절 (${weakN})</option><option value="a">전체 (${S.verses.length})</option></select>
-      <button class="btn primary" id="exGo">시작</button></div><p class="note" id="exMsg"></p>`;
-    if(!learned)$('exR').value='a';
+      <button class="btn primary" id="exGo">시작</button></div><p class="note" id="exMsg"></p>
+      <h3 style="margin-top:18px">종이 시험지 (인쇄·PDF)</h3>
+      <p class="note">주소와 첫 어절만 인쇄되고 나머지는 손으로 씁니다. 인쇄 창에서 「PDF로 저장」을 고르면 PDF 파일이 됩니다(아이패드: 인쇄 미리보기에서 두 손가락으로 벌리면 PDF로 열려 공유할 수 있습니다).</p>
+      <div class="row"><label for="ppN">문항</label><select id="ppN"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option><option value="30">30</option><option value="0">전체</option></select>
+      <label for="ppR">범위</label><select id="ppR"><option value="l">학습한 구절 (${learned})</option><option value="w">약점 있는 구절 (${weakN})</option><option value="a">전체 (${S.verses.length})</option></select>
+      <label for="ppS">글씨 칸</label><select id="ppS"><option value="m">보통 (줄 간격 11mm)</option><option value="l" selected>넉넉히 (줄 간격 13mm)</option><option value="xl">아주 크게 (줄 간격 15mm)</option></select>
+      <label><input type="checkbox" id="ppKey" checked> 정답지 마지막 장에 붙이기</label>
+      <button class="btn" id="ppGo">시험지 만들기</button></div>`;
+    if(!learned){$('exR').value='a';$('ppR').value='a';}
+    $('ppGo').onclick=()=>{const rg=$('ppR').value;const pool=S.verses.filter(v=>rg==='a'||(rg==='l'?P(v.ref).box>=1:weakSum(P(v.ref))>0)).map(v=>v.ref);
+      if(!pool.length){$('exMsg').textContent='해당하는 구절이 없습니다. 범위를 바꾸세요.';return;}
+      pool.sort(()=>Math.random()-.5);const n=+$('ppN').value||pool.length;printSheet(pool.slice(0,n),$('ppS').value,$('ppKey').checked);};
     $('exGo').onclick=()=>{const rg=$('exR').value;const pool=S.verses.filter(v=>rg==='a'||(rg==='l'?P(v.ref).box>=1:weakSum(P(v.ref))>0)).map(v=>v.ref);
       if(!pool.length){$('exMsg').textContent='해당하는 구절이 없습니다. 범위를 바꾸세요.';return;}
       pool.sort(()=>Math.random()-.5);const n=+$('exN').value||pool.length;ex={list:pool.slice(0,n),i:0,ans:[],range:rg};renderExam();};
