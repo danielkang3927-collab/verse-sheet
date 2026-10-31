@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v33">
+<meta name="app-build" content="v34">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -194,21 +194,22 @@ label{font-size:13px}
 .sync.on::before{background:var(--ok)}.sync.busy::before{background:var(--warn)}
 /* 종이 시험지 */
 #printOv{position:fixed;inset:0;z-index:60;background:#777;overflow:auto;color:#000}
-#printOv .pbar{position:sticky;top:0;display:flex;gap:8px;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #ccc}
-.psheet{background:#fff;color:#000;max-width:210mm;margin:12px auto;padding:16mm 16mm;font-family:"Noto Serif KR","Nanum Myeongjo","Apple SD Gothic Neo",serif}
-.psheet .pt{font-size:18pt;margin:0 0 4mm;font-weight:700}.psheet .pmeta{font-size:11pt;font-weight:400;float:right;margin-top:3pt}
-.psheet .pnote{font-size:10.5pt;margin:0 0 6mm;color:#333}
+#printOv .pbar{position:sticky;top:0;z-index:2;flex-wrap:wrap;padding-top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:8px;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #ccc}
+.psheet{max-width:210mm;margin:12px auto;font-family:"Noto Serif KR","Nanum Myeongjo","Apple SD Gothic Neo",serif}
+.ppage{box-sizing:border-box;width:210mm;height:297mm;padding:16mm;background:#fff;color:#000;margin:0 auto 10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ppage .pt{font-size:18pt;margin:0 0 4mm;font-weight:700}.ppage .pmeta{font-size:11pt;font-weight:400;float:right;margin-top:3pt}
+.ppage .pnote{font-size:10.5pt;margin:0 0 6mm;color:#333}
 .pq{break-inside:avoid;page-break-inside:avoid;margin:0 0 7mm}
 .ph{display:flex;align-items:baseline;gap:8px;font-size:14pt;margin-bottom:2mm}.ph .pn{width:9mm;font-weight:700}.ph .pr{font-weight:700;min-width:30mm}.pl .pf{display:block;font-size:14pt;padding-left:2mm;font-weight:600}
-.pl{width:100%;position:relative;background-image:linear-gradient(to top,#888 0.3mm,transparent 0.3mm);background-repeat:repeat-y}
+.pl{width:100%}.pln{box-sizing:border-box;border-bottom:0.4mm solid #666}
 .pbreak{page-break-before:always;break-before:page}
 .pk{font-size:10.5pt;line-height:1.7;margin:0 0 2mm;break-inside:avoid}
-@media print{body.printing>*:not(#printOv){display:none!important}#printOv{position:static;background:#fff;overflow:visible}#printOv .noprint{display:none}.psheet{margin:0;padding:0;max-width:none;box-shadow:none}@page{size:A4;margin:16mm}}
+@media print{body.printing>*:not(#printOv){display:none!important}#printOv{position:static;background:#fff;overflow:visible}#printOv .noprint{display:none}.psheet{margin:0;max-width:none}.ppage{margin:0;box-shadow:none;page-break-after:always;break-after:page;height:auto;min-height:0}.ppage:last-child{page-break-after:auto}@page{size:A4;margin:0}}
 </style>
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v33</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v34</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -325,7 +326,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v33</p>
+    <p class="note" style="margin:0;text-align:right">v34</p>
   </div>
 </div>
 
@@ -1025,18 +1026,34 @@ let ex=null;
 function examScore(r){if(r.charOk&&r.spaceOk)return 100;if(r.charOk)return 95;const n=r.st.length;if(!n)return 0;const miss=r.st.filter(x=>!x).length,ins=r.ins.reduce((a,x)=>a+[...x].length,0);const acc=Math.max(0,1-Math.max(miss,ins)/n);return Math.max(0,Math.round(acc*100)-10);}
 function examLabel(r,sc){return sc===100?'통과':sc===95?'띄어쓰기만':`${sc}점`;}
 /* 종이 시험지: 주소·첫 어절 + 손글씨 줄 */
+function loadScript(src){return new Promise((ok,no)=>{if(document.querySelector(`script[src="${src}"]`))return ok();const el=document.createElement('script');el.src=src;el.onload=ok;el.onerror=()=>no(new Error('load '+src));document.head.appendChild(el);});}
 function printSheet(list,size,withKey){
   const lh={m:11,l:13,xl:15}[size]||13,cpl={m:24,l:20,xl:17}[size]||20;
-  const q=list.map((ref,i)=>{const v=verseOf(ref);const first=v.text.split(' ')[0];const rest=v.text.length-first.length;const lines=Math.max(2,Math.ceil(rest/cpl)+1);
-    return `<div class="pq"><div class="ph"><span class="pn">${i+1}.</span><span class="pr">${esc(ref)}</span></div><div class="pl" style="height:${lines*lh}mm;background-size:100% ${lh}mm"><span class="pf" style="line-height:${lh}mm">${esc(first)}</span></div></div>`;}).join('');
-  const key=withKey?`<div class="pbreak"></div><h2 class="pt">정답</h2>${list.map((ref,i)=>`<div class="pk"><b>${i+1}. ${esc(ref)}</b> ${esc(verseOf(ref).text)}</div>`).join('')}`:'';
-  const d=new Date(),ds=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+  const d=new Date(),ds=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`,fname=`암송시험지_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${list.length}문항.pdf`;
   let ov=$('printOv');if(!ov){ov=document.createElement('div');ov.id='printOv';document.body.appendChild(ov);}
-  ov.innerHTML=`<div class="pbar noprint"><button class="btn" id="pClose">‹ 돌아가기</button><button class="btn primary" id="pPrint">인쇄 / PDF로 저장</button><span class="note">${list.length}문항 · 줄 간격 ${lh}mm</span></div>
-    <div class="psheet"><h2 class="pt">성경 암송 시험 <span class="pmeta">${ds} · ${list.length}문항 · 이름: ____________</span></h2><p class="pnote">주소와 첫 어절이 주어집니다. 이어서 본문을 끝까지 쓰세요(개역개정).</p>${q}${key}</div><div class="pbar noprint" style="position:static;border-top:1px solid #ccc;border-bottom:0"><button class="btn" id="pClose2">‹ 돌아가기</button></div>`;
+  ov.innerHTML=`<div class="pbar noprint"><button class="btn" id="pClose">‹ 돌아가기</button><button class="btn primary" id="pPdf">PDF 저장·공유</button><button class="btn" id="pPrint">인쇄</button><span class="note" id="pMsg">${list.length}문항 · 줄 간격 ${lh}mm</span></div><div class="psheet" id="pSheet"></div><div class="pbar noprint" style="position:static;border-top:1px solid #ccc;border-bottom:0"><button class="btn" id="pClose2">‹ 돌아가기</button></div>`;
+  const sheet=$('pSheet');
+  const newPage=(title)=>{const pg=document.createElement('div');pg.className='ppage';pg.innerHTML=title?`<h2 class="pt">${title}</h2>`:'';sheet.appendChild(pg);return pg;};
+  const head=`성경 암송 시험 <span class="pmeta">${ds} · ${list.length}문항 · 이름: ____________</span>`;
+  let pg=newPage(head);pg.insertAdjacentHTML('beforeend','<p class="pnote">주소와 첫 어절이 주어집니다. 이어서 본문을 끝까지 쓰세요(개역개정).</p>');
+  const fits=()=>pg.scrollHeight<=pg.clientHeight+1;
+  list.forEach((ref,i)=>{const v=verseOf(ref);const first=v.text.split(' ')[0];const rest=v.text.length-first.length;const lines=Math.max(2,Math.ceil(rest/cpl)+1);
+    const el=document.createElement('div');el.className='pq';el.innerHTML=`<div class="ph"><span class="pn">${i+1}.</span><span class="pr">${esc(ref)}</span></div><div class="pl">${Array.from({length:lines},(_,k)=>`<div class="pln" style="height:${lh}mm">${k===0?`<span class="pf" style="line-height:${lh}mm">${esc(first)}</span>`:''}</div>`).join('')}</div>`;
+    pg.appendChild(el);if(!fits()){pg=newPage('');pg.appendChild(el);}});
+  if(withKey){pg=newPage('정답');list.forEach((ref,i)=>{const el=document.createElement('div');el.className='pk';el.innerHTML=`<b>${i+1}. ${esc(ref)}</b> ${esc(verseOf(ref).text)}`;pg.appendChild(el);if(!fits()){pg=newPage('정답 (계속)');pg.appendChild(el);}});}
   ov.hidden=false;document.body.classList.add('printing');ov.scrollTop=0;
   const close=()=>{ov.hidden=true;document.body.classList.remove('printing');if(history.state&&history.state.print)history.back();};
   $('pClose').onclick=close;$('pClose2').onclick=close;$('pPrint').onclick=()=>window.print();
+  $('pPdf').onclick=async()=>{const btn=$('pPdf'),msg=$('pMsg');btn.disabled=true;msg.textContent='PDF 만드는 중…';
+    try{await loadScript('./lib/html2canvas.min.js');await loadScript('./lib/jspdf.umd.min.js');
+      const pages=[...sheet.querySelectorAll('.ppage')];const pdf=new jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+      for(let i=0;i<pages.length;i++){msg.textContent=`PDF 만드는 중… ${i+1}/${pages.length}쪽`;const cv=await html2canvas(pages[i],{scale:2,backgroundColor:'#fff',useCORS:true});
+        if(i)pdf.addPage();pdf.addImage(cv.toDataURL('image/jpeg',0.9),'JPEG',0,0,210,297);}
+      const blob=pdf.output('blob');const file=new File([blob],fname,{type:'application/pdf'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:fname});msg.textContent='공유했습니다.';}catch(e){if(e&&e.name!=='AbortError')throw e;msg.textContent='취소했습니다.';}}
+      else{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);msg.textContent='PDF를 내려받았습니다.';}
+    }catch(e){msg.textContent='PDF 만들기 실패: '+(e&&e.message||e)+' — 「인쇄」 버튼으로 PDF 저장을 시도해 보세요.';}
+    btn.disabled=false;};
   try{history.pushState({print:1},'');}catch(e){}
   window.__closePrint=()=>{if(!ov.hidden){ov.hidden=true;document.body.classList.remove('printing');}};
 }
