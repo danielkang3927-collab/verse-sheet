@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v26">
+<meta name="app-build" content="v27">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -62,6 +62,7 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .addrq input{font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:2px;width:160px}
 .cards{display:flex;flex-direction:column;gap:12px;align-items:center}
 .cardbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;max-width:640px}
+.cardbar select{max-width:260px}
 .card{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;width:100%;max-width:640px;min-height:300px;border:1px solid var(--grid);background:var(--surface);padding:22px 24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 0 var(--grid),0 6px 18px rgba(0,0,0,.06)}
 .card .cno{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
 .card .cref{font-size:22px;font-weight:600;letter-spacing:-.01em}
@@ -308,7 +309,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v26</p>
+    <p class="note" style="margin:0;text-align:right">v27</p>
   </div>
 </div>
 
@@ -911,7 +912,7 @@ function mergeState(a,b){
   out.errors.sort((x,y)=>(x.d||'').localeCompare(y.d||''));out.errors=out.errors.slice(-1200);
   const ad=(a.stats&&a.stats.days)||{},bd=(b.stats&&b.stats.days)||{};
   new Set([...Object.keys(ad),...Object.keys(bd)]).forEach(d=>{const x=ad[d],y=bd[d];if(!x){out.stats.days[d]=y;return;}if(!y){out.stats.days[d]=x;return;}
-    out.stats.days[d]={tries:Math.max(x.tries||0,y.tries||0),first:Math.max(x.first||0,y.first||0),rev:Math.max(x.rev||0,y.rev||0),nw:Math.max(x.nw||0,y.nw||0),hint:Math.max(x.hint||0,y.hint||0),fail:Math.max(x.fail||0,y.fail||0),done:!!(x.done||y.done),score:Math.max(x.score||0,y.score||0)};});
+    out.stats.days[d]={tries:Math.max(x.tries||0,y.tries||0),first:Math.max(x.first||0,y.first||0),rev:Math.max(x.rev||0,y.rev||0),nw:Math.max(x.nw||0,y.nw||0),hint:Math.max(x.hint||0,y.hint||0),fail:Math.max(x.fail||0,y.fail||0),done:!!(x.done||y.done),score:Math.max(x.score||0,y.score||0),nwRefs:[...new Set([...(x.nwRefs||[]),...(y.nwRefs||[])])],revRefs:[...new Set([...(x.revRefs||[]),...(y.revRefs||[])])]};});
   const ea=(a.stats&&a.stats.exams)||[],eb=(b.stats&&b.stats.exams)||[];const seenE=new Set();out.stats.exams=[...ea,...eb].filter(x=>{const k=(x.ts||0)+'|'+x.d+'|'+x.score;if(seenE.has(k))return false;seenE.add(k);return true;}).sort((x,y)=>(x.ts||0)-(y.ts||0));
   const ab=(a.stats&&a.stats.badges)||{},bb=(b.stats&&b.stats.badges)||{};
   new Set([...Object.keys(ab),...Object.keys(bb)]).forEach(k=>{out.stats.badges[k]=[ab[k],bb[k]].filter(Boolean).sort()[0];});
@@ -935,7 +936,7 @@ function submit(){
     if(r.pass){
       if(cur.stage===4){cur=makeItem(ref,'learn',3);cur.failed=true;}
       else{p.stage=cur.stage+1;
-        if(p.stage>=4){p.box=1;p.due=addDays(t,1);p.lapse=false;D().nw++;cur=nextItem();}
+        if(p.stage>=4){p.box=1;p.due=addDays(t,1);p.lapse=false;p.learnedOn=p.learnedOn||t;const dd=D();dd.nw++;dd.nwRefs=dd.nwRefs||[];if(!dd.nwRefs.includes(ref))dd.nwRefs.push(ref);cur=nextItem();}
         else cur=makeItem(ref,'learn',p.stage);}
     }else if(cur.stage===3){cur=toWeak('learn');}
     else{cur.failed=true;cur.hints=0;cur.mask=makeMask(ref,cur.stage);}
@@ -946,7 +947,7 @@ function submit(){
         if(cur.failed||p.lapse){p.box=1;p.lapse=false;p.due=addDays(t,1);}
         else if(cur.hints){p.box=Math.max(1,p.box);p.due=addDays(t,1);}
         else{p.box=Math.min(5,p.box+1);p.due=addDays(t,intervalFor(p));}
-        S.daily.reviewed++;D().rev++;cur=nextItem();}
+        S.daily.reviewed++;{const dd=D();dd.rev++;dd.revRefs=dd.revRefs||[];if(!dd.revRefs.includes(ref))dd.revRefs.push(ref);}cur=nextItem();}
     }else{p.box=1;p.lapse=true;p.due=t;cur=cur.stage===3?toWeak('review'):Object.assign(cur,{failed:true,hints:0,mask:makeMask(ref,4)});}
   }else if(cur.kind==='drill'){
     if(r.pass){if(cur.stage!==3){const nx=makeItem(ref,'drill',3);nx.planned=cur.planned;cur=nx;}else{if(cur.planned&&!S.daily.drilled.includes(ref)){S.daily.drilled.push(ref);D().dr=(D().dr||0)+1;}cur=nextItem();}}
@@ -977,7 +978,8 @@ function renderCards(){
   b.innerHTML=`<div class="cardbar">
       <select id="cardMode"><option value="all" ${cardMode==='all'?'selected':''}>출제 순서 전체 (${S.verses.length})</option><option value="today" ${cardMode==='today'?'selected':''}>오늘 학습·복습분</option><option value="weak" ${cardMode==='weak'?'selected':''}>약점 구절</option></select>
       <button class="btn" id="cardHide">${cardHide?'본문 보이기':'본문 가리기'}</button><button class="btn" id="cardBig">${cardBig?'보통 크기':'크게'}</button>
-      <input id="cardJump" placeholder="주소로 이동" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:110px"></div>
+      <select id="cardPick" title="구절 선택">${list.map((r,i)=>`<option value="${i}" ${i===cardI?'selected':''}>${i+1}. ${esc(r)} — ${esc(verseOf(r).text.split(/\s+/).slice(0,3).join(' '))}…</option>`).join('')}</select>
+      <input id="cardJump" placeholder="주소 입력" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:90px"></div>
     <div class="card" id="cardEl">
       <div class="cno"><span>${cardI+1} / ${list.length}</span><span>${v.freq?'빈도 '+v.freq+' · ':''}${st}</span></div>
       <div class="cref">${esc(ref)}</div>
@@ -985,8 +987,8 @@ function renderCards(){
       ${v.note?`<div class="cwhy">${esc(v.note)}</div>`:''}
     </div>
     <div class="cnav"><button class="btn" id="cardPrev">‹ 이전</button><button class="btn primary" id="cardNext">다음 ›</button></div>
-    <p class="note">소리 내어 주소부터 읽고 본문을 읽으세요. 카드 가운데를 누르면 본문이 가려지고 다시 누르면 보입니다. 카드 왼쪽을 누르면 이전, 오른쪽을 누르면 다음 구절로 넘어갑니다(좌우로 밀어도 됩니다).</p>`;
-  $('cardMode').onchange=e=>{cardMode=e.target.value;cardI=0;renderCards();};
+    <p class="note">소리 내어 주소부터 읽고 본문을 읽으세요. 카드 가운데를 누르면 본문이 가려지고 다시 누르면 보입니다. 카드 왼쪽을 누르면 이전, 오른쪽을 누르면 다음 구절로 넘어갑니다(좌우로 밀어도 됩니다). 위 목록에서 원하는 구절을 바로 고를 수 있습니다.</p>`;
+  $('cardMode').onchange=e=>{cardMode=e.target.value;cardI=0;renderCards();};$('cardPick').onchange=e=>{cardI=+e.target.value;renderCards();};
   $('cardHide').onclick=()=>{cardHide=!cardHide;renderCards();};
   $('cardBig').onclick=()=>{cardBig=!cardBig;renderCards();};
   $('cardPrev').onclick=()=>{cardI--;renderCards();};$('cardNext').onclick=()=>{cardI++;renderCards();};
@@ -999,7 +1001,7 @@ function renderCards(){
   el.addEventListener('click',e=>{if(swiped){swiped=false;return;}const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width;
     if(x<1/3)cardI--;else if(x>2/3)cardI++;else cardHide=!cardHide;renderCards();});
 }
-document.addEventListener('keydown',e=>{if($('v-cards').hidden||e.target.tagName==='INPUT')return;if(e.key==='ArrowRight'){cardI++;renderCards();}else if(e.key==='ArrowLeft'){cardI--;renderCards();}else if(e.key===' '){e.preventDefault();cardHide=!cardHide;renderCards();}});
+document.addEventListener('keydown',e=>{if($('v-cards').hidden||e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;if(e.key==='ArrowRight'){cardI++;renderCards();}else if(e.key==='ArrowLeft'){cardI--;renderCards();}else if(e.key===' '){e.preventDefault();cardHide=!cardHide;renderCards();}});
 
 /* 모의시험 */
 let ex=null;
@@ -1076,6 +1078,11 @@ function renderNotes(){
 
 
 /* 기록 탭 */
+function learnedRefs(){return S.verses.map(v=>v.ref).filter(r=>{const p=S.progress[r];return p&&(p.box>=1||p.stage>=4);});}
+function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.ref).filter(r=>!got.has(r)).slice(0,n);}
+function weekNew(){const t=today();let n=0;for(let i=0;i<7;i++){const d=S.stats.days[addDays(t,-i)];if(d)n+=d.nw||0;}return n;}
+function dayVerseRows(days,t,n){return Array.from({length:n},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x||(!(x.nwRefs||[]).length&&!(x.revRefs||[]).length))return '';const [,m,dd]=d.split('-');
+  return `<tr><td>${+m}/${+dd}</td><td>${(x.nwRefs||[]).map(r=>`<span class="st mst">${esc(r)}</span>`).join(' ')||'—'}</td><td style="color:var(--muted)">${(x.revRefs||[]).map(esc).join(', ')||'—'}</td></tr>`;}).join('');}
 function renderLog(){
   const b=$('logBox'),t=today(),{streak,best}=streakInfo(),days=S.stats.days;
   const dow=(s)=>{const [y,m,d]=s.split('-').map(Number);return (new Date(y,m-1,d).getDay()+6)%7;};
@@ -1091,6 +1098,14 @@ function renderLog(){
       <div class="kpi"><div class="l">숙달</div><div class="v">${masteredCount()}/${S.verses.length}</div><div class="s">완주 예상 ${etaText()}</div></div>
       <div class="kpi"><div class="l">오늘</div><div class="v">${D().done?gradeOf(D().score)[0]:'—'}</div><div class="s">${D().done?`${D().score}점`:`${D().rev+D().nw}개 진행`}</div></div>
     </div>
+    <h3>진도</h3>
+    <div class="tw"><table class="sheet"><tbody>
+      <tr><td style="width:120px">익힌 구절</td><td>${learnedRefs().length}개${learnedRefs().length?` · 마지막 <b>${esc(learnedRefs().slice(-1)[0])}</b>`:''}</td></tr>
+      <tr><td>다음 차례</td><td>${nextRefs(5).map(esc).join(', ')||'모두 익혔습니다'}</td></tr>
+      <tr><td>이번 주 새로 익힘</td><td>${weekNew()}개 · 오늘 ${(D().nwRefs||[]).map(esc).join(', ')||'—'}</td></tr>
+    </tbody></table></div>
+    <h3>날짜별 학습 구절</h3>
+    <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>새로 익힌 구절</th><th>복습한 구절</th></tr></thead><tbody>${dayVerseRows(days,t,14)||'<tr><td colspan="3" class="note">오늘부터 구절 단위로 기록됩니다.</td></tr>'}</tbody></table></div>
     <h3>최근 12주 출석</h3>
     <div class="tw"><div class="grass">${cells}</div></div>
     <p class="note">진한 칸이 하루 목표를 마친 날입니다. 연한 칸은 일부만 한 날.</p>
@@ -1099,7 +1114,7 @@ function renderLog(){
     <h3>함께 보기</h3>
     <div class="row"><label><input type="checkbox" id="shareOn" ${S.settings.share?'checked':''}> 내 기록을 함께 보기에 올리기</label>
       <input id="nick" placeholder="표시 이름" value="${esc(S.settings.nick||'')}" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:140px"><button class="btn" id="nickSave">이름 저장</button></div>
-    <p class="note">올리는 것은 이름·연속일·숙달 수·오늘 점수뿐입니다. 오답이나 진도 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
+    <p class="note">올리는 것은 이름·연속일·익힌 구절 수·마지막으로 익힌 구절·오늘 익힌 구절·이번 주 새 구절·오늘 점수·최근 모의시험 점수입니다. 오답 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
     <div class="tw" id="boardWrap"><p class="note">불러오는 중…</p></div>
     <h3>모의시험</h3>
     ${(S.stats.exams||[]).length?`<div class="trend">${(S.stats.exams||[]).slice(-20).map(x=>`<i style="height:${Math.max(4,x.score)}%" title="${x.d} · ${x.score}점"></i>`).join('')}</div>
@@ -1115,7 +1130,7 @@ function renderLog(){
 function boardHTML(rows,myUid){
   if(!rows.length)return '<p class="note">아직 아무도 올리지 않았습니다. 위에서 켜면 내 줄이 먼저 생깁니다.</p>';
   rows.sort((a,b)=>(b.streak-a.streak)||(b.mastered-a.mastered));
-  return `<table class="sheet"><thead><tr><th>이름</th><th>연속</th><th>숙달</th><th>오늘</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.streak}일</td><td>${r.mastered}/${r.total}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
+  return `<table class="sheet"><thead><tr><th>이름</th><th>연속</th><th>익힘</th><th>숙달</th><th>마지막 익힌 구절</th><th>오늘 익힌 구절</th><th>이번 주</th><th>오늘</th><th>모의시험</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.streak}일</td><td>${r.learned!=null?r.learned+'개':'—'}</td><td>${r.mastered}/${r.total}</td><td>${esc(r.lastRef||'—')}</td><td>${(r.todayRefs||[]).map(esc).join(', ')||'—'}</td><td>${r.weekNew!=null?'+'+r.weekNew:'—'}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${r.lastExam!=null?r.lastExam+'점':'—'}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
 }
 
 /* 목록·설정 */
@@ -1223,8 +1238,8 @@ $('today').textContent=today().replace(/-/g,'.');
       const b=fs.doc('board/'+uid);
       if(!S.settings.share){if(lastBoard!=='off'){await b.delete();lastBoard='off';}if(!$('v-log').hidden)window.__loadBoard();return;}
       const d=D(),{streak}=streakInfo();
-      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now()};
-      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date]);
+      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now(),learned:learnedRefs().length,lastRef:learnedRefs().slice(-1)[0]||'',todayRefs:(d.nwRefs||[]).slice(0,10),weekNew:weekNew(),lastExam:(S.stats.exams||[]).length?(S.stats.exams.slice(-1)[0].score):null};
+      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date,row.learned,row.lastRef,row.todayRefs,row.weekNew,row.lastExam]);
       if(key===lastBoard)return;await b.set(row);lastBoard=key;if(!$('v-log').hidden)window.__loadBoard();
     }catch(e){}};
     if(now)run();else boardTimer=setTimeout(run,2000);
