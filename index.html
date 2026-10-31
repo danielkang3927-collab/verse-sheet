@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v27">
+<meta name="app-build" content="v28">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -63,6 +63,7 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .cards{display:flex;flex-direction:column;gap:12px;align-items:center}
 .cardbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;max-width:640px}
 .cardbar select{max-width:260px}
+.pbar{display:inline-block;vertical-align:middle;width:70px;height:8px;border:1px solid var(--grid);background:var(--surface);margin-right:6px;border-radius:2px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--accent,#2f6f4e)}
 .card{cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;width:100%;max-width:640px;min-height:300px;border:1px solid var(--grid);background:var(--surface);padding:22px 24px;display:flex;flex-direction:column;gap:12px;box-shadow:0 1px 0 var(--grid),0 6px 18px rgba(0,0,0,.06)}
 .card .cno{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
 .card .cref{font-size:22px;font-weight:600;letter-spacing:-.01em}
@@ -309,7 +310,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v27</p>
+    <p class="note" style="margin:0;text-align:right">v28</p>
   </div>
 </div>
 
@@ -1078,6 +1079,8 @@ function renderNotes(){
 
 
 /* 기록 탭 */
+function versePct(p){if(!p)return 0;if(p.box>=4)return 100;if(p.box>=1)return [0,60,75,90][p.box]||60;return Math.round((p.stage||0)/4*50);}
+function completion(){if(!S.verses.length)return 0;const t=S.verses.reduce((a,v)=>a+versePct(S.progress[v.ref]),0);return Math.round(t/S.verses.length);}
 function learnedRefs(){return S.verses.map(v=>v.ref).filter(r=>{const p=S.progress[r];return p&&(p.box>=1||p.stage>=4);});}
 function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.ref).filter(r=>!got.has(r)).slice(0,n);}
 function weekNew(){const t=today();let n=0;for(let i=0;i<7;i++){const d=S.stats.days[addDays(t,-i)];if(d)n+=d.nw||0;}return n;}
@@ -1100,7 +1103,8 @@ function renderLog(){
     </div>
     <h3>진도</h3>
     <div class="tw"><table class="sheet"><tbody>
-      <tr><td style="width:120px">익힌 구절</td><td>${learnedRefs().length}개${learnedRefs().length?` · 마지막 <b>${esc(learnedRefs().slice(-1)[0])}</b>`:''}</td></tr>
+      <tr><td style="width:120px">익힌 구절</td><td>${learnedRefs().length}개 / ${S.verses.length}개${learnedRefs().length?` · 마지막 <b>${esc(learnedRefs().slice(-1)[0])}</b>`:''}</td></tr>
+      <tr><td>완성도</td><td><b>${completion()}%</b> <span class="note">(전 구절 숙달 = 100%. 단계마다 오르고, 복습 간격이 14일 이상이 되면 그 구절은 100%)</span></td></tr>
       <tr><td>다음 차례</td><td>${nextRefs(5).map(esc).join(', ')||'모두 익혔습니다'}</td></tr>
       <tr><td>이번 주 새로 익힘</td><td>${weekNew()}개 · 오늘 ${(D().nwRefs||[]).map(esc).join(', ')||'—'}</td></tr>
     </tbody></table></div>
@@ -1114,7 +1118,7 @@ function renderLog(){
     <h3>함께 보기</h3>
     <div class="row"><label><input type="checkbox" id="shareOn" ${S.settings.share?'checked':''}> 내 기록을 함께 보기에 올리기</label>
       <input id="nick" placeholder="표시 이름" value="${esc(S.settings.nick||'')}" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:140px"><button class="btn" id="nickSave">이름 저장</button></div>
-    <p class="note">올리는 것은 이름·연속일·익힌 구절 수·마지막으로 익힌 구절·오늘 익힌 구절·이번 주 새 구절·오늘 점수·최근 모의시험 점수입니다. 오답 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
+    <p class="note">올리는 것은 이름·익힌 구절 수·완성도(전 구절 숙달=100%)·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수입니다. 오답 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
     <div class="tw" id="boardWrap"><p class="note">불러오는 중…</p></div>
     <h3>모의시험</h3>
     ${(S.stats.exams||[]).length?`<div class="trend">${(S.stats.exams||[]).slice(-20).map(x=>`<i style="height:${Math.max(4,x.score)}%" title="${x.d} · ${x.score}점"></i>`).join('')}</div>
@@ -1129,8 +1133,8 @@ function renderLog(){
 }
 function boardHTML(rows,myUid){
   if(!rows.length)return '<p class="note">아직 아무도 올리지 않았습니다. 위에서 켜면 내 줄이 먼저 생깁니다.</p>';
-  rows.sort((a,b)=>(b.streak-a.streak)||(b.mastered-a.mastered));
-  return `<table class="sheet"><thead><tr><th>이름</th><th>연속</th><th>익힘</th><th>숙달</th><th>마지막 익힌 구절</th><th>오늘 익힌 구절</th><th>이번 주</th><th>오늘</th><th>모의시험</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.streak}일</td><td>${r.learned!=null?r.learned+'개':'—'}</td><td>${r.mastered}/${r.total}</td><td>${esc(r.lastRef||'—')}</td><td>${(r.todayRefs||[]).map(esc).join(', ')||'—'}</td><td>${r.weekNew!=null?'+'+r.weekNew:'—'}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${r.lastExam!=null?r.lastExam+'점':'—'}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
+  rows.sort((a,b)=>((b.pct||0)-(a.pct||0))||((b.learned||0)-(a.learned||0))||(b.streak-a.streak));
+  return `<table class="sheet"><thead><tr><th>이름</th><th>익힌 구절</th><th>완성도</th><th>연속</th><th>이번 주</th><th>오늘 익힌 구절</th><th>오늘</th><th>모의시험</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.learned!=null?`<b>${r.learned}</b>/${r.total}`:'—'}</td><td>${r.pct!=null?`<div class="pbar"><i style="width:${r.pct}%"></i></div><b>${r.pct}%</b>`:'—'}</td><td>${r.streak}일</td><td>${r.weekNew!=null?'+'+r.weekNew:'—'}</td><td>${(r.todayRefs||[]).map(esc).join(', ')||'—'}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${r.lastExam!=null?r.lastExam+'점':'—'}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
 }
 
 /* 목록·설정 */
@@ -1238,8 +1242,8 @@ $('today').textContent=today().replace(/-/g,'.');
       const b=fs.doc('board/'+uid);
       if(!S.settings.share){if(lastBoard!=='off'){await b.delete();lastBoard='off';}if(!$('v-log').hidden)window.__loadBoard();return;}
       const d=D(),{streak}=streakInfo();
-      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now(),learned:learnedRefs().length,lastRef:learnedRefs().slice(-1)[0]||'',todayRefs:(d.nwRefs||[]).slice(0,10),weekNew:weekNew(),lastExam:(S.stats.exams||[]).length?(S.stats.exams.slice(-1)[0].score):null};
-      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date,row.learned,row.lastRef,row.todayRefs,row.weekNew,row.lastExam]);
+      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now(),learned:learnedRefs().length,pct:completion(),lastRef:learnedRefs().slice(-1)[0]||'',todayRefs:(d.nwRefs||[]).slice(0,10),weekNew:weekNew(),lastExam:(S.stats.exams||[]).length?(S.stats.exams.slice(-1)[0].score):null};
+      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date,row.learned,row.pct,row.lastRef,row.todayRefs,row.weekNew,row.lastExam]);
       if(key===lastBoard)return;await b.set(row);lastBoard=key;if(!$('v-log').hidden)window.__loadBoard();
     }catch(e){}};
     if(now)run();else boardTimer=setTimeout(run,2000);
