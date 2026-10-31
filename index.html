@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v29">
+<meta name="app-build" content="v30">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -58,6 +58,7 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .sheet tr.cur td.rn{background:var(--accent);color:var(--on-accent)}
 .cue .first{font-weight:600;color:var(--fg)}
 .cue .only{display:block}
+.answrap{display:flex;align-items:flex-start;gap:8px;width:100%}.answrap .prefix{font-weight:600;font-size:17px;line-height:1.7;padding:10px 12px;border:1px solid var(--grid);background:var(--bg);white-space:nowrap;line-height:1.5}.answrap textarea{flex:1;min-width:0;margin:0}
 .addrq{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .addrq input{font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:2px;width:160px}
 .cards{display:flex;flex-direction:column;gap:12px;align-items:center}
@@ -312,7 +313,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v29</p>
+    <p class="note" style="margin:0;text-align:right">v30</p>
   </div>
 </div>
 
@@ -798,7 +799,7 @@ function renderWork(){
     <div class="steps ${free?'free':''}">${single&&!free?`<span class="step on" style="flex:1">${kindLabel(cur.kind)} · ${STAGES[cur.stage]}</span>`:steps}</div>
     <div class="cue"><div class="ref">${cur.kind==='review'&&!cur.addrOk?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${warnLine(cur)}<div class="txt">${cur.kind==='review'&&!cur.addrOk?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div></div>
     ${cur.kind==='review'&&!cur.addrOk?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
-    <textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="입력 후 Enter" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}>${cur.stage===3?esc(verseOf(cur.ref).text.split(' ')[0])+' ':''}</textarea>
+    <div class="answrap" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}>${cur.stage===3?`<span class="prefix">${esc(verseOf(cur.ref).text.split(' ')[0])}</span>`:''}<textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="${cur.stage===3?'첫 어절에 이어서 입력 후 Enter':'입력 후 Enter'}" ${cur.stage===3?`data-prefix="${esc(verseOf(cur.ref).text.split(' ')[0])}"`:''}></textarea></div>
     <div class="acts" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button><span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
     ${fbHTML()}
     <p class="tip">${cur.stage===0?'입술로 소리 없이 읽으면서 치면 더 잘 남습니다.':cur.stage===4?'점선 빈칸이 지난번에 틀린 자리입니다. 그 자리를 떠올려 전체를 쓰세요.':cur.stage===3?'떠오르지 않으면 Tab으로 다음 어절만 봅니다.':'가려진 곳을 떠올려 전체를 씁니다.'}</p>`;
@@ -807,7 +808,6 @@ function renderWork(){
       else{$('addrMsg').textContent='아닙니다. 정답: '+cur.ref;S.errors.push({ref:cur.ref,wi:-2,exp:cur.ref,got:ai.value.trim(),type:'주소',d:today(),m:'addr'});P(cur.ref).addrMiss=(P(cur.ref).addrMiss||0)+1;cur.addrOk=true;cur.addrFail=true;save();setTimeout(renderWork,1400);}};
     ai.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();chk();}});$('addrChk').onclick=chk;ai.focus({preventScroll:true});return;}
   const ta=$('ans');attachEnter(ta,submit);
-  if(cur.stage===3){ta.selectionStart=ta.selectionEnd=ta.value.length;}
   ta.addEventListener('input',()=>{if(lastFb&&!lastFb.r.pass&&diffOpen){diffOpen=false;const fb=w.querySelector('.fb');if(fb)fb.outerHTML=fbHTML();bindOpenDiff();}});
   ta.addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();hint();}});
   $('chk').onclick=submit;$('hint').onclick=hint;
@@ -820,6 +820,7 @@ function renderWork(){
 function bindOpenDiff(){const b=$('openDiff');if(b)b.onclick=()=>{diffOpen=true;const fb=$('work').querySelector('.fb');if(fb)fb.outerHTML=fbHTML();bindOpenDiff();};}
 function renderAll(){renderSheet();renderWork();renderFbar();renderToday();}
 
+function withPrefix(ta){const p=ta.dataset.prefix;return p?p+' '+ta.value:ta.value;}
 function hint(){if(!cur||cur.stage===0)return;const n=verseOf(cur.ref).text.split(' ').length;if(cur.stage===3&&cur.hints<1)cur.hints=1;if(cur.hints<n){cur.hints++;$('work').querySelector('.cue .txt').innerHTML=cueHTML(cur);}$('ans').focus();}
 
 let lastSubmit=0;
@@ -926,7 +927,7 @@ function stateFingerprint(st){const s=st.settings||{};return JSON.stringify([Obj
 function intervalFor(p){let d=INT[p.box];if(weakSum(p)>=2)d=Math.min(d,3);return d;}
 function submit(){
   const ta=$('ans');if(!cur||!ta||!norm(ta.value)||!guard())return;
-  const v=verseOf(cur.ref),r=grade(v.text,ta.value),p=P(cur.ref),t=today(),ref=cur.ref;
+  const v=verseOf(cur.ref),r=grade(v.text,withPrefix(ta)),p=P(cur.ref),t=today(),ref=cur.ref;
   const mode=cur.kind+':'+cur.stage;
   let a=null;
   if(!r.pass||!r.spaceOk){if(cur.stage>=1)a=recordFail(ref,r,mode);}
@@ -1030,10 +1031,10 @@ function renderExam(){
     const ref=ex.list[ex.i];
     b.innerHTML=`<div class="row"><span class="meta">${ex.i+1} / ${ex.list.length}</span><span style="flex:1"></span><button class="btn" id="exQuit">그만두기</button></div>
       <div class="cue"><div class="ref">${esc(ref)}<span>모의시험</span></div><div class="txt"><span class="first">${esc(verseOf(ref).text.split(' ')[0])}</span> <span class="m">…</span><span class="only" style="font-size:12px">주소와 첫 어절이 주어집니다. 이어서 끝까지 쓰세요.</span></div></div>
-      <textarea id="exAns" rows="4" spellcheck="false" autocomplete="off" placeholder="입력 후 Enter">${esc(verseOf(ref).text.split(' ')[0])} </textarea>
+      <div class="answrap"><span class="prefix">${esc(verseOf(ref).text.split(' ')[0])}</span><textarea id="exAns" rows="4" spellcheck="false" autocomplete="off" placeholder="첫 어절에 이어서 입력 후 Enter" data-prefix="${esc(verseOf(ref).text.split(' ')[0])}"></textarea></div>
       <div class="acts"><button class="btn primary" id="exNext">${ex.i+1<ex.list.length?'다음':'제출'}<kbd>Enter</kbd></button></div>`;
-    const ta=$('exAns');const go=()=>{if(!guard())return;ex.ans.push(ta.value);ex.i++;renderExam();};
-    attachEnter(ta,go);$('exNext').onclick=go;$('exQuit').onclick=()=>{ex=null;renderExam();};ta.focus({preventScroll:true});ta.selectionStart=ta.selectionEnd=ta.value.length;
+    const ta=$('exAns');const go=()=>{if(!guard())return;ex.ans.push(withPrefix(ta));ex.i++;renderExam();};
+    attachEnter(ta,go);$('exNext').onclick=go;$('exQuit').onclick=()=>{ex=null;renderExam();};ta.focus({preventScroll:true});
     return;
   }
   const t=today();let pass=0;const tc={};
