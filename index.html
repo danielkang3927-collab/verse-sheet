@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v36">
+<meta name="app-build" content="v37">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -209,7 +209,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v36</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v37</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -326,7 +326,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v36</p>
+    <p class="note" style="margin:0;text-align:right">v37</p>
   </div>
 </div>
 
@@ -1032,16 +1032,16 @@ function printSheet(list,size,withKey){
   const d=new Date(),ds=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`,fname=`암송시험지_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${list.length}문항.pdf`;
   let ov=$('printOv');if(!ov){ov=document.createElement('div');ov.id='printOv';document.body.appendChild(ov);}
   ov.innerHTML=`<div class="ptool noprint"><button class="btn" id="pClose">‹ 돌아가기</button><button class="btn primary" id="pPdf">PDF 저장·공유</button><button class="btn" id="pPrint">인쇄</button><span class="note" id="pMsg">${list.length}문항 · 줄 간격 ${lh}mm</span></div><div class="psheet" id="pSheet"></div><div class="ptool noprint" style="position:static;border-top:1px solid #ccc;border-bottom:0"><button class="btn" id="pClose2">‹ 돌아가기</button></div>`;
+  ov.hidden=false;document.body.classList.add('printing');ov.scrollTop=0;  // 쪽 나누기는 화면에 보이는 상태에서 높이를 재야 함 (숨긴 채 재면 0이 나와 한 쪽에 몰림)
   const sheet=$('pSheet');
   const newPage=(title)=>{const pg=document.createElement('div');pg.className='ppage';pg.innerHTML=title?`<h2 class="pt">${title}</h2>`:'';sheet.appendChild(pg);return pg;};
   const head=`성경 암송 시험 <span class="pmeta">${ds} · ${list.length}문항 · 이름: ____________</span>`;
   let pg=newPage(head);pg.insertAdjacentHTML('beforeend','<p class="pnote">주소와 첫 어절이 주어집니다. 이어서 본문을 끝까지 쓰세요(개역개정).</p>');
-  const fits=()=>pg.scrollHeight<=pg.clientHeight+1;
+  const fits=()=>pg.clientHeight>0&&pg.scrollHeight<=pg.clientHeight+1;
   list.forEach((ref,i)=>{const v=verseOf(ref);const first=v.text.split(' ')[0];const rest=v.text.length-first.length;const lines=Math.max(2,Math.ceil(rest/cpl)+1);
     const el=document.createElement('div');el.className='pq';el.innerHTML=`<div class="ph"><span class="pn">${i+1}.</span><span class="pr">${esc(ref)}</span></div><div class="pl">${Array.from({length:lines},(_,k)=>`<div class="pln" style="height:${lh}mm">${k===0?`<span class="pf" style="line-height:${lh}mm">${esc(first)}</span>`:''}</div>`).join('')}</div>`;
     pg.appendChild(el);if(!fits()){pg=newPage('');pg.appendChild(el);}});
   if(withKey){pg=newPage('정답');list.forEach((ref,i)=>{const el=document.createElement('div');el.className='pk';el.innerHTML=`<b>${i+1}. ${esc(ref)}</b> ${esc(verseOf(ref).text)}`;pg.appendChild(el);if(!fits()){pg=newPage('정답 (계속)');pg.appendChild(el);}});}
-  ov.hidden=false;document.body.classList.add('printing');ov.scrollTop=0;
   const close=()=>{ov.hidden=true;document.body.classList.remove('printing');if(history.state&&history.state.print)history.back();};
   $('pClose').onclick=close;$('pClose2').onclick=close;$('pPrint').onclick=()=>window.print();
   $('pPdf').onclick=async()=>{const btn=$('pPdf'),msg=$('pMsg');btn.disabled=true;msg.textContent='PDF 만드는 중…';
