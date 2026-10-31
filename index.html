@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v35">
+<meta name="app-build" content="v36">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -194,7 +194,7 @@ label{font-size:13px}
 .sync.on::before{background:var(--ok)}.sync.busy::before{background:var(--warn)}
 /* 종이 시험지 */
 #printOv{position:fixed;inset:0;z-index:60;background:#777;overflow:auto;color:#000}
-#printOv .pbar{position:sticky;top:0;z-index:2;flex-wrap:wrap;padding-top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:8px;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #ccc}
+#printOv .ptool{position:sticky;top:0;z-index:2;flex-wrap:wrap;padding-top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:8px;align-items:center;padding:10px 14px;background:#fff;border-bottom:1px solid #ccc}
 .psheet{max-width:210mm;margin:12px auto;font-family:"Noto Serif KR","Nanum Myeongjo","Apple SD Gothic Neo",serif}
 .ppage{box-sizing:border-box;width:210mm;height:297mm;padding:16mm;background:#fff;color:#000;margin:0 auto 10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .ppage .pt{font-size:18pt;margin:0 0 4mm;font-weight:700}.ppage .pmeta{font-size:11pt;font-weight:400;float:right;margin-top:3pt}
@@ -209,7 +209,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v35</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v36</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -326,7 +326,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v35</p>
+    <p class="note" style="margin:0;text-align:right">v36</p>
   </div>
 </div>
 
@@ -1031,7 +1031,7 @@ function printSheet(list,size,withKey){
   const lh={m:11,l:13,xl:15}[size]||13,cpl={m:24,l:20,xl:17}[size]||20;
   const d=new Date(),ds=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`,fname=`암송시험지_${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${list.length}문항.pdf`;
   let ov=$('printOv');if(!ov){ov=document.createElement('div');ov.id='printOv';document.body.appendChild(ov);}
-  ov.innerHTML=`<div class="pbar noprint"><button class="btn" id="pClose">‹ 돌아가기</button><button class="btn primary" id="pPdf">PDF 저장·공유</button><button class="btn" id="pPrint">인쇄</button><span class="note" id="pMsg">${list.length}문항 · 줄 간격 ${lh}mm</span></div><div class="psheet" id="pSheet"></div><div class="pbar noprint" style="position:static;border-top:1px solid #ccc;border-bottom:0"><button class="btn" id="pClose2">‹ 돌아가기</button></div>`;
+  ov.innerHTML=`<div class="ptool noprint"><button class="btn" id="pClose">‹ 돌아가기</button><button class="btn primary" id="pPdf">PDF 저장·공유</button><button class="btn" id="pPrint">인쇄</button><span class="note" id="pMsg">${list.length}문항 · 줄 간격 ${lh}mm</span></div><div class="psheet" id="pSheet"></div><div class="ptool noprint" style="position:static;border-top:1px solid #ccc;border-bottom:0"><button class="btn" id="pClose2">‹ 돌아가기</button></div>`;
   const sheet=$('pSheet');
   const newPage=(title)=>{const pg=document.createElement('div');pg.className='ppage';pg.innerHTML=title?`<h2 class="pt">${title}</h2>`:'';sheet.appendChild(pg);return pg;};
   const head=`성경 암송 시험 <span class="pmeta">${ds} · ${list.length}문항 · 이름: ____________</span>`;
