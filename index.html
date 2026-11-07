@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v41">
+<meta name="app-build" content="v42">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v41</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v42</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -354,7 +354,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v41</p>
+    <p class="note" style="margin:0;text-align:right">v42</p>
   </div>
 </div>
 
@@ -1135,6 +1135,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v42','2026-11-07','ElevenLabs 오류 이유 표시 · 목록 없이도 기본 목소리 6개로 바로 사용'],
  ['v41','2026-11-07','암송카드 음성 읽기(내장 음성·ElevenLabs, 연속·반복 재생) · 익힌 구절 목록 복사·공유'],
  ['v40','2026-10-31','사용법의 숫자·버전·변경 내역이 코드에서 자동으로 채워짐'],
  ['v39','2026-10-31','사용법 전면 개정 · 안내 문구 현행화'],
@@ -1320,6 +1321,7 @@ function renderList(){applyAdminUI();
   const st=S.settings;$('ttsEngine').value=st.ttsEngine||'browser';$('ttsAddr').checked=st.ttsAddr!==false;$('ttsGap').value=String(st.ttsGap??1);$('ttsRate').value=String(st.ttsRate??1);
   $('elRow').hidden=(st.ttsEngine||'browser')!=='el';$('elKey').value=st.elKey||'';$('elModel').value=st.elModel||'eleven_flash_v2_5';
   if(st.elVoice&&!$('elVoice').querySelector(`option[value="${st.elVoice}"]`))$('elVoice').innerHTML=`<option value="${esc(st.elVoice)}" selected>${esc(st.elVoiceName||st.elVoice)}</option>`;
+  else if(!st.elVoice)elFillPreset();
   const ym=today().slice(0,7);$('elUsed').textContent=(st.elUsage&&st.elUsage.ym===ym)?st.elUsage.chars:0;
   $('listMsg').textContent=`${S.verses.length}개 구절`;$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';renderBackups();
   $('examDate').value=S.settings.examDate;$('finishDate').value=S.settings.finishDate;$('restDay').value=String(S.settings.restDay??0);$('missPerWeek').value=String(S.settings.missPerWeek??1);$('autoPlan').checked=!!S.settings.autoPlan;renderPlanMsg();
@@ -1344,15 +1346,18 @@ $('ttsAddr').onchange=e=>{S.settings.ttsAddr=e.target.checked;save();};
 $('ttsGap').onchange=e=>{S.settings.ttsGap=+e.target.value;save();};
 $('ttsRate').onchange=e=>{S.settings.ttsRate=+e.target.value;save();};
 $('elKeySave').onclick=()=>{S.settings.elKey=$('elKey').value.trim();save();$('elMsg').textContent=S.settings.elKey?'키를 저장했습니다. 「음성 목록 불러오기」를 누르세요.':'키를 지웠습니다.';};
+const EL_PRESET=[['Sarah (여성·차분)','EXAVITQu4vr4xnSDxMaL'],['Alice (여성·또렷)','Xb7hH8MSUJpSbSDYk0k2'],['Daniel (남성·차분)','onwK4e9ZLuTAKqWW03F9'],['George (남성·따뜻)','JBFqnCBsd6RMkjVDRZzb'],['Adam (남성·깊은)','pNInz6obpgDQGcFmaJgB'],['Brian (남성·낭독)','nPczCjzI2devNBz1zQrb']];
+function elFillPreset(){$('elVoice').innerHTML=EL_PRESET.map(([n,id])=>`<option value="${id}" ${id===S.settings.elVoice?'selected':''}>${esc(n)}</option>`).join('');if(!EL_PRESET.some(([,id])=>id===S.settings.elVoice)){S.settings.elVoice=EL_PRESET[0][1];S.settings.elVoiceName=EL_PRESET[0][0];save();}}
+async function elErr(r){let d='';try{const j=await r.json();d=j.detail;d=typeof d==='string'?d:(d&&(d.message||d.status))||JSON.stringify(d);}catch(e){}return `HTTP ${r.status}${d?' · '+d:''}`;}
 $('elVoices').onclick=async()=>{const key=$('elKey').value.trim()||S.settings.elKey;if(!key){$('elMsg').textContent='먼저 API 키를 넣고 저장하세요.';return;}
-  $('elMsg').textContent='목록 불러오는 중…';try{const r=await fetch('https://api.elevenlabs.io/v1/voices',{headers:{'xi-api-key':key}});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();
+  $('elMsg').textContent='목록 불러오는 중…';try{const r=await fetch('https://api.elevenlabs.io/v1/voices',{headers:{'xi-api-key':key}});if(!r.ok){const m=await elErr(r);elFillPreset();$('elMsg').textContent=`목록 불러오기 실패(${m}). 키에 Voices 권한이 없으면 이 오류가 납니다. 기본 목소리 6개를 넣어 두었으니 「시험 듣기」로 바로 확인해 보세요. 그래도 401이면 키 자체가 거부된 것이니 새 키를 만드세요.`;return;}const j=await r.json();
     const vs=(j.voices||[]).map(v=>({id:v.voice_id,name:v.name,lab:(v.labels&&(v.labels.language||v.labels.accent))||''}));
     $('elVoice').innerHTML=vs.map(v=>`<option value="${esc(v.id)}" ${v.id===S.settings.elVoice?'selected':''}>${esc(v.name)}${v.lab?' ('+esc(v.lab)+')':''}</option>`).join('');
     if(!S.settings.elVoice&&vs.length){S.settings.elVoice=vs[0].id;S.settings.elVoiceName=vs[0].name;save();}
     $('elMsg').textContent=`목소리 ${vs.length}개. 한국어는 어떤 목소리든 읽을 수 있으니 골라서 「시험 듣기」로 확인하세요.`;}catch(e){$('elMsg').textContent='불러오기 실패: '+(e.message||e)+' — 키가 맞는지 확인하세요.';}};
 $('elVoice').onchange=e=>{S.settings.elVoice=e.target.value;S.settings.elVoiceName=e.target.selectedOptions[0]?.text||'';save();};
 $('elModel').onchange=e=>{S.settings.elModel=e.target.value;save();};
-$('elTest').onclick=async()=>{$('elMsg').textContent='시험 음성 만드는 중…';try{await TTS.speak('태초에 하나님이 천지를 창조하시니라',{force:'el',ref:'시험'});$('elMsg').textContent='들리면 설정 완료입니다.';}catch(e){$('elMsg').textContent='실패: '+(e.message||e);}};
+$('elTest').onclick=async()=>{if($('elKey').value.trim()&&$('elKey').value.trim()!==S.settings.elKey){S.settings.elKey=$('elKey').value.trim();save();}if(!S.settings.elVoice)elFillPreset();$('elMsg').textContent='시험 음성 만드는 중…';try{await TTS.speak('태초에 하나님이 천지를 창조하시니라',{force:'el',ref:'시험'});$('elMsg').textContent='들리면 설정 완료입니다.';}catch(e){$('elMsg').textContent='실패: '+(e.message||e)+(/401/.test(e.message||'')?' — 키가 거부되었습니다. ElevenLabs 사이트에서 새 키를 만들어 다시 넣으세요.':'');}};
 $('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다. 지우기 전에 오늘 날짜 백업을 먼저 만듭니다. 확인하려면 <b>지우기</b>라고 입력하세요.</span> <input id="rsTxt" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);width:90px"> <button class="btn danger" id="rsY">실행</button> <button class="btn" id="rsN">취소</button>';
   $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
 async function renderBackups(){const w=$('backupWrap');if(!w)return;if(!window.__listBackups){w.innerHTML='<p class="note">로그인하면 백업 목록이 보입니다.</p>';return;}
