@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v42">
+<meta name="app-build" content="v43">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v42</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v43</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -354,7 +354,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v42</p>
+    <p class="note" style="margin:0;text-align:right">v43</p>
   </div>
 </div>
 
@@ -1135,6 +1135,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v43','2026-11-07','익힌 구절 목록을 한 줄에 하나씩 번호 붙여 복사'],
  ['v42','2026-11-07','ElevenLabs 오류 이유 표시 · 목록 없이도 기본 목소리 6개로 바로 사용'],
  ['v41','2026-11-07','암송카드 음성 읽기(내장 음성·ElevenLabs, 연속·반복 재생) · 익힌 구절 목록 복사·공유'],
  ['v40','2026-10-31','사용법의 숫자·버전·변경 내역이 코드에서 자동으로 채워짐'],
@@ -1253,7 +1254,7 @@ function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.r
 function weekNew(){const t=today();let n=0;for(let i=0;i<7;i++){const d=S.stats.days[addDays(t,-i)];if(d)n+=d.nw||0;}return n;}
 function dayVerseRows(days,t,n){return Array.from({length:n},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x||(!(x.nwRefs||[]).length&&!(x.revRefs||[]).length))return '';const [,m,dd]=d.split('-');
   return `<tr><td>${+m}/${+dd}</td><td>${(x.nwRefs||[]).map(r=>`<span class="st mst">${esc(r)}</span>`).join(' ')||'—'}</td><td style="color:var(--muted)">${(x.revRefs||[]).map(esc).join(', ')||'—'}</td></tr>`;}).join('');}
-function learnedText(){const L=learnedRefs();const d=today().split('-');return `성경 암송 — 지금까지 익힌 구절 ${L.length}개 / ${S.verses.length}개 (${+d[0]}.${+d[1]}.${+d[2]})\n`+L.join(', ');}
+function learnedText(){const L=learnedRefs();const d=today().split('-');return `성경 암송 — 지금까지 익힌 구절 ${L.length}개 / ${S.verses.length}개 (${+d[0]}.${+d[1]}.${+d[2]})\n`+L.map((r,i)=>`${i+1}. ${r}`).join('\n');}
 async function copyText(t){try{await navigator.clipboard.writeText(t);return true;}catch(e){return false;}}
 document.addEventListener('click',async e=>{const id=e.target&&e.target.id;if(!['copyLearned','shareLearned','showLearned'].includes(id))return;const ta=$('learnedTa'),msg=$('copyMsg');
   if(id==='copyLearned'){const ok=await copyText(learnedText());msg.textContent=ok?'복사했습니다. 카톡·메모에 붙여 넣으세요.':'자동 복사가 막혀 있습니다. 아래 목록에서 직접 복사하세요.';if(!ok){ta.hidden=false;ta.value=learnedText();ta.select();}}
@@ -1279,7 +1280,7 @@ function renderLog(){
       <tr><td style="width:120px">익힌 구절</td><td>${learnedRefs().length}개 / ${S.verses.length}개${learnedRefs().length?` · 마지막 <b>${esc(learnedRefs().slice(-1)[0])}</b>`:''}</td></tr>
       <tr><td>완성도</td><td><b>${completion()}%</b> <span class="note">(전 구절 숙달 = 100%. 단계마다 오르고, 복습 간격이 14일 이상이 되면 그 구절은 100%)</span></td></tr>
       <tr><td>다음 차례</td><td>${nextRefs(5).map(esc).join(', ')||'모두 익혔습니다'}</td></tr>
-      <tr><td>목록 내보내기</td><td><button class="btn" id="copyLearned">익힌 구절 주소 복사</button> <button class="btn" id="shareLearned">공유</button> <button class="btn" id="showLearned">목록 보기</button> <span class="note" id="copyMsg"></span><textarea id="learnedTa" hidden rows="5" style="width:100%;margin-top:6px;font:inherit;font-size:13px"></textarea></td></tr>
+      <tr><td>목록 내보내기</td><td><button class="btn" id="copyLearned">익힌 구절 주소 복사</button> <button class="btn" id="shareLearned">공유</button> <button class="btn" id="showLearned">목록 보기</button> <span class="note" id="copyMsg"></span><textarea id="learnedTa" hidden rows="10" style="width:100%;margin-top:6px;font:inherit;font-size:13px"></textarea></td></tr>
       <tr><td>이번 주 새로 익힘</td><td>${weekNew()}개 · 오늘 ${(D().nwRefs||[]).map(esc).join(', ')||'—'}</td></tr>
     </tbody></table></div>
     <h3>날짜별 학습 구절</h3>
