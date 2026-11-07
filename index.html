@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v40">
+<meta name="app-build" content="v41">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -62,6 +62,8 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .addrq{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .addrq input{font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:2px;width:160px}
 .cards{display:flex;flex-direction:column;gap:12px;align-items:center}
+.player{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:8px 12px;margin:0 auto 10px;max-width:640px;border:1px solid var(--grid);background:var(--surface);border-radius:6px}
+.player.on{border-color:var(--accent,#2f6f4e)}
 .cardbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;max-width:640px}
 .cardbar select{max-width:260px}
 .pbar{display:inline-block;vertical-align:middle;width:70px;height:8px;border:1px solid var(--grid);background:var(--surface);margin-right:6px;border-radius:2px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--accent,#2f6f4e)}
@@ -209,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v40</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v41</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -229,7 +231,15 @@ label{font-size:13px}
     </div>
   </section>
 
-  <section class="view" id="v-cards" hidden><div class="cards" id="cardsBox"></div></section>
+  <section class="view" id="v-cards" hidden>
+    <div class="player" id="player">
+      <button class="btn primary" id="ttsPlay">▶ 읽어 주기</button><button class="btn" id="ttsStop" disabled>■ 정지</button>
+      <select id="ttsMode" title="재생 방식"><option value="one">이 구절만</option><option value="seq" selected>이어서 끝까지</option><option value="loop">전체 반복</option><option value="rone">이 구절 반복</option></select>
+      <select id="ttsRep" title="구절당 반복"><option value="1">1번씩</option><option value="2" selected>2번씩</option><option value="3">3번씩</option></select>
+      <span class="note" id="ttsMsg"></span>
+      <audio id="ttsAudio" preload="auto" playsinline></audio>
+    </div>
+    <div class="cards" id="cardsBox"></div></section>
 
   <section class="view panel" id="v-exam" hidden><div class="box" id="examBox"></div></section>
 
@@ -259,6 +269,17 @@ label{font-size:13px}
       <div class="row"><label><input type="checkbox" id="autoPlan"> 하루 새 구절을 계획에 맞춰 자동 조정</label><label for="newPer">수동 하루 새 구절</label><select id="newPer"><option>3</option><option>4</option><option>5</option><option>7</option><option>10</option></select>
         <label><input type="checkbox" id="strictSp"> 띄어쓰기까지 채점</label></div>
       <p class="note">띄어쓰기 채점을 끄면 글자·문장부호만 맞으면 통과하고, 띄어쓰기 차이는 노란 표시로만 알려 줍니다.</p>
+      <h2 style="margin-top:8px">음성 읽기 (암송카드)</h2>
+      <div class="row"><label for="ttsEngine">음성</label><select id="ttsEngine"><option value="browser">기기 내장 음성 (무료·무제한)</option><option value="el">ElevenLabs (자연스러움 · 월 1만 크레딧 무료)</option></select>
+        <label><input type="checkbox" id="ttsAddr" checked> 주소부터 읽기</label>
+        <label for="ttsGap">구절 사이</label><select id="ttsGap"><option value="0.5">0.5초</option><option value="1" selected>1초</option><option value="2">2초</option><option value="3">3초</option></select>
+        <label for="ttsRate">빠르기(내장 음성)</label><select id="ttsRate"><option value="0.8">느리게</option><option value="1" selected>보통</option><option value="1.2">빠르게</option></select></div>
+      <div class="row" id="elRow"><label for="elKey">ElevenLabs API 키</label><input type="password" id="elKey" placeholder="xi-… 키를 붙여 넣기" autocomplete="off" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:220px">
+        <button class="btn" id="elKeySave">키 저장</button><button class="btn" id="elVoices">음성 목록 불러오기</button>
+        <label for="elVoice">목소리</label><select id="elVoice"><option value="">(먼저 목록을 불러오세요)</option></select>
+        <label for="elModel">모델</label><select id="elModel"><option value="eleven_flash_v2_5" selected>Flash v2.5 (글자당 0.5크레딧)</option><option value="eleven_multilingual_v2">Multilingual v2 (글자당 1크레딧)</option></select>
+        <button class="btn" id="elTest">시험 듣기</button></div>
+      <p class="note" id="elMsg">키는 본인 계정에만 저장됩니다. 한 번 만든 음성은 계정 공용 저장소에 보관되어 다시 만들지 않으므로, 167구절 전체를 한 번 만드는 데 Flash 기준 약 1만 크레딧 안팎이 듭니다(주소 읽기 포함). 사용량: <b id="elUsed">0</b>자 생성 (이번 달)</p>
       <h2 style="margin-top:8px">백업과 복구</h2>
       <p class="note">매일 첫 접속과 하루 완료 때 계정 저장소에 자동 백업(30일 보관). 기기 간 기록이 다르면 지우지 않고 합칩니다.</p>
       <div class="row"><button class="btn" id="bkNow">지금 백업</button><span class="note" id="bkMsg"></span></div>
@@ -299,12 +320,13 @@ label{font-size:13px}
       <p>같은 탭의 「종이 시험지」는 같은 설정으로 A4 시험지를 만듭니다. 번호·주소 아래 손글씨 줄 첫머리에 첫 어절이 인쇄되고, 줄 간격(11·13·15mm)을 고를 수 있으며 정답지는 마지막 장에 따로 붙습니다. 「PDF 저장·공유」를 누르면 PDF 파일이 만들어져 카카오톡·파일 앱·AirDrop으로 보내거나 프린트할 수 있고, Safari·노트북에서는 「인쇄」로 바로 인쇄 창이 열립니다.</p>
       <h3>매일 이어가기</h3>
       <p>하루 목표는 「오늘 복습 전부 + 새 구절(계획에 따라 자동 조정, 기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다.</p>
-      <p>「기록」 탭에는 진도(익힌 구절 수·완성도 %·다음 차례), 날짜별로 새로 익힌 구절과 복습한 구절, 12주 출석 잔디, 배지, 모의시험 회차별 점수, 최근 14일 표가 있습니다. 완성도는 구절마다 배우는 중 12~37%, 익힘 60~90%, 숙달 100%로 매겨 전체 평균을 낸 값이라, 모든 구절이 숙달되면 100%가 됩니다.</p>
+      <p>「기록」 탭에는 진도(익힌 구절 수·완성도 %·다음 차례, 익힌 구절 주소 목록 복사·공유), 날짜별로 새로 익힌 구절과 복습한 구절, 12주 출석 잔디, 배지, 모의시험 회차별 점수, 최근 14일 표가 있습니다. 완성도는 구절마다 배우는 중 12~37%, 익힘 60~90%, 숙달 100%로 매겨 전체 평균을 낸 값이라, 모든 구절이 숙달되면 100%가 됩니다.</p>
       <p>「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·익힌 구절 수·완성도·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수를 한 표에서 봅니다(완성도 순). 오답 내용은 공유되지 않으며, 끄면 내 줄이 바로 내려갑니다.</p>
       <h3>기기 동기화와 기록 보호</h3>
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰·아이패드·노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어지고, 서로의 기록은 볼 수 없습니다. 기기 간 기록이 다르면 지우지 않고 합치며, 매일 첫 접속과 하루 완료 때 계정에 자동 백업(30일 보관)되어 「설정」에서 되돌릴 수 있습니다. 상단 초록 점이 동기화 상태이고, 그 옆 v 숫자가 앱 버전입니다(지금 <span data-g="ver"></span>, <span data-g="rel"></span>). 새 버전이 올라오면 다음에 열 때 자동으로 바뀝니다.</p>
       <h3>암송카드</h3>
       <p>휴대폰으로 타이핑이 어려울 때 쓰는 탭입니다. 출제 순서대로 한 장씩 넘기며 소리 내어 읽습니다. 카드 <b>가운데</b>를 누르면 본문이 가려지고 다시 누르면 보이며, <b>오른쪽</b>을 누르면 다음, <b>왼쪽</b>을 누르면 이전 구절입니다(좌우로 밀어도 됩니다). 위쪽 목록에서 원하는 구절을 바로 고르거나 주소를 입력해 이동할 수 있고, 「오늘 학습·복습분」「약점 구절」로 범위를 바꿀 수 있습니다. 노트북에서는 ←→ 키와 스페이스를 씁니다.</p>
+      <p><b>음성 읽기</b> — 카드 위 「▶ 읽어 주기」를 누르면 주소부터 본문까지 읽어 줍니다. 「이 구절만 / 이어서 끝까지 / 전체 반복 / 이 구절 반복」과 구절당 1~3번 반복을 고를 수 있고, 읽는 동안 카드가 따라 넘어갑니다. 음성은 「설정」에서 고릅니다: 기기 내장 음성(무료·무제한)이 기본이고, ElevenLabs API 키를 넣으면 더 자연스러운 목소리로 읽습니다. ElevenLabs로 한 번 만든 음성은 계정 공용 저장소에 보관되어 어느 기기에서든 다시 만들지 않으며, 무료 월 1만 크레딧으로 Flash 모델 기준 전체 167구절을 한 번 만들 수 있습니다.</p>
       <h3>구절 목록 (관리자)</h3>
       <p>구절 본문·출제 가능성·「왜 외워야 하는가」는 관리자 계정으로 로그인했을 때만 「구절 목록·설정」 탭에서 고칠 수 있습니다. 다른 계정에는 「설정」만 보입니다.</p>
       <h3>이번 버전에서 바뀐 것</h3>
@@ -332,7 +354,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v40</p>
+    <p class="note" style="margin:0;text-align:right">v41</p>
   </div>
 </div>
 
@@ -575,7 +597,7 @@ function load(){
   if(!d||!Array.isArray(d.verses)||!d.verses.length){
     d={verses:parseList(SAMPLE).items,progress:{},settings:{},daily:{},sample:false};
   }
-  d.settings=Object.assign({newPerDay:5,strictSpace:false,share:true,nick:''},d.settings||{});
+  d.settings=Object.assign({newPerDay:5,strictSpace:false,share:true,nick:'',ttsEngine:'browser',ttsAddr:true,ttsGap:1,ttsRate:1,ttsRep:2,ttsMode:'seq',elKey:'',elVoice:'',elVoiceName:'',elModel:'eleven_flash_v2_5',elUsage:{ym:'',chars:0}},d.settings||{});
   d.progress=d.progress||{};d.daily=d.daily||{};d.errors=d.errors||[];d.stats=d.stats||{days:{},badges:{}};d.stats.days=d.stats.days||{};d.stats.badges=d.stats.badges||{};
   return migrate(d);
 }
@@ -986,6 +1008,52 @@ function startDrill(){
 
 
 /* 암송카드 */
+/* ===== 음성 읽기 ===== */
+const BOOKS={창:'창세기',출:'출애굽기',레:'레위기',민:'민수기',신:'신명기',수:'여호수아',삿:'사사기',룻:'룻기',삼상:'사무엘상',삼하:'사무엘하',왕상:'열왕기상',왕하:'열왕기하',대상:'역대상',대하:'역대하',스:'에스라',느:'느헤미야',에:'에스더',욥:'욥기',시:'시편',잠:'잠언',전:'전도서',아:'아가',사:'이사야',렘:'예레미야',애:'예레미야애가',겔:'에스겔',단:'다니엘',호:'호세아',욜:'요엘',암:'아모스',옵:'오바댜',욘:'요나',미:'미가',나:'나훔',합:'하박국',습:'스바냐',학:'학개',슥:'스가랴',말:'말라기',마:'마태복음',막:'마가복음',눅:'누가복음',요:'요한복음',행:'사도행전',롬:'로마서',고전:'고린도전서',고후:'고린도후서',갈:'갈라디아서',엡:'에베소서',빌:'빌립보서',골:'골로새서',살전:'데살로니가전서',살후:'데살로니가후서',딤전:'디모데전서',딤후:'디모데후서',딛:'디도서',몬:'빌레몬서',히:'히브리서',약:'야고보서',벧전:'베드로전서',벧후:'베드로후서',요일:'요한일서',요이:'요한이서',요삼:'요한삼서',유:'유다서',계:'요한계시록'};
+function spokenRef(ref){const m=ref.match(/^(\S+)\s+(\d+):(\d+)(?:-(\d+))?/);if(!m)return ref;const b=BOOKS[m[1]]||m[1];let t=`${b} ${m[2]}장 ${m[3]}절`;if(m[4])t+=`에서 ${m[4]}절`;return t;}
+const TTS=(()=>{
+  const mem=new Map();let stopFlag=false,cur=null,playing=false;
+  const hash=s=>{let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36);};
+  const keyOf=(text)=>`el_${S.settings.elVoice}_${S.settings.elModel}_${hash(text)}`;
+  async function cacheGet(k){if(mem.has(k))return mem.get(k);
+    try{if(self.caches){const c=await caches.open('tts-v1');const r=await c.match('/tts/'+k);if(r){const b=await r.blob();mem.set(k,b);return b;}}}catch(e){}
+    try{if(window.__fsAudioGet){const b64=await window.__fsAudioGet(k);if(b64){const b=b64toBlob(b64);mem.set(k,b);cachePutLocal(k,b);return b;}}}catch(e){}
+    return null;}
+  async function cachePutLocal(k,blob){try{if(self.caches){const c=await caches.open('tts-v1');await c.put('/tts/'+k,new Response(blob,{headers:{'Content-Type':'audio/mpeg'}}));}}catch(e){}}
+  function b64toBlob(b64){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:'audio/mpeg'});}
+  function blobToB64(blob){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(',')[1]);fr.readAsDataURL(blob);});}
+  async function elGenerate(text,ref){const st=S.settings;if(!st.elKey)throw new Error('ElevenLabs API 키가 없습니다(설정 탭).');if(!st.elVoice)throw new Error('목소리를 고르세요(설정 탭 → 음성 목록 불러오기).');
+    const k=keyOf(text);const hit=await cacheGet(k);if(hit)return hit;
+    const r=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${st.elVoice}?output_format=mp3_44100_64`,{method:'POST',headers:{'xi-api-key':st.elKey,'Content-Type':'application/json','Accept':'audio/mpeg'},body:JSON.stringify({text,model_id:st.elModel||'eleven_flash_v2_5'})});
+    if(!r.ok){let d='';try{d=(await r.json()).detail;d=typeof d==='string'?d:(d&&d.message)||JSON.stringify(d);}catch(e){}throw new Error('ElevenLabs '+r.status+(d?': '+d:''));}
+    const blob=await r.blob();mem.set(k,blob);cachePutLocal(k,blob);
+    const ym=today().slice(0,7);if(!st.elUsage||st.elUsage.ym!==ym)st.elUsage={ym,chars:0};st.elUsage.chars+=text.length;save();
+    try{if(window.__fsAudioPut)window.__fsAudioPut(k,{b64:await blobToB64(blob),ref:ref||'',voice:st.elVoice,model:st.elModel,ts:Date.now()});}catch(e){}
+    return blob;}
+  function playBlob(blob){return new Promise((ok,no)=>{const a=$('ttsAudio');if(cur&&cur.url)URL.revokeObjectURL(cur.url);const url=URL.createObjectURL(blob);cur={url};a.onended=()=>ok();a.onerror=()=>no(new Error('재생 오류'));a.src=url;a.play().then(()=>{},e=>no(new Error('재생이 막혔습니다. ▶ 버튼을 다시 누르세요.')));});}
+  function speakBrowser(text){return new Promise((ok,no)=>{if(!window.speechSynthesis)return no(new Error('이 기기에는 내장 음성이 없습니다.'));const u=new SpeechSynthesisUtterance(text);u.lang='ko-KR';u.rate=S.settings.ttsRate||1;
+    const vs=speechSynthesis.getVoices();const ko=vs.find(v=>/ko/i.test(v.lang)&&/Yuna|Premium|Enhanced/i.test(v.name))||vs.find(v=>/ko/i.test(v.lang));if(ko)u.voice=ko;
+    u.onend=()=>ok();u.onerror=e=>{if(e.error==='interrupted'||e.error==='canceled')ok();else no(new Error('내장 음성 오류: '+e.error));};cur={utter:u};speechSynthesis.cancel();speechSynthesis.speak(u);});}
+  async function speak(text,opt={}){const eng=opt.force||S.settings.ttsEngine||'browser';if(eng==='el'){const b=await elGenerate(text,opt.ref);if(stopFlag&&!opt.force)return;await playBlob(b);}else await speakBrowser(text);}
+  async function prefetch(text,ref){try{if((S.settings.ttsEngine||'browser')==='el')await elGenerate(text,ref);}catch(e){}}
+  function sleep(ms){return new Promise(r=>{const t=setTimeout(r,ms);cur={timer:t,res:r};});}
+  function stop(){stopFlag=true;playing=false;try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}const a=$('ttsAudio');try{a.pause();a.onended=null;a.src='';}catch(e){}if(cur&&cur.timer){clearTimeout(cur.timer);cur.res&&cur.res();}uiState();}
+  function uiState(msg){const on=playing;$('ttsPlay').textContent=on?'⏸ 잠시 멈춤':'▶ 읽어 주기';$('ttsStop').disabled=!on;$('player').classList.toggle('on',on);if(msg!==undefined)$('ttsMsg').textContent=msg;}
+  async function run(){const list=cardOrder();if(!list.length)return;stopFlag=false;playing=true;uiState('');
+    const mode=$('ttsMode').value,reps=+$('ttsRep').value||1,gap=(S.settings.ttsGap??1)*1000;S.settings.ttsMode=mode;S.settings.ttsRep=reps;save();
+    try{let i=cardI;while(!stopFlag){cardI=i;renderCards();const ref=list[i],v=verseOf(ref);
+        const nxt=list[(i+1)%list.length];if(nxt&&(mode==='seq'||mode==='loop'))prefetch(spokenRef(nxt)+'. '+verseOf(nxt).text,nxt);
+        for(let r=0;r<reps&&!stopFlag;r++){uiState(`${i+1}/${list.length} · ${ref}${reps>1?` (${r+1}/${reps})`:''}`);
+          const text=(S.settings.ttsAddr!==false?spokenRef(ref)+'. ':'')+v.text;await speak(text,{ref});if(stopFlag)break;await sleep(gap);}
+        if(stopFlag)break;
+        if(mode==='one')break;if(mode==='rone')continue;
+        i++;if(i>=list.length){if(mode==='loop')i=0;else break;}}
+    }catch(e){uiState('오류: '+(e.message||e));playing=false;uiState();return;}
+    playing=false;uiState(stopFlag?'정지':'끝');}
+  function toggle(){if(playing){stop();return;}run();}
+  function isPlaying(){return playing;}
+  return {speak,run,stop,toggle,isPlaying,uiState};
+})();
 let cardI=0,cardHide=false,cardBig=false,cardMode='all';
 function cardOrder(){
   const t=today();const q=buildQueue();
@@ -1067,6 +1135,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v41','2026-11-07','암송카드 음성 읽기(내장 음성·ElevenLabs, 연속·반복 재생) · 익힌 구절 목록 복사·공유'],
  ['v40','2026-10-31','사용법의 숫자·버전·변경 내역이 코드에서 자동으로 채워짐'],
  ['v39','2026-10-31','사용법 전면 개정 · 안내 문구 현행화'],
  ['v37','2026-10-31','종이 시험지 두 번째 열 때 쪽이 한 장에 몰리던 오류 수정'],
@@ -1183,6 +1252,12 @@ function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.r
 function weekNew(){const t=today();let n=0;for(let i=0;i<7;i++){const d=S.stats.days[addDays(t,-i)];if(d)n+=d.nw||0;}return n;}
 function dayVerseRows(days,t,n){return Array.from({length:n},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x||(!(x.nwRefs||[]).length&&!(x.revRefs||[]).length))return '';const [,m,dd]=d.split('-');
   return `<tr><td>${+m}/${+dd}</td><td>${(x.nwRefs||[]).map(r=>`<span class="st mst">${esc(r)}</span>`).join(' ')||'—'}</td><td style="color:var(--muted)">${(x.revRefs||[]).map(esc).join(', ')||'—'}</td></tr>`;}).join('');}
+function learnedText(){const L=learnedRefs();const d=today().split('-');return `성경 암송 — 지금까지 익힌 구절 ${L.length}개 / ${S.verses.length}개 (${+d[0]}.${+d[1]}.${+d[2]})\n`+L.join(', ');}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true;}catch(e){return false;}}
+document.addEventListener('click',async e=>{const id=e.target&&e.target.id;if(!['copyLearned','shareLearned','showLearned'].includes(id))return;const ta=$('learnedTa'),msg=$('copyMsg');
+  if(id==='copyLearned'){const ok=await copyText(learnedText());msg.textContent=ok?'복사했습니다. 카톡·메모에 붙여 넣으세요.':'자동 복사가 막혀 있습니다. 아래 목록에서 직접 복사하세요.';if(!ok){ta.hidden=false;ta.value=learnedText();ta.select();}}
+  else if(id==='shareLearned'){const t=learnedText();if(navigator.share){try{await navigator.share({text:t});}catch(err){}}else{const ok=await copyText(t);msg.textContent=ok?'이 기기는 공유 창이 없어 복사했습니다.':'';}}
+  else{ta.hidden=!ta.hidden;if(!ta.hidden){ta.value=learnedText();ta.focus();ta.select();}}});
 function renderLog(){
   const b=$('logBox'),t=today(),{streak,best}=streakInfo(),days=S.stats.days;
   const dow=(s)=>{const [y,m,d]=s.split('-').map(Number);return (new Date(y,m-1,d).getDay()+6)%7;};
@@ -1203,6 +1278,7 @@ function renderLog(){
       <tr><td style="width:120px">익힌 구절</td><td>${learnedRefs().length}개 / ${S.verses.length}개${learnedRefs().length?` · 마지막 <b>${esc(learnedRefs().slice(-1)[0])}</b>`:''}</td></tr>
       <tr><td>완성도</td><td><b>${completion()}%</b> <span class="note">(전 구절 숙달 = 100%. 단계마다 오르고, 복습 간격이 14일 이상이 되면 그 구절은 100%)</span></td></tr>
       <tr><td>다음 차례</td><td>${nextRefs(5).map(esc).join(', ')||'모두 익혔습니다'}</td></tr>
+      <tr><td>목록 내보내기</td><td><button class="btn" id="copyLearned">익힌 구절 주소 복사</button> <button class="btn" id="shareLearned">공유</button> <button class="btn" id="showLearned">목록 보기</button> <span class="note" id="copyMsg"></span><textarea id="learnedTa" hidden rows="5" style="width:100%;margin-top:6px;font:inherit;font-size:13px"></textarea></td></tr>
       <tr><td>이번 주 새로 익힘</td><td>${weekNew()}개 · 오늘 ${(D().nwRefs||[]).map(esc).join(', ')||'—'}</td></tr>
     </tbody></table></div>
     <h3>날짜별 학습 구절</h3>
@@ -1241,6 +1317,10 @@ function applyAdminUI(){const a=isAdmin();$('listAdmin').hidden=!a;$('tabList').
 function renderList(){applyAdminUI();
   $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text+(v.note?' // '+v.note:'')).join('\n');
   $('sampleWarn').hidden=!S.sample;$('newPer').value=String(S.settings.newPerDay);$('strictSp').checked=!!S.settings.strictSpace;
+  const st=S.settings;$('ttsEngine').value=st.ttsEngine||'browser';$('ttsAddr').checked=st.ttsAddr!==false;$('ttsGap').value=String(st.ttsGap??1);$('ttsRate').value=String(st.ttsRate??1);
+  $('elRow').hidden=(st.ttsEngine||'browser')!=='el';$('elKey').value=st.elKey||'';$('elModel').value=st.elModel||'eleven_flash_v2_5';
+  if(st.elVoice&&!$('elVoice').querySelector(`option[value="${st.elVoice}"]`))$('elVoice').innerHTML=`<option value="${esc(st.elVoice)}" selected>${esc(st.elVoiceName||st.elVoice)}</option>`;
+  const ym=today().slice(0,7);$('elUsed').textContent=(st.elUsage&&st.elUsage.ym===ym)?st.elUsage.chars:0;
   $('listMsg').textContent=`${S.verses.length}개 구절`;$('listConfirm').hidden=true;$('resetConfirm').innerHTML='';renderBackups();
   $('examDate').value=S.settings.examDate;$('finishDate').value=S.settings.finishDate;$('restDay').value=String(S.settings.restDay??0);$('missPerWeek').value=String(S.settings.missPerWeek??1);$('autoPlan').checked=!!S.settings.autoPlan;renderPlanMsg();
 }
@@ -1259,6 +1339,20 @@ $('newPer').onchange=e=>{S.settings.newPerDay=+e.target.value;save();renderSheet
 function renderPlanMsg(){const m=$('planMsg');if(!m)return;const pi=planInfo();m.textContent=phase()==='exam'?`완료 목표일이 지나 약점 보강 기간입니다. 새 구절 없음 · 시험 D-${pi.dExam}.`:`남은 새 구절 ${pi.left}개 ÷ 남은 학습일 ${pi.days}일(쉬는 날·결석 허용 제외) = 하루 ${pi.perDay}구절. 시험 D-${pi.dExam}.`;}
 ['examDate','finishDate','restDay','missPerWeek','autoPlan'].forEach(id=>{$(id).onchange=e=>{if(id==='autoPlan')S.settings.autoPlan=e.target.checked;else if(id==='restDay'||id==='missPerWeek')S.settings[id]=+e.target.value;else S.settings[id]=e.target.value;save();renderPlanMsg();renderSheet();};});
 $('strictSp').onchange=e=>{S.settings.strictSpace=e.target.checked;save();};
+$('ttsEngine').onchange=e=>{S.settings.ttsEngine=e.target.value;save();renderList();};
+$('ttsAddr').onchange=e=>{S.settings.ttsAddr=e.target.checked;save();};
+$('ttsGap').onchange=e=>{S.settings.ttsGap=+e.target.value;save();};
+$('ttsRate').onchange=e=>{S.settings.ttsRate=+e.target.value;save();};
+$('elKeySave').onclick=()=>{S.settings.elKey=$('elKey').value.trim();save();$('elMsg').textContent=S.settings.elKey?'키를 저장했습니다. 「음성 목록 불러오기」를 누르세요.':'키를 지웠습니다.';};
+$('elVoices').onclick=async()=>{const key=$('elKey').value.trim()||S.settings.elKey;if(!key){$('elMsg').textContent='먼저 API 키를 넣고 저장하세요.';return;}
+  $('elMsg').textContent='목록 불러오는 중…';try{const r=await fetch('https://api.elevenlabs.io/v1/voices',{headers:{'xi-api-key':key}});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();
+    const vs=(j.voices||[]).map(v=>({id:v.voice_id,name:v.name,lab:(v.labels&&(v.labels.language||v.labels.accent))||''}));
+    $('elVoice').innerHTML=vs.map(v=>`<option value="${esc(v.id)}" ${v.id===S.settings.elVoice?'selected':''}>${esc(v.name)}${v.lab?' ('+esc(v.lab)+')':''}</option>`).join('');
+    if(!S.settings.elVoice&&vs.length){S.settings.elVoice=vs[0].id;S.settings.elVoiceName=vs[0].name;save();}
+    $('elMsg').textContent=`목소리 ${vs.length}개. 한국어는 어떤 목소리든 읽을 수 있으니 골라서 「시험 듣기」로 확인하세요.`;}catch(e){$('elMsg').textContent='불러오기 실패: '+(e.message||e)+' — 키가 맞는지 확인하세요.';}};
+$('elVoice').onchange=e=>{S.settings.elVoice=e.target.value;S.settings.elVoiceName=e.target.selectedOptions[0]?.text||'';save();};
+$('elModel').onchange=e=>{S.settings.elModel=e.target.value;save();};
+$('elTest').onclick=async()=>{$('elMsg').textContent='시험 음성 만드는 중…';try{await TTS.speak('태초에 하나님이 천지를 창조하시니라',{force:'el',ref:'시험'});$('elMsg').textContent='들리면 설정 완료입니다.';}catch(e){$('elMsg').textContent='실패: '+(e.message||e);}};
 $('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다. 지우기 전에 오늘 날짜 백업을 먼저 만듭니다. 확인하려면 <b>지우기</b>라고 입력하세요.</span> <input id="rsTxt" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);width:90px"> <button class="btn danger" id="rsY">실행</button> <button class="btn" id="rsN">취소</button>';
   $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
 async function renderBackups(){const w=$('backupWrap');if(!w)return;if(!window.__listBackups){w.innerHTML='<p class="note">로그인하면 백업 목록이 보입니다.</p>';return;}
@@ -1271,7 +1365,7 @@ async function renderBackups(){const w=$('backupWrap');if(!w)return;if(!window._
 document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>show(t.dataset.v));
 function show(v){
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.v===v)));
-  ['learn','cards','exam','log','notes','list','guide'].forEach(k=>$('v-'+k).hidden=k!==v);
+  ['learn','cards','exam','log','notes','list','guide'].forEach(k=>$('v-'+k).hidden=k!==v);if(v!=='cards'&&typeof TTS!=='undefined'&&TTS.isPlaying())TTS.stop();
   if(v==='learn')renderAll();if(v==='cards')renderCards();if(v==='log')renderLog();if(v==='exam')renderExam();if(v==='notes')renderNotes();if(v==='list')renderList();if(v==='guide')renderGuide();
 }
 function toggleCover(){const c=$('cover');c.hidden=!c.hidden;if(c.hidden){const a=$('ans')||$('exAns');if(a)a.focus({preventScroll:true});}}
@@ -1280,7 +1374,10 @@ $('homeBtn').onclick=e=>{e.preventDefault();const go=()=>{location.href=location
   async function chk(){if(checking||!navigator.onLine)return;checking=true;try{const res=await fetch(location.pathname+'?chk='+Date.now(),{cache:'no-store'});const txt=await res.text();const m=txt.match(/name="app-build" content="(v\d+)"/);
     if(m&&m[1]!==mine){if(window.__flushNow){try{await Promise.race([window.__flushNow(),new Promise(r=>setTimeout(r,2500))]);}catch(e){}}location.replace(location.pathname+'?r='+Date.now());}}catch(e){}checking=false;}
   setTimeout(chk,4000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk();});setInterval(chk,10*60*1000);})();
-$('hideBtn').onclick=toggleCover;$('cover').onclick=toggleCover;
+$('hideBtn').onclick=toggleCover;
+$('ttsPlay').onclick=()=>TTS.toggle();$('ttsStop').onclick=()=>TTS.stop();
+$('ttsMode').value=S.settings.ttsMode||'seq';$('ttsRep').value=String(S.settings.ttsRep||2);
+if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}$('cover').onclick=toggleCover;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();toggleCover();}});
 $('rows').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)return;cur=makeItem(tr.dataset.ref,'free',3);lastFb=null;renderAll();});
 $('rows').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('tr')){cur=makeItem(e.target.dataset.ref,'free',3);lastFb=null;renderAll();}});
@@ -1318,6 +1415,8 @@ $('today').textContent=today().replace(/-/g,'.');
   setTimeout(()=>{if(!authReady&&gate&&!gate.hidden){gbtn.disabled=false;gbtn.textContent='Google로 로그인';diag.push('로그인 상태 확인이 7초 안에 끝나지 않아 바로 진행합니다 (SDK '+firebase.SDK_VERSION+')');showDiag();}},7000);
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
+  window.__fsAudioGet=async k=>{if(!uid)return null;const d=await fs.doc('audio/'+k).get();return d.exists?(d.data().b64||null):null;};
+  window.__fsAudioPut=async(k,data)=>{if(!uid)return;if((data.b64||'').length>900000)return;await fs.doc('audio/'+k).set(data);};
   async function backupDaily(force){
     if(!uid)return;const t=today();
     try{const bref=fs.doc('users/'+uid+'/backups/'+t);
