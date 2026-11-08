@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v48">
+<meta name="app-build" content="v49">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v48</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v49</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -305,6 +305,8 @@ label{font-size:13px}
       </ol>
       <h3>복습: 간격을 벌려 가며</h3>
       <p>네 단계를 마친 구절은 <span data-g="ints">다음 날, 그다음은 3일·7일·14일·30일</span> 뒤에 다시 나옵니다. 복습은 먼저 본문 앞부분을 보고 <b>주소를 맞힌 뒤</b> 「주소만」으로 씁니다(주소도 함께 외워지고, 틀린 주소는 오답 노트 「주소」 유형에 쌓입니다). 한 글자라도 틀리면 1일 간격으로 돌아가고, 바로 다시 써서 맞혀야 넘어갑니다. 14일 간격까지 올라간 구절을 「숙달」로 셉니다.</p>
+      <h3>듣기는 언제</h3>
+      <p>「따라 쓰기」(처음 익힐 때)에만 「🔊 듣기」가 있고, 그 뒤 단계와 복습에서는 답을 쓰기 전에 들을 수 없습니다. 암송은 기억에서 꺼내는 연습이라, 듣고 받아쓰면 효과가 없기 때문입니다. 채점 결과 옆의 「🔊 정답 듣기」로 방금 꺼낸 기억을 바른 소리로 굳히세요.</p>
       <h3>틀렸을 때</h3>
       <p>빨간 밑줄은 빠뜨리거나 틀린 정답 글자, 취소선은 잘못 쓴 글자입니다. 다시 치기 시작하면 정답이 접힙니다. 보고 베끼지 않고 기억에서 꺼내야 오래 남습니다. 띄어쓰기만 다른 경우는 노란 표시로만 알려 주고 통과시킵니다(「설정」에서 띄어쓰기까지 채점하도록 바꿀 수 있습니다).</p>
       <h3>오답이 다음 문제를 바꿉니다</h3>
@@ -357,7 +359,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v48</p>
+    <p class="note" style="margin:0;text-align:right">v49</p>
   </div>
 </div>
 
@@ -807,6 +809,10 @@ function anaHTML(f){
   if(f.a.conf)h+=`<div class="legend">${esc(f.a.conf)} 본문과 섞였습니다.</div>`;
   return h;
 }
+async function hearRef(b,ref){const label=b.textContent;if(b.dataset.on){TTS.stop();b.dataset.on='';b.textContent=label.replace('■ 멈춤','🔊 듣기');return;}b.dataset.on='1';const orig=b.textContent;b.textContent='■ 멈춤';
+  try{await TTS.speak(TTS.textOf(ref),{ref});}catch(e){b.title='음성 오류: '+(e.message||e);b.textContent='🔊 오류';setTimeout(()=>{b.textContent=orig;},2500);b.dataset.on='';return;}
+  b.dataset.on='';b.textContent=orig;}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#hearFb');if(b)hearRef(b,b.dataset.ref);});
 function fbHTML(){
   if(!lastFb)return '';
   const f=lastFb,r=f.r;let hd,body='';
@@ -816,7 +822,7 @@ function fbHTML(){
     body=anaHTML(f);
     if(diffOpen)body+=`<div class="diff">${r.html}</div><div class="legend">${r.charOk?'<span class="spm">␣</span> 띄어 써야 함 · <span class="spx">|</span> 붙여 써야 함':'<b class="miss">밑줄</b> 빠뜨리거나 틀린 정답 글자 · <s class="ins">취소선</s> 잘못 쓴 글자'} · 다시 치면 접힙니다</div>`;
     if(f.next)body+=`<div class="legend">다음: ${esc(f.next)}</div>`;}
-  return `<div class="fb ${r.pass?'pass':'fail'}"><div class="hd">${hd}</div>${body}</div>`;
+  return `<div class="fb ${r.pass?'pass':'fail'}"><div class="hd">${hd}<button class="link" id="hearFb" data-ref="${esc(f.ref)}" title="방금 쓴 구절을 바른 소리로 확인">🔊 정답 듣기</button></div>${body}</div>`;
 }
 function warnLine(it){
   if(it.stage!==3)return '';const p=P(it.ref),wi=weakIdx(p);const bits=[];
@@ -844,7 +850,7 @@ function renderWork(){
     <div class="cue"><div class="ref">${cur.kind==='review'&&!cur.addrOk?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${warnLine(cur)}<div class="txt">${cur.kind==='review'&&!cur.addrOk?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div></div>
     ${cur.kind==='review'&&!cur.addrOk?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
     <div class="answrap" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}>${cur.stage===3?`<span class="prefix">${esc(verseOf(cur.ref).text.split(' ')[0])}</span>`:''}<textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="${cur.stage===3?'첫 어절에 이어서 입력 후 Enter':'입력 후 Enter'}" ${cur.stage===3?`data-prefix="${esc(verseOf(cur.ref).text.split(' ')[0])}"`:''}></textarea></div>
-    <div class="acts" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button><button class="btn" id="hear" title="이 구절을 음성으로 듣기 (복습·주소만 단계에서는 힌트로 기록)">🔊 듣기</button><span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
+    <div class="acts" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button>${cur.kind==='learn'&&cur.stage===0?'<button class="btn" id="hear" title="보고 들으며 익히기 (처음 익힐 때만)">🔊 듣기</button>':''}<span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
     ${fbHTML()}
     <p class="tip">${cur.stage===0?'입술로 소리 없이 읽으면서 치면 더 잘 남습니다.':cur.stage===4?'점선 빈칸이 지난번에 틀린 자리입니다. 그 자리를 떠올려 전체를 쓰세요.':cur.stage===3?'떠오르지 않으면 Tab으로 다음 어절만 봅니다.':'가려진 곳을 떠올려 전체를 씁니다.'}</p>`;
   const ai=$('addrIn');if(ai){const chk=()=>{const g=normRef(ai.value),want=normRef(cur.ref);const d=D();d.addrTries=(d.addrTries||0)+1;
@@ -855,10 +861,7 @@ function renderWork(){
   ta.addEventListener('input',()=>{if(lastFb&&!lastFb.r.pass&&diffOpen){diffOpen=false;const fb=w.querySelector('.fb');if(fb)fb.outerHTML=fbHTML();bindOpenDiff();}});
   ta.addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();hint();}});
   $('chk').onclick=submit;$('hint').onclick=hint;
-  $('hear').onclick=async()=>{const textOf=TTS.textOf;const b=$('hear');if(b.dataset.on){TTS.stop();b.dataset.on='';b.textContent='🔊 듣기';return;}b.dataset.on='1';b.textContent='■ 멈춤';
-    if(cur.stage>=1)cur.hints=Math.max(cur.hints||0,1);
-    try{await TTS.speak(textOf(cur.ref),{ref:cur.ref});}catch(e){b.title='음성 오류: '+(e.message||e);b.textContent='🔊 오류';setTimeout(()=>{b.textContent='🔊 듣기';},2500);b.dataset.on='';return;}
-    b.dataset.on='';b.textContent='🔊 듣기';};
+  const hb=$('hear');if(hb)hb.onclick=()=>hearRef(hb,cur.ref);
   if($('skip'))$('skip').onclick=()=>{const q=buildQueue();const pool=[...q.rev,...q.prog].filter(r=>r!==cur.ref);if(pool.length){const r=pool[0];cur=q.rev.includes(r)?makeItem(r,'review',3):makeItem(r,'learn',Math.min(P(r).stage,3));lastFb=null;renderAll();}};
   if($('back'))$('back').onclick=()=>{drill=null;cur=nextItem();lastFb=null;renderAll();};
   if(free)w.querySelectorAll('.step').forEach(b=>b.onclick=()=>{cur=makeItem(cur.ref,'free',+b.dataset.s);lastFb=null;renderAll();});
@@ -1198,7 +1201,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
- ['v48b','2026-11-08','학습 화면에 「🔊 듣기」(들으면 힌트 사용으로 기록)'],
+ ['v49','2026-11-08','듣기는 1단계(따라 쓰기)와 채점 뒤 「정답 듣기」에서만 — 답 쓰기 전에는 들을 수 없음'],
  ['v48','2026-11-08','따라 말하기를 끊어 읽기로 · 목소리 Alice/Brian · 시편은 "편" · 음성 미리 만들기는 설정(관리자)'],
  ['v47','2026-11-08','재생 중 바꾼 따라 말하기·빠르기·반복 횟수가 다음 조각부터 바로 적용'],
  ['v46','2026-11-08','재생 줄에서 목소리·따라 말하기 선택(계정별) · 빠르기 0.5까지 · ElevenLabs 느린 생성 · 관리자 키 공유'],
