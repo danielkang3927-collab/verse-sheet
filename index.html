@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v46">
+<meta name="app-build" content="v47">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v46</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v47</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -356,7 +356,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v46</p>
+    <p class="note" style="margin:0;text-align:right">v47</p>
   </div>
 </div>
 
@@ -1052,17 +1052,18 @@ const TTS=(()=>{
     navigator.mediaSession.setActionHandler('stop',()=>stop());navigator.mediaSession.setActionHandler('nexttrack',()=>{q.length=0;qi++;step();});navigator.mediaSession.setActionHandler('previoustrack',()=>{q.length=0;qi=Math.max(0,qi-1);step();});}catch(e){}}
   /* ElevenLabs 경로: 오디오 요소 하나에 '끝남' 이벤트로 다음 조각을 이어 붙이는 방식 (화면을 꺼도 이어짐) */
   let q=[],qi=0,qlist=[],qmode='seq',qreps=1,qgap=1000,lastDur=3000;
-  function buildVerse(i){const ref=qlist[i];const segs=[];for(let r=0;r<qreps;r++){segs.push({kind:'speech',ref,text:textOf(ref),i,r});segs.push({kind:'gap',ms:qgap});}return segs;}
+  function gapNow(){const g=S.settings.ttsGap;return g==='echo'?Math.max(1500,lastDur+500):(+(g??1))*1000;}
+  function buildVerse(i){qreps=+$('ttsRep').value||qreps;const ref=qlist[i];const segs=[];for(let r=0;r<qreps;r++){segs.push({kind:'speech',ref,text:textOf(ref),i,r});segs.push({kind:'gap'});}return segs;}
   async function step(){if(stopFlag)return;const a=$('ttsAudio');
     if(!q.length){if(qi>=qlist.length){if(qmode==='loop')qi=0;else{playing=false;uiState('끝');try{navigator.mediaSession.playbackState='none';}catch(e){}return;}}
       q=buildVerse(qi);cardI=qi;renderCards();
       for(let k=1;k<=3;k++){const j=qi+k;if(j>=qlist.length&&qmode!=='loop')break;const nx=qlist[j%qlist.length];if(nx&&(qmode==='seq'||qmode==='loop'))prefetch(textOf(nx),nx);}}
     const seg=q.shift();let blob;
-    if(seg.kind==='gap'){blob=silentBlob(seg.ms==='echo'?Math.max(1500,lastDur+500):seg.ms);}else{uiState(`${seg.i+1}/${qlist.length} · ${seg.ref}${qreps>1?` (${seg.r+1}/${qreps})`:''}`);mediaSession(seg.ref,seg.i,qlist.length);try{blob=await elGenerate(seg.text,seg.ref);}catch(e){playing=false;uiState('오류: '+(e.message||e));return;}}
+    if(seg.kind==='gap'){blob=silentBlob(gapNow());uiState(`${seg.i!==undefined?'':''}${$('ttsMsg').textContent.replace(/ · (쉼|따라 말하기).*$/,'')} · ${S.settings.ttsGap==='echo'?'따라 말하기':'쉼'}`);}else{uiState(`${seg.i+1}/${qlist.length} · ${seg.ref}${qreps>1?` (${seg.r+1}/${qreps})`:''}`);mediaSession(seg.ref,seg.i,qlist.length);try{blob=await elGenerate(seg.text,seg.ref);}catch(e){playing=false;uiState('오류: '+(e.message||e));return;}}
     if(stopFlag)return;
     if(!q.length){if(qmode==='one'){qi=qlist.length;qmode='one_end';}else if(qmode==='rone'){/* 같은 구절 */}else qi++;}
     if(cur&&cur.url)URL.revokeObjectURL(cur.url);const url=URL.createObjectURL(blob);cur={url};a.onended=()=>{if(seg.kind==='speech')lastDur=(a.duration||0)*1000/(a.playbackRate||1);step();};a.preservesPitch=true;a.playbackRate=seg.kind==='speech'?(S.settings.ttsRate||1):1;a.onerror=()=>{uiState('재생 오류');playing=false;};a.src=url;
-    try{await a.play();}catch(e){playing=false;uiState('재생이 막혔습니다. ▶ 버튼을 다시 누르세요.');}}
+    try{await a.play();a.playbackRate=seg.kind==='speech'?(S.settings.ttsRate||1):1;}catch(e){playing=false;uiState('재생이 막혔습니다. ▶ 버튼을 다시 누르세요.');}}
   async function run(){const list=cardOrder();if(!list.length)return;stopFlag=false;playing=true;uiState('');
     const mode=$('ttsMode').value,reps=+$('ttsRep').value||1,gap=S.settings.ttsGap==='echo'?'echo':(+(S.settings.ttsGap??1))*1000;S.settings.ttsMode=mode;S.settings.ttsRep=reps;save();
     if((S.settings.ttsEngine||'browser')==='el'){qlist=list;qmode=mode==='one'?'one':mode;qreps=reps;qgap=gap;qi=cardI;q=[];
@@ -1070,7 +1071,7 @@ const TTS=(()=>{
       step();return;}
     try{let i=cardI;while(!stopFlag){cardI=i;renderCards();const ref=list[i],v=verseOf(ref);
         for(let r=0;r<reps&&!stopFlag;r++){uiState(`${i+1}/${list.length} · ${ref}${reps>1?` (${r+1}/${reps})`:''}`);
-          const t0=Date.now();await speak(textOf(ref),{ref});if(stopFlag)break;await sleep(gap==='echo'?Math.max(1500,Date.now()-t0+500):gap);}
+          const t0=Date.now();await speak(textOf(ref),{ref});if(stopFlag)break;await sleep(S.settings.ttsGap==='echo'?Math.max(1500,Date.now()-t0+500):(+(S.settings.ttsGap??1))*1000);}
         if(stopFlag)break;
         if(mode==='one')break;if(mode==='rone')continue;
         i++;if(i>=list.length){if(mode==='loop')i=0;else break;}}
@@ -1166,6 +1167,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v47','2026-11-08','재생 중 바꾼 따라 말하기·빠르기·반복 횟수가 다음 조각부터 바로 적용'],
  ['v46','2026-11-08','재생 줄에서 목소리·따라 말하기 선택(계정별) · 빠르기 0.5까지 · ElevenLabs 느린 생성 · 관리자 키 공유'],
  ['v45','2026-11-08','음성 빠르기 조절(아주 느리게~빠르게, 음높이 유지) · 「읽은 길이만큼」 쉼으로 따라 말하기'],
  ['v44','2026-11-07','음성 읽기 백그라운드 재생(화면 꺼도 계속) · 잠금 화면 제어 · 음성 미리 만들기'],
@@ -1425,7 +1427,7 @@ $('hideBtn').onclick=toggleCover;
 $('ttsPlay').onclick=()=>TTS.toggle();$('ttsStop').onclick=()=>TTS.stop();$('ttsPre').onclick=()=>{if((S.settings.ttsEngine||'browser')!=='el'){$('ttsMsg').textContent='미리 만들기는 ElevenLabs 음성에서만 필요합니다(설정 탭).';return;}TTS.prebuild();};
 $('ttsMode').value=S.settings.ttsMode||'seq';$('ttsRep').value=String(S.settings.ttsRep||2);$('ttsSpeed').value=String(S.settings.ttsRate??1);fillVoiceSel();
 $('ttsVoiceSel').onchange=e=>{const v=e.target.value;if(v==='browser'){S.settings.ttsEngine='browser';}else{S.settings.ttsEngine='el';S.settings.elVoice=v;S.settings.elVoiceName=e.target.selectedOptions[0]?.text||'';}save();if(TTS.isPlaying()){TTS.stop();}};
-$('ttsEcho').onchange=e=>{S.settings.ttsGap=e.target.checked?'echo':1;save();};$('ttsSpeed').onchange=e=>{S.settings.ttsRate=+e.target.value;save();const a=$('ttsAudio');try{a.playbackRate=S.settings.ttsRate;}catch(x){}};
+$('ttsEcho').onchange=e=>{S.settings.ttsGap=e.target.checked?'echo':1;save();const g=$('ttsGap');if(g)g.value=e.target.checked?'echo':'1';};$('ttsSpeed').onchange=e=>{S.settings.ttsRate=+e.target.value;save();const a=$('ttsAudio');try{a.playbackRate=S.settings.ttsRate;}catch(x){}};
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}$('cover').onclick=toggleCover;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();toggleCover();}});
 $('rows').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)return;cur=makeItem(tr.dataset.ref,'free',3);lastFb=null;renderAll();});
