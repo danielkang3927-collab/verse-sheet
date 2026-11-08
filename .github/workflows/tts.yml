@@ -1,0 +1,39 @@
+name: TTS voice build
+on:
+  workflow_dispatch:
+    inputs:
+      voice:
+        description: alice | brian
+        default: alice
+      mode:
+        description: check | generate
+        default: check
+  schedule:
+    - cron: '0 1 1 12 *'   # 12월 1일 10:00 KST — Brian 전체 생성
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  tts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/792068515925/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: gh-deploy@verse-sheet.iam.gserviceaccount.com
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-save @google-cloud/firestore@7
+      - name: Run
+        env:
+          VOICE_IN: ${{ github.event.inputs.voice || 'brian' }}
+          MODE_IN: ${{ github.event.inputs.mode || 'generate' }}
+        run: |
+          case "$VOICE_IN" in
+            alice) ID=Xb7hH8MSUJpSbSDYk0k2; NAME="Alice (여성)";;
+            brian) ID=nPczCjzI2devNBz1zQrb; NAME="Brian (남성)";;
+            *) echo "unknown voice $VOICE_IN"; exit 2;;
+          esac
+          if [ "$MODE_IN" = "check" ]; then node scripts/tts-gen.mjs --voice "$ID" --name "$NAME" --check; else node scripts/tts-gen.mjs --voice "$ID" --name "$NAME"; fi
