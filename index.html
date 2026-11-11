@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v54">
+<meta name="app-build" content="v55">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v54</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v55</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -361,7 +361,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v54</p>
+    <p class="note" style="margin:0;text-align:right">v55</p>
   </div>
 </div>
 
@@ -1383,6 +1383,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v55','2026-11-12','학습 시간: 앱 체류 시간 전체 + 화면 꺼도 음성 재생 시간 포함'],
  ['v54','2026-11-12','학습 시간 측정(오늘·7일 평균·전체 평균) — 기록 탭과 함께 보기에 표시'],
  ['v53','2026-11-11','오답 코치(진단·오늘의 처방 자동 편성: 꼬리 먼저·짝 비교·주소·굳은 오답) · 음성 1.5/2/3배속'],
  ['v52','2026-11-08','목소리 목록은 준비된 음성만 표시(지금 Alice) · Brian은 12월 1일 자동 생성 후 추가'],
@@ -1587,8 +1588,12 @@ function secOf(x){if(!x)return 0;const by=x.secBy||{};return Object.values(by).r
 function minOf(x){return Math.round(secOf(x)/60);}
 function avgMin(days){const t=today();let tot=0,n=0;for(let i=0;i<days;i++){const x=S.stats.days[addDays(t,-i)];const sec=secOf(x);if(sec>0||(x&&(x.tries||x.rev||x.nw))){tot+=sec;n++;}}return n?Math.round(tot/n/60):0;}
 function avgMinAll(){let tot=0,n=0;Object.values(S.stats.days).forEach(x=>{const sec=secOf(x);if(sec>0){tot+=sec;n++;}});return n?Math.round(tot/n/60):0;}
-let lastAct=Date.now();['keydown','pointerdown','touchstart','input','scroll','click'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now();},{passive:true,capture:true}));
-let secAcc=0;setInterval(()=>{try{if(document.hidden)return;const playing=(typeof TTS!=='undefined'&&TTS.isPlaying());if(!playing&&Date.now()-lastAct>60000)return;if(!S||!S.stats)return;const d=D();d.secBy=d.secBy||{};d.secBy[DEV_ID]=(d.secBy[DEV_ID]||0)+15;secAcc+=15;if(secAcc>=60){secAcc=0;save();}}catch(e){}},15000);
+/* 앱이 화면에 떠 있는 시간(체류) 전부 + 화면을 꺼도 음성이 재생되는 시간. 음성 시간은 실제 재생된 길이로 셉니다. */
+let secAcc=0,lastTick=Date.now();
+function addSec(n){try{if(!S||!S.stats||!(n>0))return;const d=D();d.secBy=d.secBy||{};d.secBy[DEV_ID]=Math.round(((d.secBy[DEV_ID]||0)+n)*10)/10;secAcc+=n;if(secAcc>=60){secAcc=0;save();}}catch(e){}}
+setInterval(()=>{const now=Date.now(),el=(now-lastTick)/1000;lastTick=now;const playing=(typeof TTS!=='undefined'&&TTS.isPlaying());if(playing)return;/* 재생 중엔 오디오 쪽에서 셈 */if(document.hidden)return;addSec(Math.min(el,120));},15000);
+document.addEventListener('visibilitychange',()=>{lastTick=Date.now();});
+(function(){let lastT=null;const bind=()=>{const a=$('ttsAudio');if(!a||a.__timed)return;a.__timed=true;a.addEventListener('timeupdate',()=>{const t=a.currentTime;if(lastT!==null&&t>lastT&&t-lastT<3)addSec((t-lastT)/(a.playbackRate||1));lastT=t;});a.addEventListener('loadstart',()=>{lastT=null;});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();})();
 function learnedRefs(){return S.verses.map(v=>v.ref).filter(r=>{const p=S.progress[r];return p&&(p.box>=1||p.stage>=4);});}
 function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.ref).filter(r=>!got.has(r)).slice(0,n);}
 function weekNew(){const t=today();let n=0;for(let i=0;i<7;i++){const d=S.stats.days[addDays(t,-i)];if(d)n+=d.nw||0;}return n;}
@@ -1622,7 +1627,7 @@ function renderLog(){
       <tr><td>다음 차례</td><td>${nextRefs(5).map(esc).join(', ')||'모두 익혔습니다'}</td></tr>
       <tr><td>목록 내보내기</td><td><button class="btn" id="copyLearned">익힌 구절 주소 복사</button> <button class="btn" id="shareLearned">공유</button> <button class="btn" id="showLearned">목록 보기</button> <span class="note" id="copyMsg"></span><textarea id="learnedTa" hidden rows="10" style="width:100%;margin-top:6px;font:inherit;font-size:13px"></textarea></td></tr>
       <tr><td>이번 주 새로 익힘</td><td>${weekNew()}개 · 오늘 ${(D().nwRefs||[]).map(esc).join(', ')||'—'}</td></tr>
-      <tr><td>학습 시간</td><td>오늘 <b>${minOf(D())}분</b> · 최근 7일 하루 평균 <b>${avgMin(7)}분</b> · 전체 평균 ${avgMinAll()}분 <span class="note">(앱을 보며 조작하거나 음성을 듣는 시간만 셉니다)</span></td></tr>
+      <tr><td>학습 시간</td><td>오늘 <b>${minOf(D())}분</b> · 최근 7일 하루 평균 <b>${avgMin(7)}분</b> · 전체 평균 ${avgMinAll()}분 <span class="note">(앱이 화면에 떠 있는 시간과, 화면을 꺼도 음성을 듣는 시간을 합산)</span></td></tr>
     </tbody></table></div>
     <h3>날짜별 학습 구절</h3>
     <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>새로 익힌 구절</th><th>복습한 구절</th></tr></thead><tbody>${dayVerseRows(days,t,14)||'<tr><td colspan="3" class="note">오늘부터 구절 단위로 기록됩니다.</td></tr>'}</tbody></table></div>
