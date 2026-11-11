@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v52">
+<meta name="app-build" content="v53">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v52</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v53</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -235,7 +235,7 @@ label{font-size:13px}
     <div class="player" id="player">
       <button class="btn primary" id="ttsPlay">▶ 읽어 주기</button><button class="btn" id="ttsStop" disabled>■ 정지</button>
       <select id="ttsMode" title="재생 방식"><option value="one">이 구절만</option><option value="seq" selected>이어서 끝까지</option><option value="loop">전체 반복</option><option value="rone">이 구절 반복</option></select>
-      <select id="ttsRep" title="구절당 반복"><option value="1">1번씩</option><option value="2" selected>2번씩</option><option value="3">3번씩</option></select><select id="ttsSpeed" title="빠르기"><option value="0.5">가장 느리게 (0.5)</option><option value="0.6">아주 느리게 (0.6)</option><option value="0.7">느리게 (0.7)</option><option value="0.8">조금 느리게 (0.8)</option><option value="0.9">살짝 느리게 (0.9)</option><option value="1">보통</option><option value="1.15">빠르게</option></select><select id="ttsVoiceSel" title="목소리"></select><label class="note" style="display:inline-flex;align-items:center;gap:4px"><input type="checkbox" id="ttsEcho"> 따라 말하기</label>
+      <select id="ttsRep" title="구절당 반복"><option value="1">1번씩</option><option value="2" selected>2번씩</option><option value="3">3번씩</option></select><select id="ttsSpeed" title="빠르기"><option value="0.5">가장 느리게 (0.5)</option><option value="0.6">아주 느리게 (0.6)</option><option value="0.7">느리게 (0.7)</option><option value="0.8">조금 느리게 (0.8)</option><option value="0.9">살짝 느리게 (0.9)</option><option value="1">보통</option><option value="1.15">빠르게</option><option value="1.5">1.5배속</option><option value="2">2배속</option><option value="3">3배속</option></select><select id="ttsVoiceSel" title="목소리"></select><label class="note" style="display:inline-flex;align-items:center;gap:4px"><input type="checkbox" id="ttsEcho"> 따라 말하기</label>
       <span class="note" id="ttsMsg"></span>
       <audio id="ttsAudio" preload="auto" playsinline></audio>
     </div>
@@ -273,7 +273,7 @@ label{font-size:13px}
       <div class="row"><label for="ttsEngine">음성</label><select id="ttsEngine"><option value="browser">기기 내장 음성 (무료·무제한)</option><option value="el">ElevenLabs (자연스러움 · 월 1만 크레딧 무료)</option></select>
         <label><input type="checkbox" id="ttsAddr" checked> 주소부터 읽기</label>
         <label for="ttsGap">구절 사이</label><select id="ttsGap"><option value="0.5">0.5초</option><option value="1" selected>1초</option><option value="2">2초</option><option value="3">3초</option><option value="5">5초</option><option value="echo">읽은 길이만큼 (따라 말하기)</option></select>
-        <label for="ttsRate">빠르기</label><select id="ttsRate"><option value="0.5">가장 느리게</option><option value="0.6">아주 느리게</option><option value="0.7">느리게</option><option value="0.8">조금 느리게</option><option value="0.9">살짝 느리게</option><option value="1" selected>보통</option><option value="1.15">빠르게</option></select></div>
+        <label for="ttsRate">빠르기</label><select id="ttsRate"><option value="0.5">가장 느리게</option><option value="0.6">아주 느리게</option><option value="0.7">느리게</option><option value="0.8">조금 느리게</option><option value="0.9">살짝 느리게</option><option value="1" selected>보통</option><option value="1.15">빠르게</option><option value="1.5">1.5배속</option><option value="2">2배속</option><option value="3">3배속</option></select></div>
       <div class="row" id="elRow"><label for="elKey">ElevenLabs API 키</label><input type="password" id="elKey" placeholder="xi-… 키를 붙여 넣기" autocomplete="off" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:220px">
         <button class="btn" id="elKeySave">키 저장</button><button class="btn" id="elVoices">음성 목록 불러오기</button>
         <label for="elVoice">목소리</label><select id="elVoice"><option value="">(먼저 목록을 불러오세요)</option></select>
@@ -307,6 +307,8 @@ label{font-size:13px}
       <p>네 단계를 마친 구절은 <span data-g="ints">다음 날, 그다음은 3일·7일·14일·30일</span> 뒤에 다시 나옵니다. 복습은 먼저 본문 앞부분을 보고 <b>주소를 맞힌 뒤</b> 「주소만」으로 씁니다(주소도 함께 외워지고, 틀린 주소는 오답 노트 「주소」 유형에 쌓입니다). 한 글자라도 틀리면 1일 간격으로 돌아가고, 바로 다시 써서 맞혀야 넘어갑니다. 14일 간격까지 올라간 구절을 「숙달」로 셉니다.</p>
       <h3>듣기는 언제</h3>
       <p>「따라 쓰기」(처음 익힐 때)에만 「🔊 듣기」가 있고, 그 뒤 단계와 복습에서는 답을 쓰기 전에 들을 수 없습니다. 암송은 기억에서 꺼내는 연습이라, 듣고 받아쓰면 효과가 없기 때문입니다. 채점 결과 옆의 「🔊 정답 듣기」로 방금 꺼낸 기억을 바른 소리로 굳히세요.</p>
+      <h3>오답 코치</h3>
+      <p>「오답 노트」 맨 위 「코치 진단」이 최근 30일 오답을 유형·자리(앞/중/뒤)·시점(처음 익힐 때/복습 때)·추세로 분석해 원인을 말해 주고, 그에 맞는 「오늘의 처방」을 최대 3건 자동으로 만듭니다. 처방은 학습 탭에서 복습이 끝난 뒤 새 구절보다 먼저 나옵니다: <b>꼬리 먼저</b>(뒷부분에서 무너지는 구절은 앞 절반을 주고 뒷부분만 꺼내기), <b>짝 비교</b>(섞이는 두 구절을 나란히 본 뒤 연달아 쓰기), <b>주소 떠올리기</b>, <b>굳은 오답 풀기</b>(같은 자리를 반복해서 틀린 곳). 복습 실패가 많거나 실패율이 오르면 「오늘 새 구절 줄이기」 버튼이 나타납니다.</p>
       <h3>틀렸을 때</h3>
       <p>빨간 밑줄은 빠뜨리거나 틀린 정답 글자, 취소선은 잘못 쓴 글자입니다. 다시 치기 시작하면 정답이 접힙니다. 보고 베끼지 않고 기억에서 꺼내야 오래 남습니다. 띄어쓰기만 다른 경우는 노란 표시로만 알려 주고 통과시킵니다(「설정」에서 띄어쓰기까지 채점하도록 바꿀 수 있습니다).</p>
       <h3>오답이 다음 문제를 바꿉니다</h3>
@@ -359,7 +361,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v52</p>
+    <p class="note" style="margin:0;text-align:right">v53</p>
   </div>
 </div>
 
@@ -674,10 +676,11 @@ function makeMask(ref,stage){
   return set;
 }
 function nextItem(){
-  if(drill&&drill.length){const r=drill.shift();return makeItem(r,'drill',weakIdx(P(r)).length?4:2);}
+  if(drill&&drill.length){const r=drill.shift();if(r&&r.__rx){const it=makeRx(r.__rx);it.rxKey=null;return it;}return makeItem(r,'drill',weakIdx(P(r)).length?4:2);}
   drill=null;
   const q=buildQueue();
   if(q.rev.length)return makeItem(q.rev[0],'review',3);
+  {const left=rxLeft();if(left.length)return makeRx(left[0]);}
   if(q.prog.length)return makeItem(q.prog[0],'learn',Math.min(P(q.prog[0]).stage,3));
   if(q.fresh.length){S.daily.started.push(q.fresh[0]);save();return makeItem(q.fresh[0],'learn',0);}
   if(phase()==='exam'){const left=drillTargets().filter(r=>!S.daily.drilled.includes(r));if(left.length){const r=left[0];const it=makeItem(r,'drill',weakIdx(P(r)).length?4:2);it.planned=true;return it;}}
@@ -688,7 +691,7 @@ function cueHTML(it){
   const text=verseOf(it.ref).text,w=text.split(' ');
   if(it.stage===0)return esc(text);
   if(it.stage===3){
-    const n=Math.max(1,it.hints);
+    const n=Math.max(1,it.pre||0,it.hints);
     return `<span class="first">${esc(w.slice(0,n).join(' '))}</span>${n<w.length?' <span class="m">…</span>':''}<span class="only" style="font-size:12px">시험처럼 주소와 첫 어절이 주어집니다. 첫 어절은 입력란에 채워져 있으니 그 뒤를 이어 쓰세요.</span>`;
   }
   return w.map((word,i)=>{
@@ -830,6 +833,16 @@ function warnLine(it){
   if(p.conf)bits.push(`${esc(p.conf)}과 헷갈린 적 있음`);
   return bits.length?`<div class="warn">${bits.join(' · ')}</div>`:'';
 }
+const RX_LABEL={tail:'꼬리 먼저',pair:'짝 비교',addr:'주소 떠올리기',weak:'굳은 오답 풀기'};
+function needAddr(it){return !!it&&((it.kind==='review'||it.needAddr)&&!it.addrOk);}
+function prefixOf(it){const w=verseOf(it.ref).text.split(' ');return w.slice(0,Math.max(1,it.pre||0)).join(' ');}
+function rxNote(it){if(!it||!it.rx)return '';
+  if(it.rx==='tail')return `<div class="why" style="color:var(--accent)">코치 처방 · 꼬리 먼저: 이 구절은 뒷부분에서 자주 무너졌습니다. 앞 ${it.pre}어절은 주어지니 뒷부분만 떠올려 쓰세요.</div>`;
+  if(it.rx==='pair'){const o=verseOf(it.pairWith);return `<div class="why" style="color:var(--accent)">코치 처방 · 짝 비교: <b>${esc(it.ref)}</b>와 <b>${esc(it.pairWith)}</b>이 섞입니다. <details style="display:inline"><summary style="display:inline;cursor:pointer;text-decoration:underline">두 구절 나란히 보기</summary><div style="margin-top:6px;color:var(--fg)"><b>${esc(it.ref)}</b> ${esc(verseOf(it.ref).text)}<br><b>${esc(it.pairWith)}</b> ${o?esc(o.text):''}</div></details> 차이를 확인한 뒤 주소만 보고 쓰세요.</div>`;}
+  if(it.rx==='addr')return `<div class="why" style="color:var(--accent)">코치 처방 · 주소: 본문은 아는데 주소가 안 떠오르던 구절입니다. 앞부분을 보고 주소부터 맞힌 뒤 쓰세요.</div>`;
+  if(it.rx==='weak')return `<div class="why" style="color:var(--accent)">코치 처방 · 굳은 오답: 같은 자리를 ${it.rxN||2}번 이상 똑같이 틀렸습니다. 점선 자리를 소리 내어 세 번 읽고 쓰세요.</div>`;
+  return '';}
+function coachLine(){const l=rxLeft();if(!l.length)return '';return `<p class="note" style="margin:0 0 6px">코치 처방 ${l.length}개가 복습 다음에 나옵니다 · <a href="#" id="coachLink">진단 보기</a></p>`;}
 function renderWork(){
   const w=$('work');
   if(!cur){
@@ -844,13 +857,13 @@ function renderWork(){
   }
   const free=cur.kind==='free',single=cur.kind==='review'||cur.kind==='drill'||cur.stage===4;
   const steps=STAGES.slice(0,4).map((s,i)=>{const cls=i===cur.stage?'on':(i<cur.stage?'done':'');return `<button class="step ${cls}" data-s="${i}" ${free?'':'tabindex="-1"'}>${i+1} ${s}</button>`;}).join('');
-  const sub=cur.kind==='review'?`복습 ${P(cur.ref).box}단계`:free?'자유 연습 · 일정에 반영 안 됨':cur.kind==='drill'?'약점 집중 연습':'새 구절 학습';
-  w.innerHTML=`
+  const sub=cur.kind==='review'?`복습 ${P(cur.ref).box}단계`:free?'자유 연습 · 일정에 반영 안 됨':cur.kind==='drill'?(cur.rx?'코치 처방 · '+RX_LABEL[cur.rx]:'약점 집중 연습'):'새 구절 학습';
+  w.innerHTML=`${cur.rx?'':coachLine()}
     <div class="steps ${free?'free':''}">${single&&!free?`<span class="step on" style="flex:1">${kindLabel(cur.kind)} · ${STAGES[cur.stage]}</span>`:steps}</div>
-    <div class="cue"><div class="ref">${cur.kind==='review'&&!cur.addrOk?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${warnLine(cur)}<div class="txt">${cur.kind==='review'&&!cur.addrOk?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div></div>
-    ${cur.kind==='review'&&!cur.addrOk?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
-    <div class="answrap" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}>${cur.stage===3?`<span class="prefix">${esc(verseOf(cur.ref).text.split(' ')[0])}</span>`:''}<textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="${cur.stage===3?'첫 어절에 이어서 입력 후 Enter':'입력 후 Enter'}" ${cur.stage===3?`data-prefix="${esc(verseOf(cur.ref).text.split(' ')[0])}"`:''}></textarea></div>
-    <div class="acts" ${cur.kind==='review'&&!cur.addrOk?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button>${cur.kind==='learn'&&cur.stage===0?'<button class="btn" id="hear" title="보고 들으며 익히기 (처음 익힐 때만)">🔊 듣기</button>':''}<span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
+    <div class="cue"><div class="ref">${needAddr(cur)?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${rxNote(cur)}${warnLine(cur)}<div class="txt">${needAddr(cur)?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div></div>
+    ${needAddr(cur)?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
+    <div class="answrap" ${needAddr(cur)?'hidden':''}>${cur.stage===3?`<span class="prefix">${esc(prefixOf(cur))}</span>`:''}<textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="${cur.stage===3?(cur.pre>1?'앞부분에 이어서 뒷부분을 입력 후 Enter':'첫 어절에 이어서 입력 후 Enter'):'입력 후 Enter'}" ${cur.stage===3?`data-prefix="${esc(prefixOf(cur))}"`:''}></textarea></div>
+    <div class="acts" ${needAddr(cur)?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button>${cur.kind==='learn'&&cur.stage===0?'<button class="btn" id="hear" title="보고 들으며 익히기 (처음 익힐 때만)">🔊 듣기</button>':''}<span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
     ${fbHTML()}
     <p class="tip">${cur.stage===0?'입술로 소리 없이 읽으면서 치면 더 잘 남습니다.':cur.stage===4?'점선 빈칸이 지난번에 틀린 자리입니다. 그 자리를 떠올려 전체를 쓰세요.':cur.stage===3?'떠오르지 않으면 Tab으로 다음 어절만 봅니다.':'가려진 곳을 떠올려 전체를 씁니다.'}</p>`;
   const ai=$('addrIn');if(ai){const chk=()=>{const g=normRef(ai.value),want=normRef(cur.ref);const d=D();d.addrTries=(d.addrTries||0)+1;
@@ -862,6 +875,7 @@ function renderWork(){
   ta.addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();hint();}});
   $('chk').onclick=submit;$('hint').onclick=hint;
   const hb=$('hear');if(hb)hb.onclick=()=>hearRef(hb,cur.ref);
+  const cl=$('coachLink');if(cl)cl.onclick=e=>{e.preventDefault();show('notes');};
   if($('skip'))$('skip').onclick=()=>{const q=buildQueue();const pool=[...q.rev,...q.prog].filter(r=>r!==cur.ref);if(pool.length){const r=pool[0];cur=q.rev.includes(r)?makeItem(r,'review',3):makeItem(r,'learn',Math.min(P(r).stage,3));lastFb=null;renderAll();}};
   if($('back'))$('back').onclick=()=>{drill=null;cur=nextItem();lastFb=null;renderAll();};
   if(free)w.querySelectorAll('.step').forEach(b=>b.onclick=()=>{cur=makeItem(cur.ref,'free',+b.dataset.s);lastFb=null;renderAll();});
@@ -1005,8 +1019,8 @@ function submit(){
         S.daily.reviewed++;{const dd=D();dd.rev++;dd.revRefs=dd.revRefs||[];if(!dd.revRefs.includes(ref))dd.revRefs.push(ref);}cur=nextItem();}
     }else{p.box=1;p.lapse=true;p.due=t;cur=cur.stage===3?toWeak('review'):Object.assign(cur,{failed:true,hints:0,mask:makeMask(ref,4)});}
   }else if(cur.kind==='drill'){
-    if(r.pass){if(cur.stage!==3){const nx=makeItem(ref,'drill',3);nx.planned=cur.planned;cur=nx;}else{if(cur.planned&&!S.daily.drilled.includes(ref)){S.daily.drilled.push(ref);D().dr=(D().dr||0)+1;}cur=nextItem();}}
-    else if(cur.stage===3){cur=toWeak('drill');cur.kind='drill';}
+    if(r.pass){if(cur.stage!==3){const nx=makeItem(ref,'drill',3);nx.planned=cur.planned;nx.rx=cur.rx;nx.rxKey=cur.rxKey;nx.pairWith=cur.pairWith;nx.rxN=cur.rxN;cur=nx;}else{if(cur.planned&&!S.daily.drilled.includes(ref)){S.daily.drilled.push(ref);D().dr=(D().dr||0)+1;}if(cur.rxKey){S.daily.rxDone=S.daily.rxDone||[];if(!S.daily.rxDone.includes(cur.rxKey))S.daily.rxDone.push(cur.rxKey);D().rx=(D().rx||0)+1;}cur=nextItem();}}
+    else if(cur.stage===3){const keep={rx:cur.rx,rxKey:cur.rxKey,pairWith:cur.pairWith,rxN:cur.rxN};cur=toWeak('drill');cur.kind='drill';Object.assign(cur,keep);}
     else{cur.hints=0;cur.mask=makeMask(ref,cur.stage);}
   }else{cur=makeItem(ref,'free',cur.stage);}
   checkBadges();save();renderAll();
@@ -1369,6 +1383,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v53','2026-11-11','오답 코치(진단·오늘의 처방 자동 편성: 꼬리 먼저·짝 비교·주소·굳은 오답) · 음성 1.5/2/3배속'],
  ['v52','2026-11-08','목소리 목록은 준비된 음성만 표시(지금 Alice) · Brian은 12월 1일 자동 생성 후 추가'],
  ['v51','2026-11-08','GitHub 자동 배포 연결(코드 올리면 1~2분 내 반영)'],
  ['v50','2026-11-08','167구절 끊어 읽기 위치를 의미 단위로 직접 지정(684토막)'],
@@ -1460,6 +1475,67 @@ function renderExam(){
 }
 
 /* 오답 노트 */
+/* ===== 오답 코치: 오답 노트를 분석해 진단·처방 ===== */
+function coachAnalysis(){
+  const t=today(),from=addDays(t,-30),w7=addDays(t,-7),w14=addDays(t,-14);
+  const ev=S.errors.filter(e=>e.d>=from&&verseOf(e.ref));
+  const tc={};TYPES.forEach(x=>tc[x]=0);ev.forEach(e=>tc[e.type]++);
+  const typesSorted=TYPES.filter(x=>tc[x]).sort((a,b)=>tc[b]-tc[a]);
+  // 위치: 어절 인덱스를 구절 길이로 나눠 앞/중/뒤
+  const pos={front:0,mid:0,back:0};ev.filter(e=>e.wi>=0).forEach(e=>{const n=verseOf(e.ref).text.split(' ').length;const r=e.wi/Math.max(1,n-1);pos[r<0.34?'front':r<0.67?'mid':'back']++;});
+  const posN=pos.front+pos.mid+pos.back;
+  // 모드: 학습 중(넣기) vs 복습(꺼내기) vs 시험
+  const md={learn:0,review:0,exam:0,other:0};ev.forEach(e=>{const m=String(e.m||'');md[m.startsWith('learn')?'learn':m.startsWith('review')?'review':m.startsWith('exam')?'exam':'other']++;});
+  // 반복(굳은) 오답
+  const g={};ev.filter(e=>e.wi>=0&&e.type!=='띄어쓰기').forEach(e=>{const k=e.ref+'|'+e.wi;(g[k]=g[k]||{ref:e.ref,wi:e.wi,exp:e.exp,got:e.got,n:0}).n++;});
+  const stuck=Object.values(g).filter(x=>x.n>=2).sort((a,b)=>b.n-a.n);
+  // 뒤쪽에서 자주 틀리는 구절
+  const tailV={};ev.filter(e=>e.wi>=0).forEach(e=>{const n=verseOf(e.ref).text.split(' ').length;if(e.wi/Math.max(1,n-1)>=0.5)tailV[e.ref]=(tailV[e.ref]||0)+1;});
+  const tails=Object.entries(tailV).filter(([,n])=>n>=2).sort((a,b)=>b[1]-a[1]).map(([r])=>r);
+  // 혼동 짝
+  const confs={};ev.filter(e=>e.type==='구절 혼동'&&verseOf(e.got)).forEach(e=>{const k=[e.ref,e.got].sort().join('|');confs[k]=(confs[k]||0)+1;});
+  const pairs=Object.entries(confs).sort((a,b)=>b[1]-a[1]).map(([k,n])=>({a:k.split('|')[0],b:k.split('|')[1],n}));
+  // 주소
+  const addrV={};ev.filter(e=>e.type==='주소').forEach(e=>{addrV[e.ref]=(addrV[e.ref]||0)+1;});
+  const addrs=Object.entries(addrV).sort((a,b)=>b[1]-a[1]).map(([r])=>r);
+  // 추세: 최근 7일 vs 그 전 7일 실패율(첫 시도 기준)
+  const rate=(a,b)=>{let tr=0,f=0;Object.entries(S.stats.days).forEach(([d,x])=>{if(d>=a&&d<b){tr+=x.tries||0;f+=x.fail||0;}});return tr?{tries:tr,fail:f,r:f/tr}:null;};
+  const now=rate(w7,addDays(t,1)),prev=rate(w14,w7);
+  // 복습 실패(기억 소실)
+  const revFail7=ev.filter(e=>e.d>=w7&&String(e.m||'').startsWith('review')).length;
+  const revDone7=Object.entries(S.stats.days).filter(([d])=>d>=w7).reduce((a,[,x])=>a+(x.rev||0),0);
+  return {ev,tc,typesSorted,pos,posN,md,stuck,tails,pairs,addrs,now,prev,revFail7,revDone7};
+}
+function coachFindings(A){
+  const f=[];const n=A.ev.length;if(!n)return f;
+  const top=A.typesSorted[0],share=Math.round(A.tc[top]/n*100);
+  f.push({k:'type',t:`최근 30일 오답 ${n}건 중 「${top}」 유형이 ${share}%로 가장 많습니다.`,adv:ADVICE[top]});
+  if(A.posN>=6){const b=Math.round(A.pos.back/A.posN*100),fr=Math.round(A.pos.front/A.posN*100);
+    if(b>=45)f.push({k:'back',t:`틀린 자리의 ${b}%가 구절 <b>뒷부분</b>입니다. 앞은 외웠는데 끝이 흐려지는 유형입니다.`,adv:'뒤에서부터 외우는 「꼬리 먼저」가 효과적입니다. 앞부분을 주고 뒷부분만 꺼내는 연습을 처방에 넣었습니다.'});
+    else if(fr>=45)f.push({k:'front',t:`틀린 자리의 ${fr}%가 구절 <b>앞부분</b>입니다. 시작 어절이 떠오르지 않는 유형입니다.`,adv:'주소를 읽은 직후 첫 어절을 소리 내어 붙여 읽는 습관(주소→첫 어절)을 들이세요. 암송카드의 「주소부터 읽기」가 도움이 됩니다.'});}
+  const m=A.md,mt=m.learn+m.review+m.exam;if(mt>=6){const rv=Math.round(m.review/mt*100);
+    if(rv>=55)f.push({k:'forget',t:`오답의 ${rv}%가 <b>복습</b> 때 나왔습니다. 처음엔 되는데 며칠 뒤 잊는 유형(기억 유지 문제)입니다.`,adv:'새 구절 수를 잠시 줄이고 복습에 집중하는 편이 낫습니다. 아래 「오늘 새 구절 줄이기」를 쓰세요.'});
+    else if(m.learn/mt>=0.6)f.push({k:'encode',t:`오답의 ${Math.round(m.learn/mt*100)}%가 <b>처음 익힐 때</b> 나왔습니다. 들어가는 단계가 거친 유형입니다.`,adv:'1단계 「따라 쓰기」에서 「🔊 듣기」를 켜고 한 번 더 치고 넘어가세요. 2단계에서 틀리면 바로 넘기지 말고 그 자리를 소리 내어 읽으세요.'});}
+  if(A.stuck.length)f.push({k:'stuck',t:`같은 자리를 똑같이 두 번 이상 틀린 <b>굳은 오답</b>이 ${A.stuck.length}곳 있습니다 (예: ${esc(A.stuck[0].ref)} ${A.stuck[0].wi+1}번째 「${esc(A.stuck[0].exp)}」→「${esc(A.stuck[0].got||'빠뜨림')}」).`,adv:'굳은 오답은 반복만으로는 안 고쳐집니다. 틀린 낱말과 정답을 나란히 놓고 차이를 말로 설명한 뒤 쓰세요. 처방에 넣었습니다.'});
+  if(A.pairs.length)f.push({k:'pair',t:`서로 섞이는 구절 짝이 ${A.pairs.length}쌍 있습니다 (${esc(A.pairs[0].a)} ↔ ${esc(A.pairs[0].b)}).`,adv:'두 구절을 나란히 놓고 다른 점을 확인한 뒤 연달아 쓰는 「짝 비교」를 처방에 넣었습니다.'});
+  if(A.addrs.length>=1)f.push({k:'addr',t:`주소를 못 맞힌 구절이 ${A.addrs.length}개입니다.`,adv:'암송카드에서 주소를 먼저 읽고 본문을 읽는 습관, 그리고 처방의 「주소 떠올리기」로 보강합니다.'});
+  if(A.now&&A.prev&&A.now.tries>=10&&A.prev.tries>=10){const d=Math.round((A.now.r-A.prev.r)*100);
+    if(d>=8)f.push({k:'trend',t:`최근 7일 첫 시도 실패율이 ${Math.round(A.now.r*100)}%로 그 전 7일(${Math.round(A.prev.r*100)}%)보다 <b>올랐습니다</b>.`,adv:'분량이 버거운 신호입니다. 하루 새 구절을 줄이고 복습을 먼저 끝내세요.'});
+    else if(d<=-8)f.push({k:'trend',t:`최근 7일 첫 시도 실패율이 ${Math.round(A.now.r*100)}%로 그 전 7일(${Math.round(A.prev.r*100)}%)보다 <b>내렸습니다</b>.`,adv:'지금 방식이 맞습니다. 유지하세요.'});}
+  return f;
+}
+/* 오늘의 처방: 하루 한 번 자동 생성(최대 3건), 복습 뒤·새 구절 앞에 끼어듦 */
+function buildRx(){ensureDaily();if(S.daily.rx)return S.daily.rx;const A=coachAnalysis();const rx=[];const used=new Set();
+  const add=o=>{if(rx.length>=3||used.has(o.ref))return;used.add(o.ref);rx.push(o);};
+  if(A.pairs.length){const p=A.pairs[0];if(verseOf(p.a)&&verseOf(p.b)){add({ref:p.a,rx:'pair',pairWith:p.b});add({ref:p.b,rx:'pair',pairWith:p.a});}}
+  for(const x of A.stuck){if(P(x.ref).box>=1||P(x.ref).stage>=2)add({ref:x.ref,rx:'weak',rxN:x.n});}
+  for(const r of A.tails){add({ref:r,rx:'tail'});}
+  for(const r of A.addrs){add({ref:r,rx:'addr'});}
+  S.daily.rx=rx;S.daily.rxDone=S.daily.rxDone||[];save();return rx;}
+function rxLeft(){buildRx();return (S.daily.rx||[]).filter(o=>!(S.daily.rxDone||[]).includes(o.ref+'|'+o.rx));}
+function makeRx(o){const it=makeItem(o.ref,'drill',o.rx==='weak'&&weakIdx(P(o.ref)).length?4:3);it.rx=o.rx;it.rxKey=o.ref+'|'+o.rx;
+  if(o.rx==='tail'){const n=verseOf(o.ref).text.split(' ').length;it.pre=Math.max(1,Math.floor(n/2));it.hints=it.pre;}
+  if(o.rx==='pair')it.pairWith=o.pairWith;if(o.rx==='addr')it.needAddr=true;if(o.rx==='weak')it.rxN=o.rxN;return it;}
 function renderNotes(){
   const b=$('notesBox'),t=today(),from=addDays(t,-30);
   const ev=S.errors.filter(e=>e.d>=from&&verseOf(e.ref));
@@ -1471,7 +1547,15 @@ function renderNotes(){
   const reps=Object.values(g).sort((x,y)=>y.n-x.n||y.last.localeCompare(x.last)).slice(0,12);
   const weakV=S.verses.filter(v=>weakSum(P(v.ref))).sort((x,y)=>weakSum(P(y.ref))-weakSum(P(x.ref))).slice(0,10);
   const confs={};ev.filter(e=>e.type==='구절 혼동').forEach(e=>{const k=[e.ref,e.got].sort().join(' ↔ ');confs[k]=(confs[k]||0)+1;});
+  const A=coachAnalysis(),F=coachFindings(A),left=rxLeft(),rxAll=S.daily.rx||[];
+  const rxBtn=(label,id,cond)=>cond?`<button class="btn" id="${id}">${label}</button>`:'';
   b.innerHTML=`<div class="row"><h2 style="flex:1">오답 노트 <span class="note">최근 30일 · ${ev.length}건</span></h2>${weakV.length?`<button class="btn primary" id="drillGo">약점 집중 연습 (${weakV.length}구절)</button>`:''}</div>
+    <div class="box" style="margin:6px 0 10px"><h3 style="margin-top:0">코치 진단</h3>
+      <ul style="margin:0 0 8px 18px;padding:0">${F.map(x=>`<li style="margin-bottom:6px">${x.t}<br><span class="note">→ ${esc(x.adv)}</span></li>`).join('')}</ul>
+      <h3>오늘의 처방 <span class="note">${rxAll.length?`${rxAll.length-left.length}/${rxAll.length} 완료 · 학습 탭에서 복습 다음에 자동으로 나옵니다`:'오늘은 처방할 만큼의 오답이 없습니다'}</span></h3>
+      ${rxAll.length?`<div class="tw"><table class="sheet"><thead><tr><th>구절</th><th>처방</th><th>상태</th></tr></thead><tbody>${rxAll.map(o=>`<tr data-rx="${esc(o.ref+'|'+o.rx)}" tabindex="0"><td class="ref">${esc(o.ref)}${o.pairWith?' ↔ '+esc(o.pairWith):''}</td><td>${RX_LABEL[o.rx]}</td><td>${(S.daily.rxDone||[]).includes(o.ref+'|'+o.rx)?'<span class="st mst">완료</span>':'대기'}</td></tr>`).join('')}</tbody></table></div><p class="note">행을 누르면 그 처방부터 바로 시작합니다.</p>`:''}
+      <div class="acts">${rxBtn('오늘 새 구절 줄이기 (−2)','rxLess',F.some(x=>x.k==='forget'||x.k==='trend'&&/올랐/.test(x.t)))}${rxBtn('주소 퀴즈 10문항','rxAddrQuiz',true)}${rxBtn('꼬리 먼저 5구절','rxTail',A.tails.length>0)}</div>
+    </div>
     <p class="advice"><b>가장 많은 유형 · ${top}</b> ${esc(ADVICE[top])}</p>
     <div class="bars">${bars}</div>
     <h3>반복되는 실수</h3>
@@ -1485,6 +1569,10 @@ function renderNotes(){
     ${Object.keys(confs).length?`<h3>헷갈린 구절 쌍</h3><p class="note">${Object.entries(confs).map(([k,n])=>`${esc(k)} (${n}회)`).join(' · ')}</p>`:''}
     <p class="note">행을 누르면 그 구절의 약점 빈칸 연습으로 갑니다. 약점은 주소만 보고 틀림없이 쓰면 줄어들고, 빈칸 단계에서 맞히면 절반씩 줄어듭니다.</p>`;
   const dg=$('drillGo');if(dg)dg.onclick=startDrill;
+  b.querySelectorAll('tr[data-rx]').forEach(tr=>{tr.onclick=()=>{const [ref,rx]=tr.dataset.rx.split('|');const o=(S.daily.rx||[]).find(x=>x.ref===ref&&x.rx===rx);if(!o)return;drill=null;cur=makeRx(o);lastFb=null;show('learn');};});
+  const rl=$('rxLess');if(rl)rl.onclick=()=>{S.daily.extra=(S.daily.extra||0)-2;save();rl.textContent='오늘 새 구절 2개 줄였습니다';rl.disabled=true;};
+  const rq=$('rxAddrQuiz');if(rq)rq.onclick=()=>{const pool=S.verses.map(v=>v.ref).filter(r=>P(r).box>=1);const pri=A.addrs.filter(r=>pool.includes(r));const rest=pool.filter(r=>!pri.includes(r)).sort(()=>Math.random()-.5);const list=[...pri,...rest].slice(0,10);if(!list.length)return;drill=list.map(r=>({__rx:{ref:r,rx:'addr'}}));cur=nextItem();lastFb=null;show('learn');};
+  const rt=$('rxTail');if(rt)rt.onclick=()=>{const list=A.tails.slice(0,5);if(!list.length)return;drill=list.map(r=>({__rx:{ref:r,rx:'tail'}}));cur=nextItem();lastFb=null;show('learn');};
   b.querySelectorAll('tbody tr[data-ref]').forEach(tr=>{const go=()=>{drill=[tr.dataset.ref];cur=nextItem();lastFb=null;show('learn');};tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go();};});
 }
 
