@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v59">
+<meta name="app-build" content="v60">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v59</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v60</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -294,6 +294,7 @@ label{font-size:13px}
       <h2 style="margin-top:8px">백업과 복구</h2>
       <p class="note">매일 첫 접속과 하루 완료 때 계정 저장소에 자동 백업(30일 보관). 기기 간 기록이 다르면 지우지 않고 합칩니다.</p>
       <div class="row"><button class="btn" id="bkNow">지금 백업</button><button class="btn" id="expGo">내 기록 파일로 내보내기</button><label class="btn" style="cursor:pointer">파일에서 합치기<input type="file" id="impFile" accept="application/json,.json" hidden></label><span class="note" id="bkMsg"></span></div>
+      <textarea id="expTa" hidden rows="4" style="width:100%;font-size:12px"></textarea>
       <p class="note">내보낸 파일은 본인 기기에 보관하는 비상용 사본입니다. 「파일에서 합치기」는 지우지 않고 더 많은 쪽을 남기며 합칩니다.</p>
       <div class="tw" id="backupWrap"></div>
       <div class="row" style="margin-top:8px"><button class="btn danger" id="resetBtn">학습 기록 지우기</button><span id="resetConfirm"></span></div>
@@ -373,7 +374,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v59</p>
+    <p class="note" style="margin:0;text-align:right">v60</p>
   </div>
 </div>
 
@@ -1407,6 +1408,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v60','2026-11-12','기록 내보내기·파일에서 합치기 버튼이 동작하지 않던 오류 수정 · 전체 버튼 자동 점검 추가'],
  ['v59','2026-11-12','보안 규칙 보완(포괄 허용 제거로 삭제 금지·축소 거부가 실제 적용) · 저장 거부 시 서버 기록과 자동 합치기'],
  ['v58','2026-11-12','아래로 당겨 새로고침 · 학습 탭 표가 휴대폰 화면에 맞게 들어옴(좌우 밀림 없음)'],
  ['v57','2026-11-12','보안 강화(기록 삭제 불가·기록 줄어드는 저장 거부·키 문서 관리자 전용) · 기록 파일 내보내기/합치기 · 배포 전 자동 점검'],
@@ -1690,6 +1692,15 @@ function boardHTML(rows,myUid){
 const ADMIN_EMAILS=['danielkang3927@gmail.com','kangdy@gsmch.org'];
 function isAdmin(){try{const u=firebase.auth().currentUser;return !!(u&&u.email&&ADMIN_EMAILS.includes(u.email.toLowerCase()));}catch(e){return false;}}
 function applyAdminUI(){const a=isAdmin();$('listAdmin').hidden=!a;$('tabList').textContent=a?'구절 목록·설정':'설정';}
+/* 기록 내보내기·합치기 — 화면이 다시 그려져도 항상 동작하도록 문서 단위로 연결 */
+async function exportRecords(){const msg=$('bkMsg');const data=JSON.stringify(Object.assign({},S,{exportedAt:new Date().toISOString(),build:(document.querySelector('meta[name=app-build]')||{}).content}));const name=`암송기록_${today()}.json`;
+  const tryShare=async(type)=>{try{const f=new File([data],name,{type});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:name});return true;}}catch(e){if(e&&e.name==='AbortError')return true;}return false;};
+  if(await tryShare('application/json')||await tryShare('text/plain')){if(msg)msg.textContent='내보냈습니다(공유 창에서 「파일에 저장」을 고르면 기기에 남습니다).';return;}
+  try{const u=URL.createObjectURL(new Blob([data],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);if(msg)msg.textContent='파일로 내려받았습니다: '+name;}
+  catch(e){const ta=$('expTa');if(ta){ta.hidden=false;ta.value=data;ta.select();}if(msg)msg.textContent='자동 저장이 막혀 있어 아래에 내용을 띄웠습니다. 전체 복사해 메모에 보관하세요.';}}
+async function importRecords(file){const msg=$('bkMsg');try{const j=JSON.parse(await file.text());if(!j||typeof j.progress!=='object'||!j.stats)throw new Error('암송 기록 파일이 아닙니다');if(window.__backupNow)await window.__backupNow();const before=learnedRefs().length;S=migrate(mergeState(S,j));save();cur=nextItem();lastFb=null;renderAll();if(msg)msg.textContent=`합쳤습니다 (익힌 구절 ${before} → ${learnedRefs().length}개, 합치기 전 상태는 백업에 있음).`;}catch(err){if(msg)msg.textContent='가져오기 실패: '+(err.message||err);}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#expGo');if(b){e.preventDefault();exportRecords();}});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='impFile'){const f=e.target.files[0];if(f)importRecords(f);e.target.value='';}});
 function renderList(){applyAdminUI();
   $('listText').value=S.verses.map(v=>v.ref+(v.freq?' ['+v.freq+']':'')+' '+v.text+(v.note?' // '+v.note:'')).join('\n');
   $('sampleWarn').hidden=!S.sample;$('newPer').value=String(S.settings.newPerDay);$('strictSp').checked=!!S.settings.strictSpace;
@@ -1744,9 +1755,6 @@ $('preGo').onclick=()=>TTS.prebuild($('preVoice').value,$('preVoice').selectedOp
 $('elShare').onchange=e=>{S.settings.elShare=e.target.checked;save();if(window.__fsConfigPut)window.__fsConfigPut();$('elMsg').textContent=e.target.checked?'함께 쓰는 사람들에게 적용했습니다.':'공유를 껐습니다(이미 받은 사람 기기에는 남을 수 있음).';};
 $('elTest').onclick=async()=>{if($('elKey').value.trim()&&$('elKey').value.trim()!==S.settings.elKey){S.settings.elKey=$('elKey').value.trim();save();}if(!S.settings.elVoice)elFillPreset();$('elMsg').textContent='시험 음성 만드는 중…';try{await TTS.speak('태초에 하나님이 천지를 창조하시니라',{force:'el',ref:'시험'});$('elMsg').textContent='들리면 설정 완료입니다.';}catch(e){$('elMsg').textContent='실패: '+(e.message||e)+(/401/.test(e.message||'')?' — 키가 거부되었습니다. ElevenLabs 사이트에서 새 키를 만들어 다시 넣으세요.':'');}};
 $('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다. 지우기 전에 오늘 날짜 백업을 먼저 만듭니다. 확인하려면 <b>지우기</b>라고 입력하세요.</span> <input id="rsTxt" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);width:90px"> <button class="btn danger" id="rsY">실행</button> <button class="btn" id="rsN">취소</button>';
-  const eg=$('expGo');if(eg)eg.onclick=async()=>{const data=JSON.stringify(Object.assign({},S,{exportedAt:new Date().toISOString(),build:(document.querySelector('meta[name=app-build]')||{}).content}),null,0);const blob=new Blob([data],{type:'application/json'});const name=`암송기록_${today()}.json`;const file=new File([blob],name,{type:'application/json'});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:name});}catch(e){}}else{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);}$('bkMsg').textContent='내보냈습니다.';};
-  const imf=$('impFile');if(imf)imf.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!j||!j.progress||!j.stats)throw new Error('형식이 다릅니다');if(window.__backupNow)await window.__backupNow();const merged=mergeState(S,j);S=migrate(merged);save();cur=nextItem();lastFb=null;renderAll();$('bkMsg').textContent='합쳤습니다 (합치기 전 상태는 백업에 있음).';}catch(err){$('bkMsg').textContent='가져오기 실패: '+(err.message||err);}e.target.value='';};
   $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};S.meta=Object.assign({},S.meta||{},{reset:Date.now()});drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
 async function renderBackups(){const w=$('backupWrap');if(!w)return;if(!window.__listBackups){w.innerHTML='<p class="note">로그인하면 백업 목록이 보입니다.</p>';return;}
   const list=await window.__listBackups();if(!list.length){w.innerHTML='<p class="note">아직 백업이 없습니다. 매일 첫 접속과 하루 완료 때 자동으로 만들어집니다.</p>';return;}
@@ -1777,6 +1785,7 @@ $('hideBtn').onclick=toggleCover;
     try{if(window.__flushNow)await Promise.race([window.__flushNow(),new Promise(r=>setTimeout(r,2500))]);}catch(e){}location.replace(location.pathname+'?r='+Date.now());},{passive:true});})();
 $('ttsPlay').onclick=()=>TTS.toggle();$('ttsStop').onclick=()=>TTS.stop();
 $('ttsMode').value=S.settings.ttsMode||'seq';$('ttsRep').value=String(S.settings.ttsRep||2);$('ttsSpeed').value=String(S.settings.ttsRate??1);ensureVoice();fillVoiceSel();
+$('ttsMode').onchange=e=>{S.settings.ttsMode=e.target.value;save();if(TTS.isPlaying()){TTS.stop();$('ttsMsg').textContent='재생 방식을 바꿨습니다. ▶ 를 다시 누르세요.';}};
 $('ttsVoiceSel').onchange=e=>{const v=e.target.value;if(v==='browser'){S.settings.ttsEngine='browser';}else{S.settings.ttsEngine='el';S.settings.elVoice=v;S.settings.elVoiceName=e.target.selectedOptions[0]?.text||'';}save();if(TTS.isPlaying()){TTS.stop();}};
 $('ttsEcho').onchange=e=>{S.settings.ttsGap=e.target.checked?'echo':1;save();const g=$('ttsGap');if(g)g.value=e.target.checked?'echo':'1';};$('ttsSpeed').onchange=e=>{S.settings.ttsRate=+e.target.value;save();const a=$('ttsAudio');try{a.playbackRate=S.settings.ttsRate;}catch(x){}};
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}$('cover').onclick=toggleCover;
