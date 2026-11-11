@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v55">
+<meta name="app-build" content="v56">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -62,6 +62,7 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .addrq{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .addrq input{font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:2px;width:160px}
 .cards{display:flex;flex-direction:column;gap:12px;align-items:center}
+.eta{display:block;width:100%;margin:0 0 10px;padding:8px 12px;font-size:14px;border-radius:6px;background:var(--surface);border:1px solid var(--grid)}.eta.late{border-color:#c0392b}.eta.late b{color:#c0392b}.eta.ok b{color:var(--accent,#2f6f4e)}
 .player{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:8px 12px;margin:0 auto 10px;max-width:640px;border:1px solid var(--grid);background:var(--surface);border-radius:6px}
 .player.on{border-color:var(--accent,#2f6f4e)}
 .cardbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;max-width:640px}
@@ -211,7 +212,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v55</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v56</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -321,19 +322,19 @@ label{font-size:13px}
       </ul>
       <p>약점은 주소만 보고 틀림없이 쓰면 1점, 빈칸 단계에서 맞히면 0.5점씩 줄어 0이 되면 사라집니다. 「오답 노트」 탭에서 유형 통계, 반복 실수, 약점 구절, 헷갈린 쌍을 보고 「약점 집중 연습」으로 바로 들어갈 수 있습니다.</p>
       <h3>학습 계획</h3>
-      <p>「설정」 탭에서 시험일(기본 <span data-g="examDate">2027-01-14</span>)·완료 목표일(기본 <span data-g="finishDate">2026-12-15</span>)·쉬는 날(기본 주일)·주당 결석 허용(기본 1회)을 정하면, 매일 「남은 새 구절 ÷ 남은 학습일」로 하루 분량을 다시 계산합니다. 밀리면 늘고 앞서면 줄어듭니다. 쉬는 날은 새 구절이 나오지 않고 연속일도 끊기지 않습니다. 완료 목표일이 지나면 자동으로 「약점 보강 기간」이 되어 새 구절 없이 복습 + 오답 노트 상위 약점 10구절 연습이 하루 목표가 되고, 시험 D-day가 표시됩니다.</p>
+      <p>「설정」 탭에서 시험일(기본 <span data-g="examDate">2027-01-14</span>)·완료 목표일(기본 <span data-g="finishDate">2026-12-15</span>)·쉬는 날(기본 주일)·주당 결석 허용(기본 1회)을 정하면, 매일 「남은 새 구절 ÷ 남은 학습일」로 하루 분량을 다시 계산합니다. 밀리면 늘고 앞서면 줄어듭니다. 학습 탭 맨 위에는 <b>예상 완료일</b>이 나옵니다: 최근 2주의 실제 속도(쉬는 날 제외)로 남은 구절을 나눈 날짜이며, 계획 목표일보다 늦으면 붉게 표시됩니다. 쉬는 날은 새 구절이 나오지 않고 연속일도 끊기지 않습니다. 완료 목표일이 지나면 자동으로 「약점 보강 기간」이 되어 새 구절 없이 복습 + 오답 노트 상위 약점 10구절 연습이 하루 목표가 되고, 시험 D-day가 표시됩니다.</p>
       <h3>모의시험과 종이 시험지</h3>
       <p>「모의시험」 탭은 실제 시험처럼 주소와 첫 어절만 주고 끝날 때까지 채점을 보여 주지 않습니다. 문항 수는 5·10·15·20·25·30·전체 또는 직접 입력, 범위는 학습한 구절·약점 구절·전체입니다. 채점은 문항마다 완전 일치 100점, 띄어쓰기만 틀리면 95점, 글자가 틀리면 「100 − 틀린 글자 비율(%) − 10」점이며 총점은 문항 평균입니다. 틀린 구절은 오답 노트와 오늘 복습에 들어가고, 결과는 「기록」 탭에 회차별로 남습니다.</p>
       <p>같은 탭의 「종이 시험지」는 같은 설정으로 A4 시험지를 만듭니다. 번호·주소 아래 손글씨 줄 첫머리에 첫 어절이 인쇄되고, 줄 간격(11·13·15mm)을 고를 수 있으며 정답지는 마지막 장에 따로 붙습니다. 「PDF 저장·공유」를 누르면 PDF 파일이 만들어져 카카오톡·파일 앱·AirDrop으로 보내거나 프린트할 수 있고, Safari·노트북에서는 「인쇄」로 바로 인쇄 창이 열립니다.</p>
       <h3>매일 이어가기</h3>
       <p>하루 목표는 「오늘 복습 전부 + 새 구절(계획에 따라 자동 조정, 기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다.</p>
-      <p>「기록」 탭에는 진도(익힌 구절 수·완성도 %·다음 차례, 익힌 구절 주소 목록 복사·공유), 날짜별로 새로 익힌 구절과 복습한 구절, 12주 출석 잔디, 배지, 모의시험 회차별 점수, 최근 14일 표가 있습니다. 완성도는 구절마다 배우는 중 12~37%, 익힘 60~90%, 숙달 100%로 매겨 전체 평균을 낸 값이라, 모든 구절이 숙달되면 100%가 됩니다.</p>
+      <p>「기록」 탭에는 진도(익힌 구절 수·완성도 %·다음 차례, 익힌 구절 주소 목록 복사·공유), 학습 시간(오늘·최근 7일 하루 평균·전체 평균 — 앱이 화면에 떠 있는 시간과 화면을 꺼도 음성을 듣는 시간을 기기별로 합산), 날짜별로 새로 익힌 구절과 복습한 구절, 12주 출석 잔디, 배지, 모의시험 회차별 점수, 최근 14일 표가 있습니다. 완성도는 구절마다 배우는 중 12~37%, 익힘 60~90%, 숙달 100%로 매겨 전체 평균을 낸 값이라, 모든 구절이 숙달되면 100%가 됩니다.</p>
       <p>「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·익힌 구절 수·완성도·하루 평균 학습 시간(최근 7일)·오늘 학습 시간·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수를 한 표에서 봅니다(완성도 순). 오답 내용은 공유되지 않으며, 끄면 내 줄이 바로 내려갑니다.</p>
       <h3>기기 동기화와 기록 보호</h3>
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰·아이패드·노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어지고, 서로의 기록은 볼 수 없습니다. 기기 간 기록이 다르면 지우지 않고 합치며, 매일 첫 접속과 하루 완료 때 계정에 자동 백업(30일 보관)되어 「설정」에서 되돌릴 수 있습니다. 상단 초록 점이 동기화 상태이고, 그 옆 v 숫자가 앱 버전입니다(지금 <span data-g="ver"></span>, <span data-g="rel"></span>). 새 버전이 올라오면 다음에 열 때 자동으로 바뀝니다.</p>
       <h3>암송카드</h3>
       <p>휴대폰으로 타이핑이 어려울 때 쓰는 탭입니다. 출제 순서대로 한 장씩 넘기며 소리 내어 읽습니다. 카드 <b>가운데</b>를 누르면 본문이 가려지고 다시 누르면 보이며, <b>오른쪽</b>을 누르면 다음, <b>왼쪽</b>을 누르면 이전 구절입니다(좌우로 밀어도 됩니다). 위쪽 목록에서 원하는 구절을 바로 고르거나 주소를 입력해 이동할 수 있고, 「오늘 학습·복습분」「약점 구절」로 범위를 바꿀 수 있습니다. 노트북에서는 ←→ 키와 스페이스를 씁니다.</p>
-      <p><b>음성 읽기</b> — 카드 위 「▶ 읽어 주기」를 누르면 주소부터 본문까지 읽어 줍니다. 「이 구절만 / 이어서 끝까지 / 전체 반복 / 이 구절 반복」, 구절당 1~3번 반복, 빠르기(아주 느리게~빠르게)를 고를 수 있고, 「따라 말하기」를 켜면 구절을 의미 단위(167구절 모두 사람이 미리 끊어 둔 호흡 단위)로 끊어 읽고 그만큼 쉬어 주어 따라 말할 수 있습니다(2번씩이면 마지막 회차는 전체를 이어 읽음). 목소리는 기기 내장 음성과 준비된 ElevenLabs 목소리(지금은 Alice, 12월부터 Brian 추가) 중에서 각자 고릅니다. 읽는 동안 카드가 따라 넘어갑니다. 목소리와 따라 말하기는 카드 위 재생 줄에서 각자 고르며(계정마다 따로 저장), 음성 엔진 세부 설정은 「설정」에 있습니다: 기기 내장 음성(무료·무제한)이 기본이고, ElevenLabs API 키를 넣으면 더 자연스러운 목소리로 읽습니다. ElevenLabs로 한 번 만든 음성은 계정 공용 저장소에 보관되어 어느 기기에서든 다시 만들지 않으며, 무료 월 1만 크레딧으로 Flash 모델 기준 전체 167구절을 한 번 만들 수 있습니다. ElevenLabs 음성은 화면을 끄거나 다른 앱으로 가도 이어서 재생되고 잠금 화면에서 멈춤·다음·이전을 누를 수 있습니다(기기 내장 음성은 화면을 끄면 멈춥니다). 「음성 미리 만들기」로 목록 전체를 한 번에 만들어 두면 끊김 없이 들을 수 있습니다.</p>
+      <p><b>음성 읽기</b> — 카드 위 「▶ 읽어 주기」를 누르면 주소부터 본문까지 읽어 줍니다. 「이 구절만 / 이어서 끝까지 / 전체 반복 / 이 구절 반복」, 구절당 1~3번 반복, 빠르기(0.5배~3배속, 음높이 유지)를 고를 수 있고, 「따라 말하기」를 켜면 구절을 의미 단위(167구절 모두 사람이 미리 끊어 둔 호흡 단위)로 끊어 읽고 그만큼 쉬어 주어 따라 말할 수 있습니다(2번씩이면 마지막 회차는 전체를 이어 읽음). 목소리는 기기 내장 음성과 준비된 ElevenLabs 목소리(지금은 Alice, 12월부터 Brian 추가) 중에서 각자 고릅니다. 읽는 동안 카드가 따라 넘어갑니다. 목소리와 따라 말하기는 카드 위 재생 줄에서 각자 고르며(계정마다 따로 저장), 음성 엔진 세부 설정은 「설정」에 있습니다: 기기 내장 음성(무료·무제한)이 기본이고, ElevenLabs API 키를 넣으면 더 자연스러운 목소리로 읽습니다. ElevenLabs로 한 번 만든 음성은 계정 공용 저장소에 보관되어 어느 기기에서든 다시 만들지 않으며, 무료 월 1만 크레딧으로 Flash 모델 기준 전체 167구절을 한 번 만들 수 있습니다. ElevenLabs 음성은 화면을 끄거나 다른 앱으로 가도 이어서 재생되고 잠금 화면에서 멈춤·다음·이전을 누를 수 있습니다(기기 내장 음성은 화면을 끄면 멈춥니다). 「음성 미리 만들기」로 목록 전체를 한 번에 만들어 두면 끊김 없이 들을 수 있습니다.</p>
       <h3>구절 목록 (관리자)</h3>
       <p>구절 본문·출제 가능성·「왜 외워야 하는가」는 관리자 계정으로 로그인했을 때만 「구절 목록·설정」 탭에서 고칠 수 있습니다. 다른 계정에는 「설정」만 보입니다.</p>
       <h3>이번 버전에서 바뀐 것</h3>
@@ -361,7 +362,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v55</p>
+    <p class="note" style="margin:0;text-align:right">v56</p>
   </div>
 </div>
 
@@ -849,7 +850,7 @@ function renderWork(){
     const q=buildQueue(),weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
     markDone();
     const restToday=isRest(today())&&!D().done;
-    w.innerHTML=`<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">지금은 약점 보강 기간입니다(새 구절 없음). 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
+    w.innerHTML=`${etaLine()}<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">지금은 약점 보강 기간입니다(새 구절 없음). 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
       <div class="acts">${weakN?`<button class="btn primary" id="drillGo2">약점 집중 연습 (${Math.min(10,weakN)}구절)</button>`:''}${q.freshLeft?`<button class="btn${weakN?'':' primary'}" id="moreNew">새 구절 ${Math.min(S.settings.newPerDay,q.freshLeft)}개 더</button>`:''}</div>${fbHTML()}</div>`;
     const mn=$('moreNew');if(mn)mn.onclick=()=>{S.daily.extra=(S.daily.extra||0)+S.settings.newPerDay;save();cur=nextItem();lastFb=null;renderAll();};
     const dg=$('drillGo2');if(dg)dg.onclick=startDrill;
@@ -858,7 +859,7 @@ function renderWork(){
   const free=cur.kind==='free',single=cur.kind==='review'||cur.kind==='drill'||cur.stage===4;
   const steps=STAGES.slice(0,4).map((s,i)=>{const cls=i===cur.stage?'on':(i<cur.stage?'done':'');return `<button class="step ${cls}" data-s="${i}" ${free?'':'tabindex="-1"'}>${i+1} ${s}</button>`;}).join('');
   const sub=cur.kind==='review'?`복습 ${P(cur.ref).box}단계`:free?'자유 연습 · 일정에 반영 안 됨':cur.kind==='drill'?(cur.rx?'코치 처방 · '+RX_LABEL[cur.rx]:'약점 집중 연습'):'새 구절 학습';
-  w.innerHTML=`${cur.rx?'':coachLine()}
+  w.innerHTML=`${etaLine()}${cur.rx?'':coachLine()}
     <div class="steps ${free?'free':''}">${single&&!free?`<span class="step on" style="flex:1">${kindLabel(cur.kind)} · ${STAGES[cur.stage]}</span>`:steps}</div>
     <div class="cue"><div class="ref">${needAddr(cur)?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${rxNote(cur)}${warnLine(cur)}<div class="txt">${needAddr(cur)?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div></div>
     ${needAddr(cur)?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
@@ -938,17 +939,28 @@ function checkBadges(){
   if(S.verses.length&&S.verses.some(v=>P(v.ref).tries)&&!S.verses.some(v=>weakSum(P(v.ref))))award('noweak');
 }
 function markDone(){const d=D();if(d.done)return;const q=buildQueue();if(q.rev.length||q.prog.length||q.fresh.length)return;if(phase()==='exam'&&drillTargets().some(r=>!S.daily.drilled.includes(r)))return;if(!(d.rev+d.nw+(d.dr||0)))return;d.done=true;d.score=dayScore(d);if(!d.fail)award('perfect');checkBadges();save();if(window.__backupNow)setTimeout(window.__backupNow,3000);}
-function etaText(){
-  const left=S.verses.length-masteredCount();if(!left)return '완주';
-  const t=today();let gained=0,seen=0;for(let i=1;i<=7;i++){const d=S.stats.days[addDays(t,-i)];if(d){gained+=d.nw||0;seen++;}}
-  const rate=seen?Math.max(gained/7,0.5):S.settings.newPerDay;const days=Math.ceil(left/rate)+14;const [y,m,dd]=addDays(t,days).split('-');return `${+m}/${+dd} 무렵`;
+/* 예상 완료일: (1) 계획대로 = 설정의 완료 목표일, (2) 최근 14일 실제 속도(쉬는 날 제외) 기준 */
+function fmtDay(d){const [y,m,dd]=d.split('-');return (y!==today().slice(0,4)?`${y}년 `:'')+`${+m}/${+dd}`;}
+function etaInfo(){
+  const t=today(),learned=learnedRefs().length,left=S.verses.length-learned;
+  let gained=0,days=0;for(let i=1;i<=14;i++){const d=addDays(t,-i);if(isRest(d))continue;days++;const x=S.stats.days[d];gained+=(x&&x.nw)||0;}
+  const rate=days?gained/days:0;
+  let actual=null;if(!left)actual=t;else if(rate>0){let need=Math.ceil(left/rate),d=t;while(need>0){d=addDays(d,1);if(!isRest(d))need--;}actual=d;}
+  const plan=S.settings.finishDate||'2026-12-15';
+  return {left,learned,rate:Math.round(rate*10)/10,actual,plan,exam:S.settings.examDate||'2027-01-14',late:actual&&actual>plan};
 }
+function etaText(){const e=etaInfo();if(!e.left)return '학습 완료';if(!e.actual)return `기록이 쌓이면 계산 (계획 ${fmtDay(e.plan)})`;return `${fmtDay(e.actual)} (최근 속도 하루 ${e.rate}개)`;}
 function renderToday(){
   const el=$('todayBar');if(!el)return;const d=D(),tg=dayTarget(),{streak}=streakInfo();
   const acc=d.tries?Math.round(d.first/d.tries*100):null;
   const pi=planInfo();const ph=phase();
   el.innerHTML=`<span>오늘 <b>${d.rev+d.nw+(d.dr||0)}/${tg.rev+tg.nw+(tg.dr||0)}</b></span>${ph==='exam'?`<span>약점 보강 <b>${d.dr||0}/${tg.dr}</b></span>`:''}${acc!==null?`<span>첫 시도 <b>${acc}%</b></span>`:''}${sessionCombo>=3?`<span class="combo">연속 통과 <b>${sessionCombo}</b></span>`:''}<span>연속 <b>${streak}일</b></span><span style="margin-left:auto">${ph==='exam'?`시험 <b>D-${pi.dExam}</b>`:isRest(today())?'<b>쉬는 날</b>':`계획 <b>하루 ${pi.perDay}</b> · 남은 학습일 <b>${pi.days}</b> · 시험 <b>D-${pi.dExam}</b>`}</span>`;
 }
+function etaLine(){const e=etaInfo();if(!S.verses.length)return '';
+  if(!e.left)return `<span class="eta ok">167구절 학습 완료 · 시험까지 복습·약점 보강</span>`;
+  if(!e.actual)return `<span class="eta">예상 완료일 <b>계획 ${fmtDay(e.plan)}</b> · 아직 실제 속도 기록이 없습니다</span>`;
+  const diff=Math.round((new Date(e.actual)-new Date(e.plan))/86400000);
+  return `<span class="eta ${e.late?'late':'ok'}">예상 완료일 <b>${fmtDay(e.actual)}</b> <span class="note">최근 2주 속도 하루 ${e.rate}개 · 남은 ${e.left}구절 · 계획 ${fmtDay(e.plan)}${diff>0?` (${diff}일 늦음)`:diff<0?` (${-diff}일 빠름)`:' (계획대로)'}${e.actual>e.exam?' · 시험일을 넘깁니다 — 하루 분량을 늘리세요':''}</span></span>`;}
 function doneHTML(){
   const d=D(),t=today(),y=S.stats.days[addDays(t,-1)],{streak,best}=streakInfo(),[g,word]=gradeOf(d.score||dayScore(d));
   const acc=d.tries?Math.round(d.first/d.tries*100):0;
@@ -1383,6 +1395,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v56','2026-11-12','예상 완료일을 학습 탭 맨 위에 표시(실제 속도 기준, 계획 대비 빠름/늦음) · 안내 문구 현행화'],
  ['v55','2026-11-12','학습 시간: 앱 체류 시간 전체 + 화면 꺼도 음성 재생 시간 포함'],
  ['v54','2026-11-12','학습 시간 측정(오늘·7일 평균·전체 평균) — 기록 탭과 함께 보기에 표시'],
  ['v53','2026-11-11','오답 코치(진단·오늘의 처방 자동 편성: 꼬리 먼저·짝 비교·주소·굳은 오답) · 음성 1.5/2/3배속'],
@@ -1617,7 +1630,7 @@ function renderLog(){
     <div class="kpis">
       <div class="kpi"><div class="l">연속 출석</div><div class="v">${streak}일</div><div class="s">최장 ${best}일 · 누적 ${total}일</div></div>
       <div class="kpi"><div class="l">이번 주</div><div class="v">${att}/7</div><div class="s">평균 점수 ${avg||'—'} · 새로 익힘 ${gain}</div></div>
-      <div class="kpi"><div class="l">숙달</div><div class="v">${masteredCount()}/${S.verses.length}</div><div class="s">완주 예상 ${etaText()}</div></div>
+      <div class="kpi"><div class="l">숙달</div><div class="v">${masteredCount()}/${S.verses.length}</div><div class="s">예상 완료 ${etaText()}</div></div>
       <div class="kpi"><div class="l">오늘</div><div class="v">${D().done?gradeOf(D().score)[0]:'—'}</div><div class="s">${D().done?`${D().score}점`:`${D().rev+D().nw}개 진행`}</div></div>
     </div>
     <h3>진도</h3>
