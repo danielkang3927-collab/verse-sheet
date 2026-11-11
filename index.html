@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v58">
+<meta name="app-build" content="v59">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v58</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v59</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -373,7 +373,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v58</p>
+    <p class="note" style="margin:0;text-align:right">v59</p>
   </div>
 </div>
 
@@ -1407,6 +1407,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v59','2026-11-12','보안 규칙 보완(포괄 허용 제거로 삭제 금지·축소 거부가 실제 적용) · 저장 거부 시 서버 기록과 자동 합치기'],
  ['v58','2026-11-12','아래로 당겨 새로고침 · 학습 탭 표가 휴대폰 화면에 맞게 들어옴(좌우 밀림 없음)'],
  ['v57','2026-11-12','보안 강화(기록 삭제 불가·기록 줄어드는 저장 거부·키 문서 관리자 전용) · 기록 파일 내보내기/합치기 · 배포 전 자동 점검'],
  ['v56','2026-11-12','예상 완료일을 학습 탭 맨 위에 표시(실제 속도 기준, 계획 대비 빠름/늦음) · 안내 문구 현행화'],
@@ -1874,7 +1875,12 @@ $('today').textContent=today().replace(/-/g,'.');
   async function flush(){
     if(!uid)return;if(writing){dirty=true;return;}
     writing=true;dirty=false;setSync('busy','동기화 중');
-    try{await push();setSync('on','동기화됨');window.__syncErr='';}catch(e){const m=String(e&&e.message||e);window.__syncErr=m;setSync('',/permission|denied/i.test(m)?'저장 거부됨 · 이 기기에 보관 중(기록은 안전)':'동기화 실패 · 이 기기에만 저장');}
+    try{await push();setSync('on','동기화됨');window.__syncErr='';}catch(e){const m=String(e&&e.message||e);window.__syncErr=m;
+      if(/permission|denied/i.test(m)){
+        // 서버가 '기록이 줄어드는 저장'으로 보고 거부한 경우: 서버 기록을 받아 합친 뒤 한 번 더 보냄(어느 쪽도 지우지 않음)
+        try{const [s2,e2]=await Promise.all([ref('state').get(),ref('errors').get()]);if(s2.exists){const rd=Object.assign({},s2.data(),{errors:(e2.exists&&e2.data().errors)||[]});S=migrate(mergeState(S,rd));S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(x){}await push();setSync('on','동기화됨');window.__syncErr='';renderAll();}}
+        catch(e3){setSync('','서버 저장 보류 · 이 기기에 안전하게 보관 중');}
+      }else setSync('','동기화 실패 · 이 기기에만 저장');}
     writing=false;if(dirty)schedule();
   }
   function schedule(){clearTimeout(timer);timer=setTimeout(flush,1500);}

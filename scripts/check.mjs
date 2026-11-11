@@ -32,6 +32,7 @@ const rules = fs.readFileSync(new URL('../firestore.rules', import.meta.url), 'u
 if (!/allow delete: if false/.test(rules)) fail('규칙에 삭제 금지가 없습니다'); else ok('규칙: 기록 삭제 금지');
 if (!/match \/config\/tts \{\s*allow read, write: if isAdmin\(\);/.test(rules)) fail('config/tts 가 관리자 전용이 아닙니다'); else ok('규칙: 키 문서 관리자 전용');
 if (/allow read, write: if true/.test(rules)) fail('규칙에 전체 공개 쓰기가 있습니다');
+if (/match \/users\/\{uid\}\/\{[a-z]+=\*\*\}/.test(rules)) fail('users 아래 포괄 허용 규칙이 있으면 삭제 금지·축소 거부가 무력화됩니다(규칙은 OR로 합쳐짐)'); else ok('규칙: 포괄 허용 없음');
 
 // 5) 안내 문구: 새 기능 키워드가 사용법에 있는지 (느슨한 확인)
 const guide = html.slice(html.indexOf('id="v-guide"'), html.indexOf('</section>', html.indexOf('id="v-guide"')));

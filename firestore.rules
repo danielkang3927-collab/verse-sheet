@@ -24,9 +24,6 @@ service cloud.firestore {
       // 30일이 지난 백업만 정리 가능 (최근 백업은 삭제 불가)
       allow delete: if owner(uid) && resource.data.get('savedAt', 0) < request.time.toMillis() - 2592000000;
     }
-    match /users/{uid}/{other=**} {
-      allow read, write: if owner(uid);
-    }
     // 음성 생성 설정(키 포함): 관리자만
     match /config/tts {
       allow read, write: if isAdmin();
