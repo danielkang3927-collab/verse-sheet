@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v53">
+<meta name="app-build" content="v54">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -211,7 +211,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v53</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v54</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -328,7 +328,7 @@ label{font-size:13px}
       <h3>매일 이어가기</h3>
       <p>하루 목표는 「오늘 복습 전부 + 새 구절(계획에 따라 자동 조정, 기본 5개)」입니다. 다 마치면 그날이 출석으로 기록되고 연속일이 올라갑니다. 하루를 빠지면 끊기지만, 한 주에 한 번은 자동으로 보호됩니다. 하루를 마치면 오늘 점수(첫 시도 정확도 70%, 목표 달성 30%)와 등급, 어제와의 비교를 보여 줍니다.</p>
       <p>「기록」 탭에는 진도(익힌 구절 수·완성도 %·다음 차례, 익힌 구절 주소 목록 복사·공유), 날짜별로 새로 익힌 구절과 복습한 구절, 12주 출석 잔디, 배지, 모의시험 회차별 점수, 최근 14일 표가 있습니다. 완성도는 구절마다 배우는 중 12~37%, 익힘 60~90%, 숙달 100%로 매겨 전체 평균을 낸 값이라, 모든 구절이 숙달되면 100%가 됩니다.</p>
-      <p>「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·익힌 구절 수·완성도·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수를 한 표에서 봅니다(완성도 순). 오답 내용은 공유되지 않으며, 끄면 내 줄이 바로 내려갑니다.</p>
+      <p>「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·익힌 구절 수·완성도·하루 평균 학습 시간(최근 7일)·오늘 학습 시간·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수를 한 표에서 봅니다(완성도 순). 오답 내용은 공유되지 않으며, 끄면 내 줄이 바로 내려갑니다.</p>
       <h3>기기 동기화와 기록 보호</h3>
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰·아이패드·노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어지고, 서로의 기록은 볼 수 없습니다. 기기 간 기록이 다르면 지우지 않고 합치며, 매일 첫 접속과 하루 완료 때 계정에 자동 백업(30일 보관)되어 「설정」에서 되돌릴 수 있습니다. 상단 초록 점이 동기화 상태이고, 그 옆 v 숫자가 앱 버전입니다(지금 <span data-g="ver"></span>, <span data-g="rel"></span>). 새 버전이 올라오면 다음에 열 때 자동으로 바뀝니다.</p>
       <h3>암송카드</h3>
@@ -361,7 +361,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v53</p>
+    <p class="note" style="margin:0;text-align:right">v54</p>
   </div>
 </div>
 
@@ -981,7 +981,7 @@ function mergeState(a,b){
   out.errors.sort((x,y)=>(x.d||'').localeCompare(y.d||''));out.errors=out.errors.slice(-1200);
   const ad=(a.stats&&a.stats.days)||{},bd=(b.stats&&b.stats.days)||{};
   new Set([...Object.keys(ad),...Object.keys(bd)]).forEach(d=>{const x=ad[d],y=bd[d];if(!x){out.stats.days[d]=y;return;}if(!y){out.stats.days[d]=x;return;}
-    out.stats.days[d]={tries:Math.max(x.tries||0,y.tries||0),first:Math.max(x.first||0,y.first||0),rev:Math.max(x.rev||0,y.rev||0),nw:Math.max(x.nw||0,y.nw||0),hint:Math.max(x.hint||0,y.hint||0),fail:Math.max(x.fail||0,y.fail||0),done:!!(x.done||y.done),score:Math.max(x.score||0,y.score||0),nwRefs:[...new Set([...(x.nwRefs||[]),...(y.nwRefs||[])])],revRefs:[...new Set([...(x.revRefs||[]),...(y.revRefs||[])])]};});
+    out.stats.days[d]={tries:Math.max(x.tries||0,y.tries||0),first:Math.max(x.first||0,y.first||0),rev:Math.max(x.rev||0,y.rev||0),nw:Math.max(x.nw||0,y.nw||0),hint:Math.max(x.hint||0,y.hint||0),fail:Math.max(x.fail||0,y.fail||0),done:!!(x.done||y.done),score:Math.max(x.score||0,y.score||0),nwRefs:[...new Set([...(x.nwRefs||[]),...(y.nwRefs||[])])],revRefs:[...new Set([...(x.revRefs||[]),...(y.revRefs||[])])],secBy:(()=>{const o={};[x.secBy||{},y.secBy||{}].forEach(b=>Object.entries(b).forEach(([k,v])=>{o[k]=Math.max(o[k]||0,v||0);}));return o;})()};});
   const ea=(a.stats&&a.stats.exams)||[],eb=(b.stats&&b.stats.exams)||[];const seenE=new Set();out.stats.exams=[...ea,...eb].filter(x=>{const k=(x.ts||0)+'|'+x.d+'|'+x.score;if(seenE.has(k))return false;seenE.add(k);return true;}).sort((x,y)=>(x.ts||0)-(y.ts||0));
   const ab=(a.stats&&a.stats.badges)||{},bb=(b.stats&&b.stats.badges)||{};
   new Set([...Object.keys(ab),...Object.keys(bb)]).forEach(k=>{out.stats.badges[k]=[ab[k],bb[k]].filter(Boolean).sort()[0];});
@@ -1383,6 +1383,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v54','2026-11-12','학습 시간 측정(오늘·7일 평균·전체 평균) — 기록 탭과 함께 보기에 표시'],
  ['v53','2026-11-11','오답 코치(진단·오늘의 처방 자동 편성: 꼬리 먼저·짝 비교·주소·굳은 오답) · 음성 1.5/2/3배속'],
  ['v52','2026-11-08','목소리 목록은 준비된 음성만 표시(지금 Alice) · Brian은 12월 1일 자동 생성 후 추가'],
  ['v51','2026-11-08','GitHub 자동 배포 연결(코드 올리면 1~2분 내 반영)'],
@@ -1580,6 +1581,14 @@ function renderNotes(){
 /* 기록 탭 */
 function versePct(p){if(!p)return 0;if(p.box>=4)return 100;if(p.box>=1)return [0,60,75,90][p.box]||60;return Math.round((p.stage||0)/4*50);}
 function completion(){if(!S.verses.length)return 0;const t=S.verses.reduce((a,v)=>a+versePct(S.progress[v.ref]),0);return Math.round(t/S.verses.length);}
+/* ===== 체류 시간(활동 시간) 측정: 화면이 보이고 1분 안에 조작이 있거나 음성 재생 중일 때만 15초 단위로 누적, 기기별로 저장해 합산 ===== */
+const DEV_ID=(()=>{try{let d=localStorage.getItem('verse-sheet-dev');if(!d){d=Math.random().toString(36).slice(2,10);localStorage.setItem('verse-sheet-dev',d);}return d;}catch(e){return 'dev';}})();
+function secOf(x){if(!x)return 0;const by=x.secBy||{};return Object.values(by).reduce((a,b)=>a+(b||0),0)+(x.sec||0);}
+function minOf(x){return Math.round(secOf(x)/60);}
+function avgMin(days){const t=today();let tot=0,n=0;for(let i=0;i<days;i++){const x=S.stats.days[addDays(t,-i)];const sec=secOf(x);if(sec>0||(x&&(x.tries||x.rev||x.nw))){tot+=sec;n++;}}return n?Math.round(tot/n/60):0;}
+function avgMinAll(){let tot=0,n=0;Object.values(S.stats.days).forEach(x=>{const sec=secOf(x);if(sec>0){tot+=sec;n++;}});return n?Math.round(tot/n/60):0;}
+let lastAct=Date.now();['keydown','pointerdown','touchstart','input','scroll','click'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now();},{passive:true,capture:true}));
+let secAcc=0;setInterval(()=>{try{if(document.hidden)return;const playing=(typeof TTS!=='undefined'&&TTS.isPlaying());if(!playing&&Date.now()-lastAct>60000)return;if(!S||!S.stats)return;const d=D();d.secBy=d.secBy||{};d.secBy[DEV_ID]=(d.secBy[DEV_ID]||0)+15;secAcc+=15;if(secAcc>=60){secAcc=0;save();}}catch(e){}},15000);
 function learnedRefs(){return S.verses.map(v=>v.ref).filter(r=>{const p=S.progress[r];return p&&(p.box>=1||p.stage>=4);});}
 function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.ref).filter(r=>!got.has(r)).slice(0,n);}
 function weekNew(){const t=today();let n=0;for(let i=0;i<7;i++){const d=S.stats.days[addDays(t,-i)];if(d)n+=d.nw||0;}return n;}
@@ -1613,6 +1622,7 @@ function renderLog(){
       <tr><td>다음 차례</td><td>${nextRefs(5).map(esc).join(', ')||'모두 익혔습니다'}</td></tr>
       <tr><td>목록 내보내기</td><td><button class="btn" id="copyLearned">익힌 구절 주소 복사</button> <button class="btn" id="shareLearned">공유</button> <button class="btn" id="showLearned">목록 보기</button> <span class="note" id="copyMsg"></span><textarea id="learnedTa" hidden rows="10" style="width:100%;margin-top:6px;font:inherit;font-size:13px"></textarea></td></tr>
       <tr><td>이번 주 새로 익힘</td><td>${weekNew()}개 · 오늘 ${(D().nwRefs||[]).map(esc).join(', ')||'—'}</td></tr>
+      <tr><td>학습 시간</td><td>오늘 <b>${minOf(D())}분</b> · 최근 7일 하루 평균 <b>${avgMin(7)}분</b> · 전체 평균 ${avgMinAll()}분 <span class="note">(앱을 보며 조작하거나 음성을 듣는 시간만 셉니다)</span></td></tr>
     </tbody></table></div>
     <h3>날짜별 학습 구절</h3>
     <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>새로 익힌 구절</th><th>복습한 구절</th></tr></thead><tbody>${dayVerseRows(days,t,14)||'<tr><td colspan="3" class="note">오늘부터 구절 단위로 기록됩니다.</td></tr>'}</tbody></table></div>
@@ -1624,14 +1634,14 @@ function renderLog(){
     <h3>함께 보기</h3>
     <div class="row"><label><input type="checkbox" id="shareOn" ${S.settings.share?'checked':''}> 내 기록을 함께 보기에 올리기</label>
       <input id="nick" placeholder="표시 이름" value="${esc(S.settings.nick||'')}" style="font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);border-radius:4px;width:140px"><button class="btn" id="nickSave">이름 저장</button></div>
-    <p class="note">올리는 것은 이름·익힌 구절 수·완성도(전 구절 숙달=100%)·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수입니다. 오답 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
+    <p class="note">올리는 것은 이름·익힌 구절 수·완성도(전 구절 숙달=100%)·하루 평균 학습 시간(7일)·오늘 학습 시간·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수입니다. 오답 내용은 공유되지 않습니다. 같은 주소로 로그인한 사람끼리만 보입니다.</p>
     <div class="tw" id="boardWrap"><p class="note">불러오는 중…</p></div>
     <h3>모의시험</h3>
     ${(S.stats.exams||[]).length?`<div class="trend">${(S.stats.exams||[]).slice(-20).map(x=>`<i style="height:${Math.max(4,x.score)}%" title="${x.d} · ${x.score}점"></i>`).join('')}</div>
     <div class="tw"><table class="sheet"><thead><tr><th>회차</th><th>날짜</th><th>범위</th><th>문항</th><th>정답</th><th>점수</th></tr></thead><tbody>${(S.stats.exams||[]).slice().reverse().slice(0,15).map((x,k,arr)=>{const no=(S.stats.exams||[]).length-k;const [,m,dd]=x.d.split('-');return `<tr><td>${no}</td><td>${+m}/${+dd}</td><td>${{l:'학습한 구절',w:'약점',a:'전체'}[x.range]||''}</td><td>${x.n}</td><td>${x.ok}</td><td><b>${x.score}</b></td></tr>`;}).join('')}</tbody></table></div>`:'<p class="note">아직 모의시험 기록이 없습니다. 「모의시험」 탭에서 10문항 이상을 권합니다.</p>'}
     <h3>최근 14일</h3>
-    <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>복습</th><th>새 구절</th><th>첫 시도</th><th>점수</th><th>완료</th></tr></thead><tbody>
-      ${Array.from({length:14},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x)return '';const [,m,dd]=d.split('-');return `<tr><td>${+m}/${+dd}</td><td>${x.rev}</td><td>${x.nw}</td><td>${x.tries?Math.round(x.first/x.tries*100)+'%':'—'}</td><td>${x.done?x.score:'—'}</td><td>${x.done?'<span class="st mst">완료</span>':''}</td></tr>`;}).join('')||'<tr><td colspan="6" class="note">아직 기록이 없습니다.</td></tr>'}
+    <div class="tw"><table class="sheet"><thead><tr><th>날짜</th><th>시간</th><th>복습</th><th>새 구절</th><th>첫 시도</th><th>점수</th><th>완료</th></tr></thead><tbody>
+      ${Array.from({length:14},(_,i)=>addDays(t,-i)).map(d=>{const x=days[d];if(!x)return '';const [,m,dd]=d.split('-');return `<tr><td>${+m}/${+dd}</td><td>${minOf(x)?minOf(x)+'분':'—'}</td><td>${x.rev}</td><td>${x.nw}</td><td>${x.tries?Math.round(x.first/x.tries*100)+'%':'—'}</td><td>${x.done?x.score:'—'}</td><td>${x.done?'<span class="st mst">완료</span>':''}</td></tr>`;}).join('')||'<tr><td colspan="7" class="note">아직 기록이 없습니다.</td></tr>'}
     </tbody></table></div>`;
   $('shareOn').onchange=e=>{S.settings.share=e.target.checked;save();if(window.__pushBoard)window.__pushBoard(true);};
   $('nickSave').onclick=()=>{S.settings.nick=$('nick').value.trim().slice(0,12);save();if(window.__pushBoard)window.__pushBoard(true);$('nickSave').textContent='저장됨';setTimeout(()=>{if($('nickSave'))$('nickSave').textContent='이름 저장';},1200);};
@@ -1640,7 +1650,7 @@ function renderLog(){
 function boardHTML(rows,myUid){
   if(!rows.length)return '<p class="note">아직 아무도 올리지 않았습니다. 위에서 켜면 내 줄이 먼저 생깁니다.</p>';
   rows.sort((a,b)=>((b.pct||0)-(a.pct||0))||((b.learned||0)-(a.learned||0))||(b.streak-a.streak));
-  return `<table class="sheet"><thead><tr><th>이름</th><th>익힌 구절</th><th>완성도</th><th>연속</th><th>이번 주</th><th>오늘 익힌 구절</th><th>오늘</th><th>모의시험</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.learned!=null?`<b>${r.learned}</b>/${r.total}`:'—'}</td><td>${r.pct!=null?`<div class="pbar"><i style="width:${r.pct}%"></i></div><b>${r.pct}%</b>`:'—'}</td><td>${r.streak}일</td><td>${r.weekNew!=null?'+'+r.weekNew:'—'}</td><td>${(r.todayRefs||[]).map(esc).join(', ')||'—'}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${r.lastExam!=null?r.lastExam+'점':'—'}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
+  return `<table class="sheet"><thead><tr><th>이름</th><th>익힌 구절</th><th>완성도</th><th>하루 평균</th><th>오늘</th><th>연속</th><th>이번 주</th><th>오늘 익힌 구절</th><th>오늘 점수</th><th>모의시험</th><th>마지막</th></tr></thead><tbody>${rows.map(r=>{const [,m,d]=(r.date||'').split('-');return `<tr class="${r.uid===myUid?'me':''}"><td>${esc(r.name||'이름 없음')}${r.uid===myUid?' (나)':''}</td><td>${r.learned!=null?`<b>${r.learned}</b>/${r.total}`:'—'}</td><td>${r.pct!=null?`<div class="pbar"><i style="width:${r.pct}%"></i></div><b>${r.pct}%</b>`:'—'}</td><td>${r.minAvg!=null?r.minAvg+'분':'—'}</td><td>${r.minToday!=null?r.minToday+'분':'—'}</td><td>${r.streak}일</td><td>${r.weekNew!=null?'+'+r.weekNew:'—'}</td><td>${(r.todayRefs||[]).map(esc).join(', ')||'—'}</td><td>${r.todayDone?`<span class="st mst">${r.todayScore}점</span>`:(r.todayN?r.todayN+'개 진행':'—')}</td><td>${r.lastExam!=null?r.lastExam+'점':'—'}</td><td>${m?`${+m}/${+d}`:'—'}</td></tr>`;}).join('')}</tbody></table>`;
 }
 
 /* 목록·설정 */
@@ -1793,8 +1803,8 @@ $('today').textContent=today().replace(/-/g,'.');
       const b=fs.doc('board/'+uid);
       if(!S.settings.share){if(lastBoard!=='off'){await b.delete();lastBoard='off';}if(!$('v-log').hidden)window.__loadBoard();return;}
       const d=D(),{streak}=streakInfo();
-      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now(),learned:learnedRefs().length,pct:completion(),lastRef:learnedRefs().slice(-1)[0]||'',todayRefs:(d.nwRefs||[]).slice(0,10),weekNew:weekNew(),lastExam:(S.stats.exams||[]).length?(S.stats.exams.slice(-1)[0].score):null};
-      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date,row.learned,row.pct,row.lastRef,row.todayRefs,row.weekNew,row.lastExam]);
+      const row={name:S.settings.nick||(auth.currentUser&&auth.currentUser.displayName)||'',streak,mastered:masteredCount(),total:S.verses.length,todayDone:!!d.done,todayScore:d.score||0,todayN:d.rev+d.nw,date:today(),updatedAt:Date.now(),learned:learnedRefs().length,pct:completion(),minToday:minOf(D()),minAvg:avgMin(7),lastRef:learnedRefs().slice(-1)[0]||'',todayRefs:(d.nwRefs||[]).slice(0,10),weekNew:weekNew(),lastExam:(S.stats.exams||[]).length?(S.stats.exams.slice(-1)[0].score):null};
+      const key=JSON.stringify([row.name,row.streak,row.mastered,row.total,row.todayDone,row.todayScore,row.todayN,row.date,row.learned,row.pct,row.minToday,row.minAvg,row.lastRef,row.todayRefs,row.weekNew,row.lastExam]);
       if(key===lastBoard)return;await b.set(row);lastBoard=key;if(!$('v-log').hidden)window.__loadBoard();
     }catch(e){}};
     if(now)run();else boardTimer=setTimeout(run,2000);
