@@ -26,6 +26,7 @@ const cfg = (await db.doc('config/tts').get()).data() || {};
 let have = 0, made = 0, fail = 0, chars = 0; const missing = [];
 for (const v of verses) { const k = keyOf(fullOf(v), VOICE); const d = await db.doc('audio/' + k).get(); if (d.exists) have++; else missing.push(v); }
 console.log(`${NAME}: 있음 ${have}/${verses.length}, 없음 ${missing.length}`);
+console.log('KEY_PRESENT=' + (cfg.key ? 'yes' : 'no'));
 if (CHECK || !missing.length) {
   if (!missing.length) await db.doc('config/public').set({ ready: FieldValue.arrayUnion(VOICE), readyNames: { [VOICE]: NAME }, ts: Date.now() }, { merge: true });
   console.log('READY=' + JSON.stringify(((await db.doc('config/public').get()).data() || {}).ready || []));
