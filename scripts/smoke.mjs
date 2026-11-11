@@ -7,6 +7,8 @@ const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
 const errors = [];
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 page.on('console', m => { if (m.type() === 'error' && !/firebase|net::|favicon|ERR_/.test(m.text())) errors.push('console: ' + m.text()); });
+// 테스트는 로그인 없이(외부 요청 차단) 돌려 결과가 환경에 따라 달라지지 않게 함
+await page.route(/^https?:\/\//, r => r.abort());
 await page.goto(file); await page.waitForTimeout(800);
 const r = await page.evaluate(async () => {
   const out = {}; document.getElementById('gate').hidden = true; S.daily.started = S.daily.started || [];

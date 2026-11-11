@@ -7,6 +7,8 @@ const ctx = await browser.newContext({ ...devices['iPhone 13'], acceptDownloads:
 const page = await ctx.newPage();
 const errs = []; page.on('pageerror', e => errs.push(e.message)); page.on('dialog', d => d.dismiss());
 await page.addInitScript(() => { const orig = EventTarget.prototype.addEventListener; window.__L = new WeakSet(); EventTarget.prototype.addEventListener = function (t, f, o) { if ((t === 'click' || t === 'change') && this instanceof Element) window.__L.add(this); return orig.call(this, t, f, o); }; });
+// 테스트는 로그인 없이(외부 요청 차단) 돌려 결과가 환경에 따라 달라지지 않게 함
+await page.route(/^https?:\/\//, r => r.abort());
 await page.goto('file://' + file); await page.waitForTimeout(800);
 const setup = () => page.evaluate(() => { document.getElementById('gate').hidden = true; S.daily.started = S.daily.started || []; const t = today();
   S.verses.slice(0, 6).forEach(v => Object.assign(P(v.ref), { stage: 4, box: 2, due: addDays(t, 2) }));
