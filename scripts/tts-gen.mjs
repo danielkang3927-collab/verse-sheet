@@ -27,8 +27,8 @@ let have = 0, made = 0, fail = 0, chars = 0; const missing = [];
 for (const v of verses) { const k = keyOf(fullOf(v), VOICE); const d = await db.doc('audio/' + k).get(); if (d.exists) have++; else missing.push(v); }
 console.log(`${NAME}: 있음 ${have}/${verses.length}, 없음 ${missing.length}`);
 if (CHECK || !missing.length) {
-  if (!missing.length) await db.doc('config/tts').set({ ready: FieldValue.arrayUnion(VOICE), readyNames: { [VOICE]: NAME }, ts: Date.now() }, { merge: true });
-  console.log('READY=' + JSON.stringify(((await db.doc('config/tts').get()).data() || {}).ready || []));
+  if (!missing.length) await db.doc('config/public').set({ ready: FieldValue.arrayUnion(VOICE), readyNames: { [VOICE]: NAME }, ts: Date.now() }, { merge: true });
+  console.log('READY=' + JSON.stringify(((await db.doc('config/public').get()).data() || {}).ready || []));
   process.exit(0);
 }
 const key = cfg.key; if (!key) { console.error('config/tts에 ElevenLabs 키가 없습니다(설정 탭에서 키 공유 켜기).'); process.exit(3); }
@@ -45,6 +45,6 @@ for (const v of missing) {
   } catch (e) { fail++; console.log(`오류 ${v.ref}: ${e.message}`); }
 }
 const after = await (async () => { let n = 0; for (const v of verses) { if ((await db.doc('audio/' + keyOf(fullOf(v), VOICE)).get()).exists) n++; } return n; })();
-if (after === verses.length) await db.doc('config/tts').set({ ready: FieldValue.arrayUnion(VOICE), readyNames: { [VOICE]: NAME }, ts: Date.now() }, { merge: true });
+if (after === verses.length) await db.doc('config/public').set({ ready: FieldValue.arrayUnion(VOICE), readyNames: { [VOICE]: NAME }, ts: Date.now() }, { merge: true });
 console.log(`SUMMARY ${NAME}: 새로 ${made}개, 실패 ${fail}개, 사용 ${chars}자(≈${Math.round(chars / 2)}크레딧), 완료 ${after}/${verses.length}`);
 process.exit(fail && after !== verses.length ? 1 : 0);

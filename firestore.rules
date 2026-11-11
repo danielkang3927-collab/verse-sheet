@@ -1,19 +1,49 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid}/{doc=**} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function signedIn() { return request.auth != null; }
+    function owner(uid) { return signedIn() && request.auth.uid == uid; }
+    function isAdmin() { return signedIn() && request.auth.token.email in ['danielkang3927@gmail.com', 'kangdy@gsmch.org']; }
+    function learnedOf(d) { return d.get('meta', {}).get('learned', 0); }
+    // 사용자가 10분 안에 명시적으로 '기록 지우기'를 눌렀을 때만 기록이 줄어드는 저장을 허용
+    function explicitReset() { return request.resource.data.get('meta', {}).get('reset', 0) > request.time.toMillis() - 600000; }
+    // 학습 기록 문서: 본인만 읽고 쓰며, 삭제는 누구도 불가. 익힌 구절 수가 크게 줄거나 구절 목록이 비는 저장은 거부(명시적 초기화 제외)
+    match /users/{uid}/data/{doc} {
+      allow read, create: if owner(uid);
+      allow update: if owner(uid) && (
+        doc != 'state'
+        || explicitReset()
+        || (learnedOf(request.resource.data) >= learnedOf(resource.data) - 3
+            && request.resource.data.get('verses', []).size() >= 100)
+      );
+      allow delete: if false;
     }
-    match /config/{id} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.token.email in ['danielkang3927@gmail.com','kangdy@gsmch.org'];
+    // 백업: 본인만, 삭제 불가
+    match /users/{uid}/backups/{day} {
+      allow read, create, update: if owner(uid);
+      allow delete: if false;
     }
+    match /users/{uid}/{other=**} {
+      allow read, write: if owner(uid);
+    }
+    // 음성 생성 설정(키 포함): 관리자만
+    match /config/tts {
+      allow read, write: if isAdmin();
+    }
+    // 준비된 목소리 목록 등 공개 설정: 로그인한 사람은 읽기, 관리자만 쓰기
+    match /config/public {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+    // 공용 음성 저장소: 로그인한 사람은 재생, 쓰기는 관리자(자동 생성은 서비스 계정)
     match /audio/{id} {
-      allow read, write: if request.auth != null;
+      allow read: if signedIn();
+      allow write: if isAdmin();
     }
+    // 함께 보기: 로그인한 사람은 읽기, 자기 줄만 쓰기
     match /board/{uid} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow read: if signedIn();
+      allow write: if owner(uid);
     }
   }
 }

@@ -7,7 +7,19 @@ permissions:
   contents: read
   id-token: write
 jobs:
+  check:
+    name: 배포 전 점검 (버전·문법·끊어 읽기·규칙·연기 테스트)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/check.mjs
+      - run: npm install --no-save playwright@1.47.2 && npx playwright install --with-deps chromium
+      - run: node scripts/smoke.mjs
   deploy:
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

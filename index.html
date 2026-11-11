@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v56">
+<meta name="app-build" content="v57">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -212,7 +212,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v56</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v57</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -282,11 +282,12 @@ label{font-size:13px}
         <label for="elModel">모델</label><select id="elModel"><option value="eleven_flash_v2_5" selected>Flash v2.5 (글자당 0.5크레딧)</option><option value="eleven_multilingual_v2">Multilingual v2 (글자당 1크레딧)</option></select>
         <button class="btn" id="elTest">시험 듣기</button></div>
       <div class="row" id="preRow" hidden><label for="preVoice">음성 미리 만들기 (관리자)</label><select id="preVoice"></select><button class="btn" id="preGo">전체 167구절 음성 만들기</button><span class="note" id="preMsg"></span></div>
-      <div class="row" id="elShareRow" hidden><label><input type="checkbox" id="elShare"> 이 키·목소리를 함께 쓰는 사람들에게도 적용 (관리자)</label><span class="note">켜면 다른 계정은 키 없이 이 키로 음성을 만들고, 각자 목소리·빠르기는 따로 고릅니다.</span></div>
+      <div class="row" id="elShareRow" hidden><label><input type="checkbox" id="elShare"> 자동 생성용으로 키를 저장소에 보관 (관리자만 읽을 수 있음)</label><span class="note">12월 1일 Brian 자동 생성 등 GitHub 자동 작업이 이 키를 씁니다. 다른 사용자에게는 키가 전달되지 않으며, 이미 만들어진 음성만 재생합니다.</span></div>
       <p class="note" id="elMsg">키는 본인 계정에만 저장됩니다. 「생성 속도」를 낮추면 ElevenLabs가 처음부터 천천히 읽은 음성을 새로 만들므로(재생 빠르기와 겹쳐 더 느려짐) 그만큼 크레딧이 다시 듭니다. 한 번 만든 음성은 계정 공용 저장소에 보관되어 다시 만들지 않으므로, 167구절 전체를 한 번 만드는 데 Flash 기준 약 1만 크레딧 안팎이 듭니다(주소 읽기 포함). 사용량: <b id="elUsed">0</b>자 생성 (이번 달)</p>
       <h2 style="margin-top:8px">백업과 복구</h2>
       <p class="note">매일 첫 접속과 하루 완료 때 계정 저장소에 자동 백업(30일 보관). 기기 간 기록이 다르면 지우지 않고 합칩니다.</p>
-      <div class="row"><button class="btn" id="bkNow">지금 백업</button><span class="note" id="bkMsg"></span></div>
+      <div class="row"><button class="btn" id="bkNow">지금 백업</button><button class="btn" id="expGo">내 기록 파일로 내보내기</button><label class="btn" style="cursor:pointer">파일에서 합치기<input type="file" id="impFile" accept="application/json,.json" hidden></label><span class="note" id="bkMsg"></span></div>
+      <p class="note">내보낸 파일은 본인 기기에 보관하는 비상용 사본입니다. 「파일에서 합치기」는 지우지 않고 더 많은 쪽을 남기며 합칩니다.</p>
       <div class="tw" id="backupWrap"></div>
       <div class="row" style="margin-top:8px"><button class="btn danger" id="resetBtn">학습 기록 지우기</button><span id="resetConfirm"></span></div>
       <p class="note">로그인 전에는 이 브라우저에만 저장되고, 로그인하면 계정에 함께 저장됩니다.</p>
@@ -331,6 +332,7 @@ label{font-size:13px}
       <p>「기록」 탭에는 진도(익힌 구절 수·완성도 %·다음 차례, 익힌 구절 주소 목록 복사·공유), 학습 시간(오늘·최근 7일 하루 평균·전체 평균 — 앱이 화면에 떠 있는 시간과 화면을 꺼도 음성을 듣는 시간을 기기별로 합산), 날짜별로 새로 익힌 구절과 복습한 구절, 12주 출석 잔디, 배지, 모의시험 회차별 점수, 최근 14일 표가 있습니다. 완성도는 구절마다 배우는 중 12~37%, 익힘 60~90%, 숙달 100%로 매겨 전체 평균을 낸 값이라, 모든 구절이 숙달되면 100%가 됩니다.</p>
       <p>「함께 보기」를 켜면 같은 주소를 쓰는 사람들끼리 이름·익힌 구절 수·완성도·하루 평균 학습 시간(최근 7일)·오늘 학습 시간·연속일·이번 주 새 구절·오늘 익힌 구절·오늘 점수·최근 모의시험 점수를 한 표에서 봅니다(완성도 순). 오답 내용은 공유되지 않으며, 끄면 내 줄이 바로 내려갑니다.</p>
       <h3>기기 동기화와 기록 보호</h3>
+      <p>기록은 네 겹으로 지킵니다: ① 기기마다 내용이 다르면 지우지 않고 합치기 ② 매일 자동 백업(30일 보관, 삭제 불가) ③ 서버 규칙이 기록을 지우는 요청과 익힌 구절 수가 갑자기 줄어드는 저장을 거부(본인이 「기록 지우기」를 명시적으로 누른 직후만 예외) ④ 「설정」의 「내 기록 파일로 내보내기」로 비상용 사본을 기기에 보관하고 「파일에서 합치기」로 되살림. 다른 사람의 기록은 서로 볼 수도 고칠 수도 없고, 음성 생성 키는 관리자 외에는 읽을 수 없습니다.</p>
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰·아이패드·노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어지고, 서로의 기록은 볼 수 없습니다. 기기 간 기록이 다르면 지우지 않고 합치며, 매일 첫 접속과 하루 완료 때 계정에 자동 백업(30일 보관)되어 「설정」에서 되돌릴 수 있습니다. 상단 초록 점이 동기화 상태이고, 그 옆 v 숫자가 앱 버전입니다(지금 <span data-g="ver"></span>, <span data-g="rel"></span>). 새 버전이 올라오면 다음에 열 때 자동으로 바뀝니다.</p>
       <h3>암송카드</h3>
       <p>휴대폰으로 타이핑이 어려울 때 쓰는 탭입니다. 출제 순서대로 한 장씩 넘기며 소리 내어 읽습니다. 카드 <b>가운데</b>를 누르면 본문이 가려지고 다시 누르면 보이며, <b>오른쪽</b>을 누르면 다음, <b>왼쪽</b>을 누르면 이전 구절입니다(좌우로 밀어도 됩니다). 위쪽 목록에서 원하는 구절을 바로 고르거나 주소를 입력해 이동할 수 있고, 「오늘 학습·복습분」「약점 구절」로 범위를 바꿀 수 있습니다. 노트북에서는 ←→ 키와 스페이스를 씁니다.</p>
@@ -362,7 +364,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v56</p>
+    <p class="note" style="margin:0;text-align:right">v57</p>
   </div>
 </div>
 
@@ -1059,8 +1061,9 @@ const TTS=(()=>{
   async function cachePutLocal(k,ent){try{if(self.caches){const c=await caches.open('tts-v1');await c.put('/tts/'+k,new Response(ent.blob,{headers:{'Content-Type':'audio/mpeg'}}));if(ent.al)await c.put('/tts/'+k+'.al',new Response(JSON.stringify(ent.al),{headers:{'Content-Type':'application/json'}}));}}catch(e){}}
   function b64toBlob(b64){const bin=atob(b64);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new Blob([u],{type:'audio/mpeg'});}
   function blobToB64(blob){return new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(String(fr.result).split(',')[1]);fr.readAsDataURL(blob);});}
-  async function elGenerate(text,ref,voice){const st=S.settings;voice=voice||st.elVoice;if(!elKey())throw new Error('ElevenLabs API 키가 없습니다(설정 탭).');if(!voice)throw new Error('목소리를 고르세요.');
+  async function elGenerate(text,ref,voice){const st=S.settings;voice=voice||st.elVoice;if(!voice)throw new Error('목소리를 고르세요.');
     const k=keyOf(text,voice);const hit=await cacheGet(k);if(hit)return hit;
+    if(!elKey())throw new Error('이 구절의 음성이 아직 준비되지 않았습니다(관리자가 만들면 자동으로 들립니다).');
     const body=Object.assign({text,model_id:st.elModel||'eleven_flash_v2_5'},(+st.elSpeed||1)!==1?{voice_settings:{stability:0.5,similarity_boost:0.75,speed:+st.elSpeed}}:{});
     const r=await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}/with-timestamps?output_format=mp3_44100_64`,{method:'POST',headers:{'xi-api-key':elKey(),'Content-Type':'application/json'},body:JSON.stringify(body)});
     if(!r.ok){let d='';try{d=(await r.json()).detail;d=typeof d==='string'?d:(d&&d.message)||JSON.stringify(d);}catch(e){}throw new Error('ElevenLabs '+r.status+(d?': '+d:''));}
@@ -1395,6 +1398,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v57','2026-11-12','보안 강화(기록 삭제 불가·기록 줄어드는 저장 거부·키 문서 관리자 전용) · 기록 파일 내보내기/합치기 · 배포 전 자동 점검'],
  ['v56','2026-11-12','예상 완료일을 학습 탭 맨 위에 표시(실제 속도 기준, 계획 대비 빠름/늦음) · 안내 문구 현행화'],
  ['v55','2026-11-12','학습 시간: 앱 체류 시간 전체 + 화면 꺼도 음성 재생 시간 포함'],
  ['v54','2026-11-12','학습 시간 측정(오늘·7일 평균·전체 평균) — 기록 탭과 함께 보기에 표시'],
@@ -1709,9 +1713,9 @@ $('ttsRate').onchange=e=>{S.settings.ttsRate=+e.target.value;save();const sp=$('
 $('elKeySave').onclick=()=>{S.settings.elKey=$('elKey').value.trim();save();fillVoiceSel();if(S.settings.elShare&&window.__fsConfigPut)window.__fsConfigPut();$('elMsg').textContent=S.settings.elKey?'키를 저장했습니다. 「음성 목록 불러오기」를 누르세요.':'키를 지웠습니다.';};
 const EL_PRESET=[['Alice (여성)','Xb7hH8MSUJpSbSDYk0k2'],['Brian (남성)','nPczCjzI2devNBz1zQrb']];
 function elVoiceOptions(){const seen=new Set(),out=[];[...(S.settings.elVoiceList||[]),...EL_PRESET.map(([n,id])=>({id,name:n}))].forEach(v=>{if(v&&v.id&&!seen.has(v.id)){seen.add(v.id);out.push(v);}});return out;}
-function fillVoiceSel(){const sel=$('ttsVoiceSel');if(!sel)return;const eng=S.settings.ttsEngine||'browser';const canEl=!!(S.settings.elKey||S.settings.elKeyShared);
+function fillVoiceSel(){const sel=$('ttsVoiceSel');if(!sel)return;const eng=S.settings.ttsEngine||'browser';const canEl=!!(S.settings.elKey||S.settings.elKeyShared||(S.settings.elReady||[]).length);
   const ready=S.settings.elReady||[];const pv=EL_PRESET.filter(([,id])=>isAdmin()||ready.includes(id)).map(([n,id])=>({id,name:n}));if(!pv.length)pv.push({id:EL_PRESET[0][1],name:EL_PRESET[0][0]});if(S.settings.elVoice&&!pv.some(v=>v.id===S.settings.elVoice)&&isAdmin()){const f=elVoiceOptions().find(v=>v.id===S.settings.elVoice);pv.push(f||{id:S.settings.elVoice,name:S.settings.elVoiceName||'선택한 목소리'});}
-  sel.innerHTML=`<option value="browser" ${eng==='browser'?'selected':''}>기기 내장 음성</option>`+(canEl?pv.map(v=>`<option value="${esc(v.id)}" ${eng==='el'&&v.id===S.settings.elVoice?'selected':''}>${esc(v.name)}</option>`).join(''):'<option disabled>ElevenLabs 키 없음(설정)</option>');
+  sel.innerHTML=`<option value="browser" ${eng==='browser'?'selected':''}>기기 내장 음성</option>`+(canEl?pv.map(v=>`<option value="${esc(v.id)}" ${eng==='el'&&v.id===S.settings.elVoice?'selected':''}>${esc(v.name)}</option>`).join(''):'<option disabled>준비된 음성 없음</option>');
   const ec=$('ttsEcho');if(ec)ec.checked=S.settings.ttsGap==='echo';}
 function ensureVoice(){if(!S.settings.elVoice){S.settings.elVoice=EL_PRESET[0][1];S.settings.elVoiceName=EL_PRESET[0][0];}}
 function elFillPreset(){$('elVoice').innerHTML=EL_PRESET.map(([n,id])=>`<option value="${id}" ${id===S.settings.elVoice?'selected':''}>${esc(n)}</option>`).join('');if(!EL_PRESET.some(([,id])=>id===S.settings.elVoice)){S.settings.elVoice=EL_PRESET[0][1];S.settings.elVoiceName=EL_PRESET[0][0];save();}}
@@ -1729,7 +1733,10 @@ $('preGo').onclick=()=>TTS.prebuild($('preVoice').value,$('preVoice').selectedOp
 $('elShare').onchange=e=>{S.settings.elShare=e.target.checked;save();if(window.__fsConfigPut)window.__fsConfigPut();$('elMsg').textContent=e.target.checked?'함께 쓰는 사람들에게 적용했습니다.':'공유를 껐습니다(이미 받은 사람 기기에는 남을 수 있음).';};
 $('elTest').onclick=async()=>{if($('elKey').value.trim()&&$('elKey').value.trim()!==S.settings.elKey){S.settings.elKey=$('elKey').value.trim();save();}if(!S.settings.elVoice)elFillPreset();$('elMsg').textContent='시험 음성 만드는 중…';try{await TTS.speak('태초에 하나님이 천지를 창조하시니라',{force:'el',ref:'시험'});$('elMsg').textContent='들리면 설정 완료입니다.';}catch(e){$('elMsg').textContent='실패: '+(e.message||e)+(/401/.test(e.message||'')?' — 키가 거부되었습니다. ElevenLabs 사이트에서 새 키를 만들어 다시 넣으세요.':'');}};
 $('resetBtn').onclick=()=>{const rc=$('resetConfirm');rc.innerHTML='<span class="note">모든 구절의 단계, 복습 일정, 오답 기록이 지워집니다. 지우기 전에 오늘 날짜 백업을 먼저 만듭니다. 확인하려면 <b>지우기</b>라고 입력하세요.</span> <input id="rsTxt" style="font:inherit;font-size:13px;padding:4px 8px;border:1px solid var(--grid);background:var(--surface);color:var(--fg);width:90px"> <button class="btn danger" id="rsY">실행</button> <button class="btn" id="rsN">취소</button>';
-  $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
+  const eg=$('expGo');if(eg)eg.onclick=async()=>{const data=JSON.stringify(Object.assign({},S,{exportedAt:new Date().toISOString(),build:(document.querySelector('meta[name=app-build]')||{}).content}),null,0);const blob=new Blob([data],{type:'application/json'});const name=`암송기록_${today()}.json`;const file=new File([blob],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:name});}catch(e){}}else{const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),30000);}$('bkMsg').textContent='내보냈습니다.';};
+  const imf=$('impFile');if(imf)imf.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!j||!j.progress||!j.stats)throw new Error('형식이 다릅니다');if(window.__backupNow)await window.__backupNow();const merged=mergeState(S,j);S=migrate(merged);save();cur=nextItem();lastFb=null;renderAll();$('bkMsg').textContent='합쳤습니다 (합치기 전 상태는 백업에 있음).';}catch(err){$('bkMsg').textContent='가져오기 실패: '+(err.message||err);}e.target.value='';};
+  $('rsN').onclick=()=>{rc.innerHTML='';};$('rsY').onclick=async()=>{if($('rsTxt').value.trim()!=='지우기'){$('rsTxt').focus();return;}if(window.__backupNow)await window.__backupNow();S.progress={};S.daily={};S.errors=[];S.stats={days:{},badges:{}};S.meta=Object.assign({},S.meta||{},{reset:Date.now()});drill=null;save();cur=nextItem();lastFb=null;renderAll();rc.innerHTML='<span class="note">지웠습니다. 백업에서 되돌릴 수 있습니다.</span>';renderBackups();};};
 async function renderBackups(){const w=$('backupWrap');if(!w)return;if(!window.__listBackups){w.innerHTML='<p class="note">로그인하면 백업 목록이 보입니다.</p>';return;}
   const list=await window.__listBackups();if(!list.length){w.innerHTML='<p class="note">아직 백업이 없습니다. 매일 첫 접속과 하루 완료 때 자동으로 만들어집니다.</p>';return;}
   w.innerHTML=`<table class="sheet"><thead><tr><th>날짜</th><th>숙달</th><th>출석일</th><th>구절 수</th><th></th></tr></thead><tbody>${list.map(b=>{const d=b.data;const m=Object.values(d.progress||{}).filter(p=>(p.box||0)>=4).length;const days=Object.values((d.stats&&d.stats.days)||{}).filter(x=>x.done).length;return `<tr><td>${b.id}</td><td>${m}</td><td>${days}</td><td>${(d.verses||[]).length}</td><td><button class="btn" data-bk="${b.id}">이 시점으로 복구</button></td></tr>`;}).join('')}</tbody></table><p class="note">복구하면 현재 상태를 먼저 백업한 뒤, 선택한 날의 기록으로 되돌립니다.</p>`;
@@ -1792,11 +1799,11 @@ $('today').textContent=today().replace(/-/g,'.');
   setTimeout(()=>{if(!authReady&&gate&&!gate.hidden){gbtn.disabled=false;gbtn.textContent='Google로 로그인';diag.push('로그인 상태 확인이 7초 안에 끝나지 않아 바로 진행합니다 (SDK '+firebase.SDK_VERSION+')');showDiag();}},7000);
   let uid=null,writing=false,dirty=false,timer=null,remoteAt=0,unsub=null;
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
-  window.__fsConfigPut=async()=>{if(!uid||!isAdmin())return;const st=S.settings;try{if(st.elShare&&st.elKey)await fs.doc('config/tts').set({key:st.elKey,model:st.elModel||'eleven_flash_v2_5',voices:st.elVoiceList||[],ts:Date.now()},{merge:true});else await fs.doc('config/tts').set({key:'',voices:[],ts:Date.now()},{merge:true});}catch(e){}};
-  window.__fsMarkReady=async(voice)=>{if(!uid||!isAdmin())return;try{await fs.doc('config/tts').set({ready:firebase.firestore.FieldValue.arrayUnion(voice),ts:Date.now()},{merge:true});if(!(S.settings.elReady||[]).includes(voice)){S.settings.elReady=[...(S.settings.elReady||[]),voice];save();fillVoiceSel();}}catch(e){}};
-  window.__fsConfigGet=async()=>{if(!uid)return;try{const d=await fs.doc('config/tts').get();if(!d.exists)return;const c=d.data();if(Array.isArray(c.ready)&&c.ready.length){const prev=JSON.stringify(S.settings.elReady||[]);S.settings.elReady=c.ready;if(prev!==JSON.stringify(c.ready)){save();fillVoiceSel();}}if(S.settings.elKey)return;const changed=(S.settings.elKeyShared||'')!==(c.key||'');S.settings.elKeyShared=c.key||'';if(c.key){if(!(S.settings.elVoiceList||[]).length&&(c.voices||[]).length)S.settings.elVoiceList=c.voices;if(!S.settings.elVoice)elFillPreset();}if(changed){save();fillVoiceSel();}}catch(e){}};
+  window.__fsConfigPut=async()=>{if(!uid||!isAdmin())return;const st=S.settings;try{if(st.elShare&&st.elKey)await fs.doc('config/tts').set({key:st.elKey,model:st.elModel||'eleven_flash_v2_5',ts:Date.now()},{merge:true});else await fs.doc('config/tts').set({key:'',ts:Date.now()},{merge:true});await fs.doc('config/public').set({voices:st.elVoiceList||[],ready:st.elReady||[],ts:Date.now()},{merge:true});}catch(e){}};
+  window.__fsMarkReady=async(voice)=>{if(!uid||!isAdmin())return;try{await fs.doc('config/public').set({ready:firebase.firestore.FieldValue.arrayUnion(voice),ts:Date.now()},{merge:true});if(!(S.settings.elReady||[]).includes(voice)){S.settings.elReady=[...(S.settings.elReady||[]),voice];save();fillVoiceSel();}}catch(e){}};
+  window.__fsConfigGet=async()=>{if(!uid)return;try{const d=await fs.doc('config/public').get();const c=d.exists?d.data():{};if(Array.isArray(c.ready)&&c.ready.length){const prev=JSON.stringify(S.settings.elReady||[]);S.settings.elReady=c.ready;if(prev!==JSON.stringify(c.ready)){save();fillVoiceSel();}}if(!isAdmin()){if(S.settings.elKeyShared){S.settings.elKeyShared='';save();}return;}if(S.settings.elKey)return;const dt=await fs.doc('config/tts').get();if(dt.exists)Object.assign(c,dt.data());const changed=(S.settings.elKeyShared||'')!==(c.key||'');S.settings.elKeyShared=c.key||'';if(c.key){if(!(S.settings.elVoiceList||[]).length&&(c.voices||[]).length)S.settings.elVoiceList=c.voices;if(!S.settings.elVoice)elFillPreset();}if(changed){save();fillVoiceSel();}}catch(e){}};
   window.__fsAudioGet=async k=>{if(!uid)return null;const d=await fs.doc('audio/'+k).get();return d.exists?d.data():null;};
-  window.__fsAudioPut=async(k,data)=>{if(!uid)return;if((data.b64||'').length>900000)return;await fs.doc('audio/'+k).set(data);};
+  window.__fsAudioPut=async(k,data)=>{if(!uid||!isAdmin())return;if((data.b64||'').length>900000)return;await fs.doc('audio/'+k).set(data);};
   async function backupDaily(force){
     if(!uid)return;const t=today();
     try{const bref=fs.doc('users/'+uid+'/backups/'+t);
@@ -1842,15 +1849,15 @@ $('today').textContent=today().replace(/-/g,'.');
     if(!$('v-learn').hidden)renderAll();else if(!$('v-notes').hidden)renderNotes();else if(!$('v-list').hidden)renderList();else if(!$('v-log').hidden)renderLog();
   }
   async function push(){
-    const at=S.updatedAt;const {errors,...rest}=S;
-    await ref('state').set(Object.assign({},rest,{updatedAt:at}));
+    const at=S.updatedAt;const {errors,...rest}=S;const meta=Object.assign({},S.meta||{},{learned:learnedRefs().length,build:(document.querySelector('meta[name=app-build]')||{}).content||''});
+    await ref('state').set(Object.assign({},rest,{meta,updatedAt:at}));
     await ref('errors').set({errors:(errors||[]).slice(-1200),updatedAt:at});
     remoteAt=at;
   }
   async function flush(){
     if(!uid)return;if(writing){dirty=true;return;}
     writing=true;dirty=false;setSync('busy','동기화 중');
-    try{await push();setSync('on','동기화됨');}catch(e){setSync('','동기화 실패 · 이 기기에만 저장');}
+    try{await push();setSync('on','동기화됨');window.__syncErr='';}catch(e){const m=String(e&&e.message||e);window.__syncErr=m;setSync('',/permission|denied/i.test(m)?'저장 거부됨 · 이 기기에 보관 중(기록은 안전)':'동기화 실패 · 이 기기에만 저장');}
     writing=false;if(dirty)schedule();
   }
   function schedule(){clearTimeout(timer);timer=setTimeout(flush,1500);}
