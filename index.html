@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v57">
+<meta name="app-build" content="v58">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -110,6 +110,13 @@ kbd{font-family:var(--mono);font-size:11px;padding:0 4px;border:1px solid var(--
 .quote{border-left:3px solid var(--accent);padding:6px 12px;font-size:13px;color:var(--muted)}
 .bar i{display:block;height:100%;background:var(--accent);width:0}
 .tw{overflow-x:auto}
+html,body{max-width:100%;overflow-x:hidden}body{overscroll-behavior-y:contain}
+#mainSheet{table-layout:fixed;width:100%}#mainSheet td,#mainSheet th{overflow:hidden;text-overflow:ellipsis}
+#mainSheet th.rn{width:34px}#mainSheet .c-fq{width:52px;text-align:center}#mainSheet .c-acc{width:60px}#mainSheet .c-wk{width:44px;text-align:center}#mainSheet .c-due{width:84px}
+@media(max-width:640px){#mainSheet{font-size:12px}#mainSheet td,#mainSheet th{padding:5px 4px}#mainSheet th.rn{width:26px}#mainSheet .c-acc{display:none}#mainSheet .c-fq{width:44px}#mainSheet th.c-fq{font-size:11px;text-overflow:clip}#mainSheet .c-wk{width:34px}#mainSheet .c-due{width:64px}
+  .sheet td,.sheet th{padding:4px 6px}.wrap,.panel,.box{max-width:100%}}
+@media(max-width:380px){#mainSheet .c-fq{display:none}}
+.ptr{position:fixed;left:50%;top:0;transform:translate(-50%,-48px);z-index:70;padding:6px 14px;border-radius:0 0 10px 10px;background:var(--surface);border:1px solid var(--grid);border-top:0;font-size:12px;color:var(--muted);transition:transform .12s;pointer-events:none}.ptr.go{color:var(--accent,#2f6f4e);font-weight:600}
 table.sheet{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
 .sheet th{background:var(--head);font-weight:500;color:var(--muted);text-align:left;padding:4px 8px;border:1px solid var(--grid);font-size:12px;white-space:nowrap}
 .sheet td{padding:5px 8px;border:1px solid var(--grid);white-space:nowrap}
@@ -212,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v57</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v58</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -227,7 +234,7 @@ label{font-size:13px}
         <div class="sum" id="sum"></div>
         <div class="bar"><i id="barI"></i></div>
         <div class="today" id="todayBar"></div>
-        <div class="tw"><table class="sheet"><thead><tr><th class="rn"></th><th>주소</th><th title="출제 빈도 예측값 (5 높음 ~ 1 낮음)">빈도*</th><th>상태</th><th>다음 복습</th><th>정답률</th><th>약점</th></tr></thead><tbody id="rows"></tbody></table></div>
+        <div class="tw"><table class="sheet" id="mainSheet"><thead><tr><th class="rn"></th><th>주소</th><th class="c-fq" title="출제 빈도 예측값 (5 높음 ~ 1 낮음)">빈도*</th><th>상태</th><th class="c-due">다음 복습</th><th class="c-acc">정답률</th><th class="c-wk">약점</th></tr></thead><tbody id="rows"></tbody></table></div>
       </div>
     </div>
   </section>
@@ -341,6 +348,8 @@ label{font-size:13px}
       <p>구절 본문·출제 가능성·「왜 외워야 하는가」는 관리자 계정으로 로그인했을 때만 「구절 목록·설정」 탭에서 고칠 수 있습니다. 다른 계정에는 「설정」만 보입니다.</p>
       <h3>이번 버전에서 바뀐 것</h3>
       <ul id="changelog"></ul>
+      <h3>새로고침</h3>
+      <p>화면 맨 위에서 아래로 당겼다 놓으면 저장을 먼저 보낸 뒤 새로 불러옵니다. 왼쪽 위 아이콘을 눌러도 같습니다.</p>
       <h3>단축키</h3>
       <ul><li><b>Enter</b> 채점 · <b>Tab</b> 다음 어절 힌트(복습에서 쓰면 간격이 늘지 않음) · <b>Esc</b> 화면 가리기(시험지 화면에서는 돌아가기)</li></ul>
       <h3>음성과 타이핑</h3>
@@ -364,7 +373,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v57</p>
+    <p class="note" style="margin:0;text-align:right">v58</p>
   </div>
 </div>
 
@@ -792,7 +801,7 @@ function dueLabel(p){if(!p.due)return '—';const t=today();if(p.due<=t)return '
 
 function renderSheet(){
   $('rows').innerHTML=S.verses.map((v,i)=>{const p=P(v.ref),[s,c]=statusOf(v.ref),ws=weakSum(p);
-    return `<tr data-ref="${esc(v.ref)}" tabindex="0" class="${cur&&cur.ref===v.ref?'cur':''}"><td class="rn">${i+2}</td><td class="ref">${esc(v.ref)}</td><td>${v.freq?`<span class="fq">${v.freq}</span>`:''}</td><td><span class="st ${c}">${s}</span></td><td>${dueLabel(p)}</td><td>${p.tries?Math.round(p.ok/p.tries*100)+'%':'—'}</td><td>${ws?`<span class="wkdot">${weakIdx(p).length}</span>`:''}</td></tr>`;}).join('');
+    return `<tr data-ref="${esc(v.ref)}" tabindex="0" class="${cur&&cur.ref===v.ref?'cur':''}"><td class="rn">${i+2}</td><td class="ref">${esc(v.ref)}</td><td class="c-fq">${v.freq?`<span class="fq">${v.freq}</span>`:''}</td><td><span class="st ${c}">${s}</span></td><td class="c-due">${dueLabel(p)}</td><td class="c-acc">${p.tries?Math.round(p.ok/p.tries*100)+'%':'—'}</td><td class="c-wk">${ws?`<span class="wkdot">${weakIdx(p).length}</span>`:''}</td></tr>`;}).join('');
   const q=buildQueue(),mast=S.verses.filter(v=>P(v.ref).box>=4).length;
   $('sum').innerHTML=`<span>복습 <b>${q.rev.length}</b></span><span>학습 중 <b>${q.prog.length}</b></span><span>새 구절 <b>${q.fresh.length}</b></span>${drill?`<span>약점 연습 <b>${drill.length+1}</b></span>`:''}<span style="margin-left:auto">숙달 <b>${mast}/${S.verses.length}</b></span>`;
   $('barI').style.width=(S.verses.length?mast/S.verses.length*100:0)+'%';
@@ -845,6 +854,7 @@ function rxNote(it){if(!it||!it.rx)return '';
   if(it.rx==='addr')return `<div class="why" style="color:var(--accent)">코치 처방 · 주소: 본문은 아는데 주소가 안 떠오르던 구절입니다. 앞부분을 보고 주소부터 맞힌 뒤 쓰세요.</div>`;
   if(it.rx==='weak')return `<div class="why" style="color:var(--accent)">코치 처방 · 굳은 오답: 같은 자리를 ${it.rxN||2}번 이상 똑같이 틀렸습니다. 점선 자리를 소리 내어 세 번 읽고 쓰세요.</div>`;
   return '';}
+document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('#coachLink');if(a){e.preventDefault();show('notes');window.scrollTo(0,0);}});
 function coachLine(){const l=rxLeft();if(!l.length)return '';return `<p class="note" style="margin:0 0 6px">코치 처방 ${l.length}개가 복습 다음에 나옵니다 · <a href="#" id="coachLink">진단 보기</a></p>`;}
 function renderWork(){
   const w=$('work');
@@ -852,7 +862,7 @@ function renderWork(){
     const q=buildQueue(),weakN=S.verses.filter(v=>weakSum(P(v.ref))).length;
     markDone();
     const restToday=isRest(today())&&!D().done;
-    w.innerHTML=`${etaLine()}<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">지금은 약점 보강 기간입니다(새 구절 없음). 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
+    w.innerHTML=`${etaLine()}${coachLine()}<div class="done"><h2>${D().done?'오늘 분량을 마쳤습니다':restToday?'오늘은 쉬는 날입니다':'오늘 할 분량이 없습니다'}</h2>${D().done?doneHTML():restToday?'<p class="tip">주일은 계획에서 빼 두었습니다. 연속일은 끊기지 않습니다. 그래도 하고 싶으면 아래에서 복습이나 새 구절을 시작할 수 있습니다.</p>':phase()==='exam'?`<p class="tip">지금은 약점 보강 기간입니다(새 구절 없음). 복습과 약점 구절 연습을 마치면 하루가 완료됩니다. 모의시험을 격일로 20문항씩 권합니다. 시험까지 D-${planInfo().dExam}.</p>`:'<p class="tip">새 구절을 더 시작하거나 약점 연습을 할 수 있습니다.</p>'}
       <div class="acts">${weakN?`<button class="btn primary" id="drillGo2">약점 집중 연습 (${Math.min(10,weakN)}구절)</button>`:''}${q.freshLeft?`<button class="btn${weakN?'':' primary'}" id="moreNew">새 구절 ${Math.min(S.settings.newPerDay,q.freshLeft)}개 더</button>`:''}</div>${fbHTML()}</div>`;
     const mn=$('moreNew');if(mn)mn.onclick=()=>{S.daily.extra=(S.daily.extra||0)+S.settings.newPerDay;save();cur=nextItem();lastFb=null;renderAll();};
     const dg=$('drillGo2');if(dg)dg.onclick=startDrill;
@@ -878,7 +888,6 @@ function renderWork(){
   ta.addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();hint();}});
   $('chk').onclick=submit;$('hint').onclick=hint;
   const hb=$('hear');if(hb)hb.onclick=()=>hearRef(hb,cur.ref);
-  const cl=$('coachLink');if(cl)cl.onclick=e=>{e.preventDefault();show('notes');};
   if($('skip'))$('skip').onclick=()=>{const q=buildQueue();const pool=[...q.rev,...q.prog].filter(r=>r!==cur.ref);if(pool.length){const r=pool[0];cur=q.rev.includes(r)?makeItem(r,'review',3):makeItem(r,'learn',Math.min(P(r).stage,3));lastFb=null;renderAll();}};
   if($('back'))$('back').onclick=()=>{drill=null;cur=nextItem();lastFb=null;renderAll();};
   if(free)w.querySelectorAll('.step').forEach(b=>b.onclick=()=>{cur=makeItem(cur.ref,'free',+b.dataset.s);lastFb=null;renderAll();});
@@ -1398,6 +1407,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v58','2026-11-12','아래로 당겨 새로고침 · 학습 탭 표가 휴대폰 화면에 맞게 들어옴(좌우 밀림 없음)'],
  ['v57','2026-11-12','보안 강화(기록 삭제 불가·기록 줄어드는 저장 거부·키 문서 관리자 전용) · 기록 파일 내보내기/합치기 · 배포 전 자동 점검'],
  ['v56','2026-11-12','예상 완료일을 학습 탭 맨 위에 표시(실제 속도 기준, 계획 대비 빠름/늦음) · 안내 문구 현행화'],
  ['v55','2026-11-12','학습 시간: 앱 체류 시간 전체 + 화면 꺼도 음성 재생 시간 포함'],
@@ -1757,6 +1767,13 @@ $('homeBtn').onclick=e=>{e.preventDefault();const go=()=>{location.href=location
     if(m&&m[1]!==mine){if(window.__flushNow){try{await Promise.race([window.__flushNow(),new Promise(r=>setTimeout(r,2500))]);}catch(e){}}location.replace(location.pathname+'?r='+Date.now());}}catch(e){}checking=false;}
   setTimeout(chk,4000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)chk();});setInterval(chk,10*60*1000);})();
 $('hideBtn').onclick=toggleCover;
+/* 아래로 당겨 새로고침: 맨 위에서 80px 이상 당기면 저장을 서버에 보낸 뒤 다시 불러옴 */
+(function(){const el=document.createElement('div');el.className='ptr';el.id='ptr';el.textContent='당겨서 새로고침';document.body.appendChild(el);let y0=null,dy=0,busy=false;
+  const scrolledInside=t=>{for(let n=t;n&&n!==document.body;n=n.parentElement){if(n.scrollTop>0)return true;const tag=n.tagName;if(tag==='TEXTAREA'||tag==='INPUT'||tag==='SELECT')return true;}return false;};
+  document.addEventListener('touchstart',e=>{y0=null;dy=0;if(busy||e.touches.length!==1)return;const ov=$('printOv');if(ov&&!ov.hidden)return;if((window.scrollY||document.documentElement.scrollTop)>0)return;if(scrolledInside(e.target))return;y0=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchmove',e=>{if(y0===null)return;dy=e.touches[0].clientY-y0;if(dy<=0){el.style.transform='translate(-50%,-48px)';return;}const p=Math.min(dy,120);el.style.transform=`translate(-50%,${-48+p*0.5}px)`;el.classList.toggle('go',dy>=80);el.textContent=dy>=80?'놓으면 새로고침':'당겨서 새로고침';},{passive:true});
+  document.addEventListener('touchend',async()=>{if(y0===null)return;const go=dy>=80;y0=null;if(!go){el.style.transform='translate(-50%,-48px)';return;}busy=true;el.textContent='새로고침 중…';
+    try{if(window.__flushNow)await Promise.race([window.__flushNow(),new Promise(r=>setTimeout(r,2500))]);}catch(e){}location.replace(location.pathname+'?r='+Date.now());},{passive:true});})();
 $('ttsPlay').onclick=()=>TTS.toggle();$('ttsStop').onclick=()=>TTS.stop();
 $('ttsMode').value=S.settings.ttsMode||'seq';$('ttsRep').value=String(S.settings.ttsRep||2);$('ttsSpeed').value=String(S.settings.ttsRate??1);ensureVoice();fillVoiceSel();
 $('ttsVoiceSel').onchange=e=>{const v=e.target.value;if(v==='browser'){S.settings.ttsEngine='browser';}else{S.settings.ttsEngine='el';S.settings.elVoice=v;S.settings.elVoiceName=e.target.selectedOptions[0]?.text||'';}save();if(TTS.isPlaying()){TTS.stop();}};
@@ -1816,7 +1833,7 @@ $('today').textContent=today().replace(/-/g,'.');
   window.__listBackups=async function(){if(!uid)return[];try{const q=await fs.collection('users/'+uid+'/backups').orderBy('savedAt','desc').limit(30).get();return q.docs.map(d=>({id:d.id,data:d.data()}));}catch(e){return[];}};
   window.__restoreBackup=async function(id){if(!uid)return false;try{const d=await fs.doc('users/'+uid+'/backups/'+id).get();if(!d.exists)return false;
     await backupDaily(true);
-    S=migrate(mergeState(d.data(),{}));S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(x){}
+    S=migrate(mergeState(d.data(),{}));S.meta=Object.assign({},S.meta||{},{reset:Date.now()});S.updatedAt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));}catch(x){}
     await push();cur=nextItem();lastFb=null;drill=null;renderAll();return true;}catch(e){return false;}};
   window.__backupNow=()=>backupDaily(true);
 
