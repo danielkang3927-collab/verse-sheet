@@ -21,7 +21,8 @@ service cloud.firestore {
     // 백업: 본인만, 삭제 불가
     match /users/{uid}/backups/{day} {
       allow read, create, update: if owner(uid);
-      allow delete: if false;
+      // 30일이 지난 백업만 정리 가능 (최근 백업은 삭제 불가)
+      allow delete: if owner(uid) && resource.data.get('savedAt', 0) < request.time.toMillis() - 2592000000;
     }
     match /users/{uid}/{other=**} {
       allow read, write: if owner(uid);
