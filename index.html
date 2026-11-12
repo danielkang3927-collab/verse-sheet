@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v66">
+<meta name="app-build" content="v67">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v66</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v67</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -318,7 +318,7 @@ label{font-size:13px}
       <h3>듣기는 언제</h3>
       <p>「따라 쓰기」(처음 익힐 때)에만 「🔊 듣기」가 있고, 그 뒤 단계와 복습에서는 답을 쓰기 전에 들을 수 없습니다. 암송은 기억에서 꺼내는 연습이라, 듣고 받아쓰면 효과가 없기 때문입니다. 채점 결과 옆의 「🔊 정답 듣기」로 방금 꺼낸 기억을 바른 소리로 굳히세요.</p>
       <h3>오답 코치</h3>
-      <p>「오답 노트」 맨 위 「코치 진단」이 최근 30일 오답을 유형·자리(앞/중/뒤)·시점(처음 익힐 때/복습 때)·추세로 분석해 원인을 말해 주고, 그에 맞는 「오늘의 처방」을 최대 3건 자동으로 만듭니다. 처방은 학습 탭에서 복습이 끝난 뒤 새 구절보다 먼저 나옵니다: <b>꼬리 먼저</b>(뒷부분에서 무너지는 구절은 앞 절반을 주고 뒷부분만 꺼내기), <b>짝 비교</b>(섞이는 두 구절을 나란히 본 뒤 연달아 쓰기), <b>주소 떠올리기</b>, <b>굳은 오답 풀기</b>(같은 자리를 반복해서 틀린 곳). 복습 실패가 많거나 실패율이 오르면 「오늘 새 구절 줄이기」 버튼이 나타납니다.</p>
+      <p>「오답 노트」 맨 위 「코치 진단」이 최근 30일 오답을 유형·자리(앞/중/뒤)·시점(처음 익힐 때/복습 때)·추세로 분석해 원인을 말해 주고, 그에 맞는 「오늘의 처방」을 최대 3건 자동으로 만듭니다. 한 번 마친 처방은 되풀이하지 않고, 그 뒤에 같은 종류로 새로 틀렸을 때만 다시 나옵니다. 처방은 학습 탭에서 복습이 끝난 뒤 새 구절보다 먼저 나옵니다: <b>꼬리 먼저</b>(뒷부분에서 무너지는 구절은 앞 절반을 주고 뒷부분만 꺼내기), <b>짝 비교</b>(섞이는 두 구절을 나란히 본 뒤 연달아 쓰기), <b>주소 떠올리기</b>, <b>굳은 오답 풀기</b>(같은 자리를 반복해서 틀린 곳). 복습 실패가 많거나 실패율이 오르면 「오늘 새 구절 줄이기」 버튼이 나타납니다.</p>
       <h3>틀렸을 때</h3>
       <p>빨간 밑줄은 빠뜨리거나 틀린 정답 글자, 취소선은 잘못 쓴 글자입니다. 다시 치기 시작하면 정답이 접힙니다. 보고 베끼지 않고 기억에서 꺼내야 오래 남습니다. 띄어쓰기만 다른 경우는 노란 표시로만 알려 주고 통과시킵니다(「설정」에서 띄어쓰기까지 채점하도록 바꿀 수 있습니다).</p>
       <h3>오답이 다음 문제를 바꿉니다</h3>
@@ -374,7 +374,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v66</p>
+    <p class="note" style="margin:0;text-align:right">v67</p>
   </div>
 </div>
 
@@ -998,7 +998,7 @@ function mergeState(a,b){
     if(!pa){out.progress[r]=pb;return;}if(!pb){out.progress[r]=pa;return;}
     const base=pScore(pa)>=pScore(pb)?pa:pb,other=base===pa?pb:pa;
     const m=Object.assign({},base);m.tries=Math.max(pa.tries||0,pb.tries||0);m.ok=Math.max(pa.ok||0,pb.ok||0);
-    m.weak=Object.assign({},other.weak||{},base.weak||{});out.progress[r]=m;});
+    m.weak=Object.assign({},other.weak||{},base.weak||{});if(pa.rxAt||pb.rxAt){m.rxAt={};[pa.rxAt||{},pb.rxAt||{}].forEach(x=>Object.entries(x).forEach(([k,d])=>{if(!m.rxAt[k]||d>m.rxAt[k])m.rxAt[k]=d;}));}out.progress[r]=m;});
   const t=today();const da=a.daily||{},db=b.daily||{};
   out.daily=(da.date===t&&db.date===t)?{date:t,started:[...new Set([...(da.started||[]),...(db.started||[])])],reviewed:Math.max(da.reviewed||0,db.reviewed||0),extra:Math.max(da.extra||0,db.extra||0)}:(da.date===t?da:(db.date===t?db:((da.date||'')>=(db.date||'')?da:db)));
   const seen=new Set();[...(a.errors||[]),...(b.errors||[])].forEach(e=>{const k=[e.ref,e.wi,e.got,e.type,e.d,e.m].join('|');if(!seen.has(k)){seen.add(k);out.errors.push(e);}});
@@ -1043,7 +1043,7 @@ function submit(){
         S.daily.reviewed++;{const dd=D();dd.rev++;dd.revRefs=dd.revRefs||[];if(!dd.revRefs.includes(ref))dd.revRefs.push(ref);}cur=nextItem();}
     }else{p.box=1;p.lapse=true;p.due=t;cur=cur.stage===3?toWeak('review'):Object.assign(cur,{failed:true,hints:0,mask:makeMask(ref,4)});}
   }else if(cur.kind==='drill'){
-    if(r.pass){if(cur.stage!==3){const nx=makeItem(ref,'drill',3);nx.planned=cur.planned;nx.rx=cur.rx;nx.rxKey=cur.rxKey;nx.pairWith=cur.pairWith;nx.rxN=cur.rxN;cur=nx;}else{if(cur.planned&&!S.daily.drilled.includes(ref)){S.daily.drilled.push(ref);D().dr=(D().dr||0)+1;}if(cur.rxKey){S.daily.rxDone=S.daily.rxDone||[];if(!S.daily.rxDone.includes(cur.rxKey))S.daily.rxDone.push(cur.rxKey);D().rx=(D().rx||0)+1;}cur=nextItem();}}
+    if(r.pass){if(cur.stage!==3){const nx=makeItem(ref,'drill',3);nx.planned=cur.planned;nx.rx=cur.rx;nx.rxKey=cur.rxKey;nx.pairWith=cur.pairWith;nx.rxN=cur.rxN;cur=nx;}else{if(cur.planned&&!S.daily.drilled.includes(ref)){S.daily.drilled.push(ref);D().dr=(D().dr||0)+1;}if(cur.rxKey){S.daily.rxDone=S.daily.rxDone||[];if(!S.daily.rxDone.includes(cur.rxKey))S.daily.rxDone.push(cur.rxKey);if(cur.rx){const pp=P(ref);pp.rxAt=Object.assign({},pp.rxAt||{},{[cur.rx]:today()});}D().rx=(D().rx||0)+1;}cur=nextItem();}}
     else if(cur.stage===3){const keep={rx:cur.rx,rxKey:cur.rxKey,pairWith:cur.pairWith,rxN:cur.rxN};cur=toWeak('drill');cur.kind='drill';Object.assign(cur,keep);}
     else{cur.hints=0;cur.mask=makeMask(ref,cur.stage);}
   }else{cur=makeItem(ref,'free',cur.stage);}
@@ -1422,6 +1422,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v67','2026-11-13','코치 처방은 한 번 마치면 되풀이하지 않음 — 그 뒤 같은 종류로 새로 틀렸을 때만 다시 나옴'],
  ['v66','2026-11-13','학습 「듣기」가 이전 구절을 읽던 오류 수정 — 마지막에 누른 구절만 재생 · 「정답 듣기」에 구절 주소 표시'],
  ['v65','2026-11-13','코치 처방 「굳은 오답」에 점선 빈칸이 보이지 않던 오류 수정 — 반복해 틀린 자리를 실제로 점선으로 표시'],
  ['v64','2026-11-12','따라 말하기 끊는 자리 다듬기 — 다음 말의 첫소리가 딸려 오지 않도록 두 덩어리 사이 가장 조용한 지점에서 자르고 끝을 부드럽게 줄임'],
@@ -1578,13 +1579,16 @@ function coachFindings(A){
 }
 /* 오늘의 처방: 하루 한 번 자동 생성(최대 3건), 복습 뒤·새 구절 앞에 끼어듦 */
 function buildRx(){ensureDaily();if(S.daily.rx)return S.daily.rx;const A=coachAnalysis();const rx=[];const used=new Set();
-  const add=o=>{if(rx.length>=3||used.has(o.ref))return;used.add(o.ref);rx.push(o);};
-  if(A.pairs.length){const p=A.pairs[0];if(verseOf(p.a)&&verseOf(p.b)){add({ref:p.a,rx:'pair',pairWith:p.b});add({ref:p.b,rx:'pair',pairWith:p.a});}}
+  /* 한 번 마친 처방은 되풀이하지 않음 — 마친 날 뒤에 같은 종류의 오답이 새로 생겼을 때만 다시 편성 */
+  const rxRel={weak:e=>e.wi>=0&&e.type!=='띄어쓰기',tail:e=>e.wi>=0,addr:e=>e.type==='주소',pair:e=>e.type==='구절 혼동'};
+  const again=(ref,kind)=>{const at=((P(ref).rxAt)||{})[kind];if(!at)return true;return S.errors.some(e=>e.ref===ref&&e.d>at&&rxRel[kind](e));};
+  const add=o=>{if(rx.length>=3||used.has(o.ref)||!again(o.ref,o.rx))return;used.add(o.ref);rx.push(o);};
+  {const p=A.pairs.find(p=>verseOf(p.a)&&verseOf(p.b)&&again(p.a,'pair')&&again(p.b,'pair'));if(p){add({ref:p.a,rx:'pair',pairWith:p.b});add({ref:p.b,rx:'pair',pairWith:p.a});}}
   for(const x of A.stuck){if(P(x.ref).box>=1||P(x.ref).stage>=2)add({ref:x.ref,rx:'weak',rxN:x.n});}
   for(const r of A.tails){add({ref:r,rx:'tail'});}
   for(const r of A.addrs){add({ref:r,rx:'addr'});}
   S.daily.rx=rx;S.daily.rxDone=S.daily.rxDone||[];save();return rx;}
-function rxLeft(){buildRx();return (S.daily.rx||[]).filter(o=>!(S.daily.rxDone||[]).includes(o.ref+'|'+o.rx));}
+function rxLeft(){buildRx();(S.daily.rxDone||[]).forEach(k=>{const i=k.lastIndexOf('|'),r=k.slice(0,i),kind=k.slice(i+1);if(verseOf(r)){const pp=P(r);if(!(pp.rxAt||{})[kind])pp.rxAt=Object.assign({},pp.rxAt||{},{[kind]:today()});}});return (S.daily.rx||[]).filter(o=>!(S.daily.rxDone||[]).includes(o.ref+'|'+o.rx));}
 function makeRx(o){let it;
   if(o.rx==='weak'){/* 굳은 오답: 오답 노트에서 반복해 틀린 어절 자리를 직접 점선 빈칸으로 가림(진도 기록의 약점 표시는 통과하면 지워지므로 그것에 기대지 않음) */
     const n=verseOf(o.ref).text.split(' ').length;const wis=[...new Set(coachAnalysis().stuck.filter(x=>x.ref===o.ref).map(x=>x.wi))].filter(i=>i>=0&&i<n);
