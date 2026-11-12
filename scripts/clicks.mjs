@@ -18,7 +18,7 @@ await setup();
 // 1) unbound controls
 const unbound = await page.evaluate(() => { const delegated = ['copyLearned', 'shareLearned', 'showLearned', 'hearFb', 'coachLink', 'expGo', 'impFile']; const readAtUse = ['ttsRep', 'exR', 'exN', 'exNc', 'ppR', 'ppN', 'ppNc', 'ppS', 'ppKey', 'preVoice', 'cardJump', 'nick', 'rsTxt', 'addrIn', 'elKey']; const out = [];
   for (const v of ['learn', 'cards', 'exam', 'log', 'notes', 'list', 'guide']) { show(v); if (v === 'learn') { cur = nextItem(); lastFb = null; renderAll(); }
-    document.querySelectorAll('#v-' + v + ' button, #v-' + v + ' a[href="#"], #v-' + v + ' select, #v-' + v + ' input').forEach(el => { const has = el.onclick || el.onchange || el.oninput || window.__L.has(el) || delegated.includes(el.id) || readAtUse.includes(el.id) || el.closest('summary'); if (!has) out.push(v + ':' + (el.id || el.textContent.trim().slice(0, 14) || el.tagName)); }); }
+    document.querySelectorAll('#v-' + v + ' button, #v-' + v + ' a[href="#"], #v-' + v + ' select, #v-' + v + ' input').forEach(el => { const has = el.onclick || el.onchange || el.oninput || window.__L.has(el) || delegated.includes(el.id) || readAtUse.includes(el.id) || el.closest('summary') || el.matches('.steps:not(.free) .step') /* 단계 표시줄: 자유 연습이 아닐 때는 누르는 버튼이 아니라 진행 표시 */; if (!has) out.push(v + ':' + (el.id || el.textContent.trim().slice(0, 14) || el.tagName)); }); }
   return out; });
 // 2) click every button per tab (skip destructive/navigation)
 const skip = ['authBtn', 'gbtn', 'rsY', 'homeBtn', 'elVoices', 'elTest', 'preGo', 'elKeySave', 'bkNow', 'pPdf', 'hideBtn'];
