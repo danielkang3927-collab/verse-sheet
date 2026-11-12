@@ -36,6 +36,7 @@ for (const v of list) {
     return { dur: +buf.duration.toFixed(2), hasAl: !!al, alOk: !!al && al.length === v.full.length, preTimes: al ? [...v.full.slice(0, pre)].map((c, i) => c + ':' + al[i]).join(' ') : '', pre: v.full.slice(0, pre), preEnd: +tAt(pre).toFixed(2), b, files };
   }, { v, b64, al, keep: !!REF });
   rows.push({ ref: v.ref, ...r });
+  if (args.saveall) { fs.mkdirSync('out/all', { recursive: true }); const n = String(rows.length).padStart(3, '0'); fs.writeFileSync(`out/all/${n}.mp3`, Buffer.from(b64, 'base64')); fs.appendFileSync('out/all.jsonl', JSON.stringify({ n, ref: v.ref, full: v.full }) + '\n'); }
   if (REF) { fs.writeFileSync('out/full.mp3', Buffer.from(b64, 'base64')); r.files.forEach((f, i) => fs.writeFileSync(`out/chunk${String(i).padStart(2, '0')}.wav`, Buffer.from(f.b64, 'base64'))); fs.writeFileSync('out/labels.json', JSON.stringify(r.files.map(f => f.label))); console.log(JSON.stringify({ ...r, files: undefined }, null, 1)); }
 }
 await browser.close();
