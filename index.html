@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v63">
+<meta name="app-build" content="v64">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v63</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v64</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -374,7 +374,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v63</p>
+    <p class="note" style="margin:0;text-align:right">v64</p>
   </div>
 </div>
 
@@ -1261,9 +1261,18 @@ const TTS=(()=>{
   function wavFrom(buf,t0,t1){const sr=buf.sampleRate,ch=buf.getChannelData(0),a=Math.max(0,Math.floor(t0*sr)),b=Math.min(ch.length,Math.ceil(t1*sr)),n=Math.max(1,b-a);const out=new ArrayBuffer(44+n*2),dv=new DataView(out);const w=(o,str)=>{for(let i=0;i<str.length;i++)dv.setUint8(o+i,str.charCodeAt(i));};
     w(0,'RIFF');dv.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,sr,true);dv.setUint32(28,sr*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,n*2,true);
     for(let i=0;i<n;i++){const v=Math.max(-1,Math.min(1,ch[a+i]||0));dv.setInt16(44+i*2,v<0?v*32768:v*32767,true);}return new Blob([out],{type:'audio/wav'});}
+  // 끊는 자리 다듬기: 글자 시각(정렬)은 수십 ms씩 어긋나므로, 두 덩어리 사이에서 실제로 가장 조용한 구간을 찾아 그 한가운데에서 자름
+  function quietCut(ch,sr,a,b){const lo=Math.max(0,Math.floor((Math.min(a,b)-0.09)*sr)),hi=Math.min(ch.length,Math.ceil((Math.max(a,b)+0.07)*sr));const W=Math.max(8,Math.round(sr*0.012)),H=Math.max(4,Math.round(sr*0.003));if(hi-lo<W*2)return (a+b)/2;
+    const fr=[];for(let p=lo;p+W<=hi;p+=H){let e=0;for(let i=p;i<p+W;i++)e+=ch[i]*ch[i];fr.push(Math.sqrt(e/W));}
+    let mi=0;for(let i=1;i<fr.length;i++)if(fr[i]<fr[mi])mi=i;const thr=Math.max(fr[mi]*2.5,0.003);let l=mi,r=mi;while(l>0&&fr[l-1]<thr)l--;while(r<fr.length-1&&fr[r+1]<thr)r++;
+    return (lo+((l+r)/2)*H+W/2)/sr;}
+  function fadeEdges(buf,t0,t1,fin,fout){const sr=buf.sampleRate,src=buf.getChannelData(0),a=Math.max(0,Math.floor(t0*sr)),b=Math.min(src.length,Math.ceil(t1*sr)),n=Math.max(1,b-a);const out=new Float32Array(n);out.set(src.subarray(a,a+n));
+    const ni=Math.min(n>>1,Math.round(fin*sr)),no=Math.min(n>>1,Math.round(fout*sr));for(let i=0;i<ni;i++)out[i]*=i/ni;for(let i=0;i<no;i++)out[n-1-i]*=i/no;return {sampleRate:sr,getChannelData:()=>out};}
   async function chunkBlobs(ent,full,prefixLen,ref){if(ent.chunks)return ent.chunks;const buf=await ctx().decodeAudioData(await ent.blob.slice(0).arrayBuffer());const dur=buf.duration;const rs=chunkRanges(full,prefixLen,ref);const al=(ent.al&&ent.al.length===full.length)?ent.al:null;
-    const tAt=i=>al?(i<=0?0:al[Math.min(i,al.length)-1]):dur*i/full.length;
-    ent.chunks=rs.map((r,k)=>{const t0=k===0?0:Math.max(0,tAt(r.s)-0.05),t1=k===rs.length-1?dur:Math.min(dur,tAt(r.e)+0.12);return {blob:wavFrom(buf,t0,t1),label:r.label};});return ent.chunks;}
+    const tAt=i=>al?(i<=0?0:al[Math.min(i,al.length)-1]):dur*i/full.length;const ch=buf.getChannelData(0),sr=buf.sampleRate;
+    const endOf=r=>{let e=r.e;while(e>r.s&&/\s/.test(full[e-1]))e--;return e;};
+    const cuts=[0];for(let k=0;k<rs.length-1;k++){let c=quietCut(ch,sr,tAt(endOf(rs[k])),tAt(rs[k+1].s));c=Math.max(cuts[k]+0.05,Math.min(dur,c));cuts.push(c);}cuts.push(dur);
+    ent.cuts=cuts;ent.chunks=rs.map((r,k)=>{const first=k===0,last=k===rs.length-1;const fb=fadeEdges(buf,cuts[k],cuts[k+1],first?0:0.006,last?0:0.02);return {blob:wavFrom(fb,0,fb.getChannelData(0).length/sr),label:r.label};});return ent.chunks;}
   function playBlob(blob){return new Promise((ok,no)=>{const a=$('ttsAudio');if(cur&&cur.url)URL.revokeObjectURL(cur.url);const url=URL.createObjectURL(blob);cur={url};a.onended=()=>ok();a.onerror=()=>no(new Error('재생 오류'));a.preservesPitch=true;a.playbackRate=S.settings.ttsRate||1;a.src=url;a.play().then(()=>{},e=>no(new Error('재생이 막혔습니다. ▶ 버튼을 다시 누르세요.')));});}
   function speakBrowser(text){return new Promise((ok,no)=>{if(!window.speechSynthesis)return no(new Error('이 기기에는 내장 음성이 없습니다.'));const u=new SpeechSynthesisUtterance(text);u.lang='ko-KR';u.rate=S.settings.ttsRate||1;
     const vs=speechSynthesis.getVoices();const ko=vs.find(v=>/ko/i.test(v.lang)&&/Yuna|Premium|Enhanced/i.test(v.name))||vs.find(v=>/ko/i.test(v.lang));if(ko)u.voice=ko;
@@ -1326,7 +1335,7 @@ const TTS=(()=>{
   async function evict(k){mem.delete(k);try{if(self.caches){const c=await caches.open('tts-v1');await c.delete('/tts/'+k);await c.delete('/tts/'+k+'.al');}}catch(e){}}
   function toggle(){if(playing){stop();return;}run();}
   function isPlaying(){return playing;}
-  return {speak,run,stop,toggle,isPlaying,uiState,prebuild,elKey,textOf,PHRASES,evict};
+  return {speak,run,stop,toggle,isPlaying,uiState,prebuild,elKey,textOf,PHRASES,evict,_quietCut:quietCut,_chunkBlobs:chunkBlobs,_elGenerate:elGenerate};
 })();
 let cardI=0,cardHide=false,cardBig=false,cardMode='all';
 function cardOrder(){
@@ -1411,6 +1420,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v64','2026-11-12','따라 말하기 끊는 자리 다듬기 — 다음 말의 첫소리가 딸려 오지 않도록 두 덩어리 사이 가장 조용한 지점에서 자르고 끝을 부드럽게 줄임'],
  ['v63','2026-11-12','아직 준비되지 않은 목소리(Brian)는 목록에서 숨김 — 준비된 목소리(Alice)만 선택 가능, 12월 1일 생성 후 자동 표시'],
  ['v62','2026-11-12','잘못 읽은 음성을 구절 단위로 다시 만들면 모든 기기에 자동으로 새 음성이 적용'],
  ['v61','2026-11-12','암송카드가 마지막으로 보던 구절부터 열림 · 내보내기 파일에서 음성 키 제외'],
