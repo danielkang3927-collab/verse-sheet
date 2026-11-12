@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v62">
+<meta name="app-build" content="v63">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v62</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v63</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -374,7 +374,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v62</p>
+    <p class="note" style="margin:0;text-align:right">v63</p>
   </div>
 </div>
 
@@ -1411,6 +1411,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v63','2026-11-12','아직 준비되지 않은 목소리(Brian)는 목록에서 숨김 — 준비된 목소리(Alice)만 선택 가능, 12월 1일 생성 후 자동 표시'],
  ['v62','2026-11-12','잘못 읽은 음성을 구절 단위로 다시 만들면 모든 기기에 자동으로 새 음성이 적용'],
  ['v61','2026-11-12','암송카드가 마지막으로 보던 구절부터 열림 · 내보내기 파일에서 음성 키 제외'],
  ['v60','2026-11-12','기록 내보내기·파일에서 합치기 버튼이 동작하지 않던 오류 수정 · 전체 버튼 자동 점검 추가'],
@@ -1741,7 +1742,7 @@ $('elKeySave').onclick=()=>{S.settings.elKey=$('elKey').value.trim();save();fill
 const EL_PRESET=[['Alice (여성)','Xb7hH8MSUJpSbSDYk0k2'],['Brian (남성)','nPczCjzI2devNBz1zQrb']];
 function elVoiceOptions(){const seen=new Set(),out=[];[...(S.settings.elVoiceList||[]),...EL_PRESET.map(([n,id])=>({id,name:n}))].forEach(v=>{if(v&&v.id&&!seen.has(v.id)){seen.add(v.id);out.push(v);}});return out;}
 function fillVoiceSel(){const sel=$('ttsVoiceSel');if(!sel)return;const eng=S.settings.ttsEngine||'browser';const canEl=!!(S.settings.elKey||S.settings.elKeyShared||(S.settings.elReady||[]).length);
-  const ready=S.settings.elReady||[];const pv=EL_PRESET.filter(([,id])=>isAdmin()||ready.includes(id)).map(([n,id])=>({id,name:n}));if(!pv.length)pv.push({id:EL_PRESET[0][1],name:EL_PRESET[0][0]});if(S.settings.elVoice&&!pv.some(v=>v.id===S.settings.elVoice)&&isAdmin()){const f=elVoiceOptions().find(v=>v.id===S.settings.elVoice);pv.push(f||{id:S.settings.elVoice,name:S.settings.elVoiceName||'선택한 목소리'});}
+  const ready=S.settings.elReady||[];const pv=EL_PRESET.filter(([,id])=>ready.includes(id)).map(([n,id])=>({id,name:n}));if(!pv.length)pv.push({id:EL_PRESET[0][1],name:EL_PRESET[0][0]});/* 준비(전 구절 생성 완료)된 목소리만 — 관리자도 예외 없음. 준비 안 된 목소리가 골라져 있으면 준비된 목소리로 되돌림 */if(eng==='el'&&!pv.some(v=>v.id===S.settings.elVoice)){S.settings.elVoice=pv[0].id;S.settings.elVoiceName=pv[0].name;try{save();}catch(e){}}
   sel.innerHTML=`<option value="browser" ${eng==='browser'?'selected':''}>기기 내장 음성</option>`+(canEl?pv.map(v=>`<option value="${esc(v.id)}" ${eng==='el'&&v.id===S.settings.elVoice?'selected':''}>${esc(v.name)}</option>`).join(''):'<option disabled>준비된 음성 없음</option>');
   const ec=$('ttsEcho');if(ec)ec.checked=S.settings.ttsGap==='echo';}
 function ensureVoice(){if(!S.settings.elVoice){S.settings.elVoice=EL_PRESET[0][1];S.settings.elVoiceName=EL_PRESET[0][0];}}
