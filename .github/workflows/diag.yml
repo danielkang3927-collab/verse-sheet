@@ -1,0 +1,38 @@
+name: TTS diagnose
+on:
+  workflow_dispatch:
+    inputs:
+      voice:
+        description: alice | brian
+        default: alice
+      ref:
+        description: 구절 주소(비우면 전체 경계 점검)
+        default: ''
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/792068515925/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: gh-deploy@verse-sheet.iam.gserviceaccount.com
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install --no-save @google-cloud/firestore@7 playwright@1.47.2 && npx playwright install --with-deps chromium
+      - name: Diagnose
+        env:
+          VOICE_IN: ${{ github.event.inputs.voice }}
+          REF_IN: ${{ github.event.inputs.ref }}
+        run: |
+          case "$VOICE_IN" in alice) ID=Xb7hH8MSUJpSbSDYk0k2;; brian) ID=nPczCjzI2devNBz1zQrb;; *) exit 2;; esac
+          if [ -n "$REF_IN" ]; then node scripts/tts-diag.mjs --voice "$ID" --ref "$REF_IN"; else node scripts/tts-diag.mjs --voice "$ID"; fi
+      - name: 받아쓰기(구절 지정 시)
+        if: ${{ github.event.inputs.ref != '' }}
+        run: |
+          pip install -q faster-whisper
+          python scripts/stt.py medium
