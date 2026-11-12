@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v65">
+<meta name="app-build" content="v66">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v65</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v66</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -374,7 +374,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v65</p>
+    <p class="note" style="margin:0;text-align:right">v66</p>
   </div>
 </div>
 
@@ -838,7 +838,7 @@ function fbHTML(){
     body=anaHTML(f);
     if(diffOpen)body+=`<div class="diff">${r.html}</div><div class="legend">${r.charOk?'<span class="spm">␣</span> 띄어 써야 함 · <span class="spx">|</span> 붙여 써야 함':'<b class="miss">밑줄</b> 빠뜨리거나 틀린 정답 글자 · <s class="ins">취소선</s> 잘못 쓴 글자'} · 다시 치면 접힙니다</div>`;
     if(f.next)body+=`<div class="legend">다음: ${esc(f.next)}</div>`;}
-  return `<div class="fb ${r.pass?'pass':'fail'}"><div class="hd">${hd}<button class="link" id="hearFb" data-ref="${esc(f.ref)}" title="방금 쓴 구절을 바른 소리로 확인">🔊 정답 듣기</button></div>${body}</div>`;
+  return `<div class="fb ${r.pass?'pass':'fail'}"><div class="hd">${hd}<button class="link" id="hearFb" data-ref="${esc(f.ref)}" title="방금 쓴 구절을 바른 소리로 확인">🔊 ${esc(f.ref)} 정답 듣기</button></div>${body}</div>`;
 }
 function warnLine(it){
   if(it.stage!==3)return '';const p=P(it.ref),wi=weakIdx(p);const bits=[];
@@ -1277,10 +1277,12 @@ const TTS=(()=>{
   function speakBrowser(text){return new Promise((ok,no)=>{if(!window.speechSynthesis)return no(new Error('이 기기에는 내장 음성이 없습니다.'));const u=new SpeechSynthesisUtterance(text);u.lang='ko-KR';u.rate=S.settings.ttsRate||1;
     const vs=speechSynthesis.getVoices();const ko=vs.find(v=>/ko/i.test(v.lang)&&/Yuna|Premium|Enhanced/i.test(v.name))||vs.find(v=>/ko/i.test(v.lang));if(ko)u.voice=ko;
     u.onend=()=>ok();u.onerror=e=>{if(e.error==='interrupted'||e.error==='canceled')ok();else no(new Error('내장 음성 오류: '+e.error));};cur={utter:u};speechSynthesis.cancel();speechSynthesis.speak(u);});}
-  async function speak(text,opt={}){const eng=opt.force||S.settings.ttsEngine||'browser';if(eng==='el'){const b=await elGenerate(text,opt.ref);if(stopFlag&&!opt.force)return;await playBlob(b.blob);}else await speakBrowser(text);}
+  /* 한 구절 듣기: 가장 마지막에 누른 것만 재생(먼저 누른 구절의 음성이 늦게 도착해 덮어쓰지 않게), 이전에 멈춤을 눌렀어도 다시 재생됨 */
+  let speakSeq=0;
+  async function speak(text,opt={}){const my=++speakSeq;if(!playing)stopFlag=false;const eng=opt.force||S.settings.ttsEngine||'browser';if(eng==='el'){const b=await elGenerate(text,opt.ref);if(my!==speakSeq||(stopFlag&&!opt.force))return;await playBlob(b.blob);}else await speakBrowser(text);}
   async function prefetch(text,ref){try{if((S.settings.ttsEngine||'browser')==='el')await elGenerate(text,ref);}catch(e){}}
   function sleep(ms){return new Promise(r=>{const t=setTimeout(r,ms);cur={timer:t,res:r};});}
-  function stop(){stopFlag=true;playing=false;q=[];try{navigator.mediaSession.playbackState='none';}catch(e){}try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}const a=$('ttsAudio');try{a.pause();a.onended=null;a.src='';}catch(e){}if(cur&&cur.timer){clearTimeout(cur.timer);cur.res&&cur.res();}uiState();}
+  function stop(){speakSeq++;stopFlag=true;playing=false;q=[];try{navigator.mediaSession.playbackState='none';}catch(e){}try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}const a=$('ttsAudio');try{a.pause();a.onended=null;a.src='';}catch(e){}if(cur&&cur.timer){clearTimeout(cur.timer);cur.res&&cur.res();}uiState();}
   function uiState(msg){const on=playing;$('ttsPlay').textContent=on?'⏸ 잠시 멈춤':'▶ 읽어 주기';$('ttsStop').disabled=!on;$('player').classList.toggle('on',on);if(msg!==undefined)$('ttsMsg').textContent=msg;}
   /* 무음 WAV (구절 사이 쉼을 타이머 대신 오디오로 이어 붙여 백그라운드에서도 끊기지 않게) */
   const silence=new Map();function silentBlob(ms){const k=Math.round(ms);if(silence.has(k))return silence.get(k);const sr=8000,n=Math.max(1,Math.round(sr*k/1000));const buf=new ArrayBuffer(44+n);const dv=new DataView(buf);const w=(o,str)=>{for(let i=0;i<str.length;i++)dv.setUint8(o+i,str.charCodeAt(i));};
@@ -1420,6 +1422,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v66','2026-11-13','학습 「듣기」가 이전 구절을 읽던 오류 수정 — 마지막에 누른 구절만 재생 · 「정답 듣기」에 구절 주소 표시'],
  ['v65','2026-11-13','코치 처방 「굳은 오답」에 점선 빈칸이 보이지 않던 오류 수정 — 반복해 틀린 자리를 실제로 점선으로 표시'],
  ['v64','2026-11-12','따라 말하기 끊는 자리 다듬기 — 다음 말의 첫소리가 딸려 오지 않도록 두 덩어리 사이 가장 조용한 지점에서 자르고 끝을 부드럽게 줄임'],
  ['v63','2026-11-12','아직 준비되지 않은 목소리(Brian)는 목록에서 숨김 — 준비된 목소리(Alice)만 선택 가능, 12월 1일 생성 후 자동 표시'],
