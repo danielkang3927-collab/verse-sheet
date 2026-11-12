@@ -33,9 +33,15 @@ async function stt(b64) {
   if (!r.ok) throw new Error('STT ' + r.status + ' ' + (await r.text()).slice(0, 160));
   return (await r.json()).text || '';
 }
-const attempts = [['eleven_multilingual_v2', { apply_text_normalization: 'off' }], ['eleven_flash_v2_5', { apply_text_normalization: 'off' }], ['eleven_multilingual_v2', { seed: 7 }], ['eleven_multilingual_v2', { seed: 21, voice_settings: { stability: 0.7, similarity_boost: 0.75 } }], ['eleven_flash_v2_5', { seed: 3 }]];
+// 값싼 모델(글자당 0.5)부터 시도하고, 마지막에만 다국어 모델(글자당 1)을 씀
+const attempts = [['eleven_flash_v2_5', { apply_text_normalization: 'off' }], ['eleven_flash_v2_5', { seed: 3 }], ['eleven_multilingual_v2', { apply_text_normalization: 'off' }]];
+// 남겨 둘 크레딧(다른 목소리 전체 생성 몫). 남은 양을 알 수 있으면 그 아래로는 쓰지 않음
+const RESERVE = +(args.reserve || 0);
+async function remaining() { try { const r = await fetch('https://api.elevenlabs.io/v1/user/subscription', { headers: { 'xi-api-key': key } }); if (!r.ok) return null; const j = await r.json(); return j.character_limit - j.character_count; } catch (e) { return null; } }
 let chosen = null, verified = false, firstOk = null;
 for (const [model, extra] of attempts) {
+  const cost = Math.ceil(text.length * (model === 'eleven_flash_v2_5' ? 0.5 : 1)); const left = await remaining();
+  if (RESERVE) { if (left === null && model !== 'eleven_flash_v2_5') { console.log('남은 크레딧을 알 수 없어 비싼 모델은 건너뜀'); continue; } if (left !== null && left - cost < RESERVE) { console.log(`예산 보호: 남은 ${left}, 필요 ${cost}, 남겨 둘 ${RESERVE} — 중단`); break; } }
   let a; try { a = await tts(model, extra); } catch (e) { console.log(`시도 실패(${model}): ${e.message}`); if (/401|quota|limit|exceed/i.test(e.message)) break; continue; }
   firstOk = firstOk || a;
   let heard = null; try { heard = await stt(a.b64); } catch (e) { console.log('받아쓰기 확인 불가: ' + e.message); }

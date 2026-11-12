@@ -50,7 +50,7 @@ jobs:
           esac
           # 예약 실행(크레딧 초기화 직후): 밀린 음성 수정부터 처리한 뒤 Brian 생성
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            node -e "const l=require('./scripts/tts-fixlist.json');const ids={alice:'Xb7hH8MSUJpSbSDYk0k2',brian:'nPczCjzI2devNBz1zQrb'};const {spawnSync}=require('child_process');for(const f of l){const r=spawnSync('node',['scripts/tts-fix.mjs','--voice',ids[f.voice],'--ref',f.ref,'--expect',f.expect||'','--reject',f.reject||''],{stdio:'inherit'});console.log('FIX '+f.ref+' exit='+r.status);}"
+            node -e "const l=require('./scripts/tts-fixlist.json');const ids={alice:'Xb7hH8MSUJpSbSDYk0k2',brian:'nPczCjzI2devNBz1zQrb'};const {spawnSync}=require('child_process');for(const f of l){const r=spawnSync('node',['scripts/tts-fix.mjs','--voice',ids[f.voice],'--ref',f.ref,'--expect',f.expect||'','--reject',f.reject||'','--reserve','7600'],{stdio:'inherit'});console.log('FIX '+f.ref+' exit='+r.status);}"
           fi
           if [ "$MODE_IN" = "fix" ]; then node scripts/tts-fix.mjs --voice "$ID" --ref "$REF_IN" --expect "$EXPECT_IN" --reject "$REJECT_IN"; exit $?; fi
           if [ "$MODE_IN" = "check" ]; then node scripts/tts-gen.mjs --voice "$ID" --name "$NAME" --check; else node scripts/tts-gen.mjs --voice "$ID" --name "$NAME"; fi

@@ -9,7 +9,7 @@ on:
         description: 구절 주소(비우면 전체 경계 점검)
         default: ''
       audit:
-        description: yes면 전 구절을 받아써서 잘못 읽은 곳 찾기
+        description: yes=전 구절 받아쓰기 점검 / alfill=시각표 없는 음성에 시각표 만들어 넣기
         default: 'no'
 permissions:
   contents: read
@@ -33,7 +33,7 @@ jobs:
           REF_IN: ${{ github.event.inputs.ref }}
         run: |
           case "$VOICE_IN" in alice) ID=Xb7hH8MSUJpSbSDYk0k2;; brian) ID=nPczCjzI2devNBz1zQrb;; *) exit 2;; esac
-          if [ -n "$REF_IN" ]; then node scripts/tts-diag.mjs --voice "$ID" --ref "$REF_IN"; elif [ "${{ github.event.inputs.audit }}" = "yes" ]; then node scripts/tts-diag.mjs --voice "$ID" --saveall; else node scripts/tts-diag.mjs --voice "$ID"; fi
+          if [ -n "$REF_IN" ]; then node scripts/tts-diag.mjs --voice "$ID" --ref "$REF_IN"; elif [ "${{ github.event.inputs.audit }}" = "alfill" ]; then node scripts/tts-diag.mjs --voice "$ID" --saveall --onlynoal; elif [ "${{ github.event.inputs.audit }}" = "yes" ]; then node scripts/tts-diag.mjs --voice "$ID" --saveall; else node scripts/tts-diag.mjs --voice "$ID"; fi
       - name: 받아쓰기(구절 지정 시)
         if: ${{ github.event.inputs.ref != '' }}
         run: |
@@ -46,3 +46,14 @@ jobs:
           sudo apt-get install -y -qq ffmpeg >/dev/null
           pip install -q faster-whisper numpy
           python scripts/stt_all.py medium
+      - name: 시각표 없는 음성에 시각표 만들어 넣기
+        if: ${{ github.event.inputs.audit == 'alfill' && github.event.inputs.ref == '' }}
+        env:
+          VOICE_IN: ${{ github.event.inputs.voice }}
+        run: |
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          pip install -q faster-whisper numpy
+          python scripts/stt_align.py
+          node scripts/al-write.mjs
+          case "$VOICE_IN" in alice) ID=Xb7hH8MSUJpSbSDYk0k2;; brian) ID=nPczCjzI2devNBz1zQrb;; esac
+          node scripts/tts-diag.mjs --voice "$ID"
