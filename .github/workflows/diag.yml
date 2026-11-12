@@ -34,5 +34,5 @@ jobs:
       - name: 받아쓰기(구절 지정 시)
         if: ${{ github.event.inputs.ref != '' }}
         run: |
-          pip install -q -U faster-whisper av
+          pip install -q faster-whisper numpy
           python scripts/stt.py medium
