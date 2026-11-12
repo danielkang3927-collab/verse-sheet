@@ -6,8 +6,17 @@ on:
         description: alice | brian
         default: alice
       mode:
-        description: check | generate
+        description: check | generate | fix
         default: check
+      ref:
+        description: (fix) 구절 주소 예) 출 19:5-6
+        default: ''
+      expect:
+        description: (fix) 반드시 들려야 하는 말
+        default: ''
+      reject:
+        description: (fix) 들리면 안 되는 말
+        default: ''
   schedule:
     - cron: '0 1 1 12 *'   # 12월 1일 10:00 KST — Brian 전체 생성
 permissions:
@@ -30,10 +39,14 @@ jobs:
         env:
           VOICE_IN: ${{ github.event.inputs.voice || 'brian' }}
           MODE_IN: ${{ github.event.inputs.mode || 'generate' }}
+          REF_IN: ${{ github.event.inputs.ref }}
+          EXPECT_IN: ${{ github.event.inputs.expect }}
+          REJECT_IN: ${{ github.event.inputs.reject }}
         run: |
           case "$VOICE_IN" in
             alice) ID=Xb7hH8MSUJpSbSDYk0k2; NAME="Alice (여성)";;
             brian) ID=nPczCjzI2devNBz1zQrb; NAME="Brian (남성)";;
             *) echo "unknown voice $VOICE_IN"; exit 2;;
           esac
+          if [ "$MODE_IN" = "fix" ]; then node scripts/tts-fix.mjs --voice "$ID" --ref "$REF_IN" --expect "$EXPECT_IN" --reject "$REJECT_IN"; exit $?; fi
           if [ "$MODE_IN" = "check" ]; then node scripts/tts-gen.mjs --voice "$ID" --name "$NAME" --check; else node scripts/tts-gen.mjs --voice "$ID" --name "$NAME"; fi

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v61">
+<meta name="app-build" content="v62">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v61</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v62</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -374,7 +374,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v61</p>
+    <p class="note" style="margin:0;text-align:right">v62</p>
   </div>
 </div>
 
@@ -1323,9 +1323,10 @@ const TTS=(()=>{
     let done=0,made=0,fail=0;const btn=$('preGo');if(btn)btn.disabled=true;
     for(const r of list){try{const t=textOf(r);if(!(await cacheGet(keyOf(t,voice)))){await elGenerate(t,r,voice);made++;}}catch(e){fail++;msg('오류: '+(e.message||e));if(/401|quota|limit|exceed/i.test(e.message||'')){if(btn)btn.disabled=false;return;}}done++;msg(`${vname} 만드는 중 ${done}/${list.length} (새로 ${made}개${fail?', 실패 '+fail:''})`);}
     if(!fail&&window.__fsMarkReady)window.__fsMarkReady(voice);msg(`${vname} 완료: 새로 ${made}개${fail?', 실패 '+fail:''}. 이제 모든 기기에서 바로 재생됩니다.`);if(btn)btn.disabled=false;}
+  async function evict(k){mem.delete(k);try{if(self.caches){const c=await caches.open('tts-v1');await c.delete('/tts/'+k);await c.delete('/tts/'+k+'.al');}}catch(e){}}
   function toggle(){if(playing){stop();return;}run();}
   function isPlaying(){return playing;}
-  return {speak,run,stop,toggle,isPlaying,uiState,prebuild,elKey,textOf,PHRASES};
+  return {speak,run,stop,toggle,isPlaying,uiState,prebuild,elKey,textOf,PHRASES,evict};
 })();
 let cardI=0,cardHide=false,cardBig=false,cardMode='all';
 function cardOrder(){
@@ -1410,6 +1411,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v62','2026-11-12','잘못 읽은 음성을 구절 단위로 다시 만들면 모든 기기에 자동으로 새 음성이 적용'],
  ['v61','2026-11-12','암송카드가 마지막으로 보던 구절부터 열림 · 내보내기 파일에서 음성 키 제외'],
  ['v60','2026-11-12','기록 내보내기·파일에서 합치기 버튼이 동작하지 않던 오류 수정 · 전체 버튼 자동 점검 추가'],
  ['v59','2026-11-12','보안 규칙 보완(포괄 허용 제거로 삭제 금지·축소 거부가 실제 적용) · 저장 거부 시 서버 기록과 자동 합치기'],
@@ -1625,7 +1627,7 @@ function avgMinAll(){let tot=0,n=0;Object.values(S.stats.days).forEach(x=>{const
 let secAcc=0,lastTick=Date.now();
 function addSec(n){try{if(!S||!S.stats||!(n>0))return;const d=D();d.secBy=d.secBy||{};d.secBy[DEV_ID]=Math.round(((d.secBy[DEV_ID]||0)+n)*10)/10;secAcc+=n;if(secAcc>=60){secAcc=0;save();}}catch(e){}}
 setInterval(()=>{const now=Date.now(),el=(now-lastTick)/1000;lastTick=now;const playing=(typeof TTS!=='undefined'&&TTS.isPlaying());if(playing)return;/* 재생 중엔 오디오 쪽에서 셈 */if(document.hidden)return;addSec(Math.min(el,120));},15000);
-document.addEventListener('visibilitychange',()=>{lastTick=Date.now();});
+document.addEventListener('visibilitychange',()=>{lastTick=Date.now();if(!document.hidden&&window.__fsConfigGet)window.__fsConfigGet();});
 (function(){let lastT=null;const bind=()=>{const a=$('ttsAudio');if(!a||a.__timed)return;a.__timed=true;a.addEventListener('timeupdate',()=>{const t=a.currentTime;if(lastT!==null&&t>lastT&&t-lastT<3)addSec((t-lastT)/(a.playbackRate||1));lastT=t;});a.addEventListener('loadstart',()=>{lastT=null;});};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();})();
 function learnedRefs(){return S.verses.map(v=>v.ref).filter(r=>{const p=S.progress[r];return p&&(p.box>=1||p.stage>=4);});}
 function nextRefs(n){const got=new Set(learnedRefs());return S.verses.map(v=>v.ref).filter(r=>!got.has(r)).slice(0,n);}
@@ -1831,7 +1833,9 @@ $('today').textContent=today().replace(/-/g,'.');
   const ref=k=>fs.doc('users/'+uid+'/data/'+k);
   window.__fsConfigPut=async()=>{if(!uid||!isAdmin())return;const st=S.settings;try{if(st.elShare&&st.elKey)await fs.doc('config/tts').set({key:st.elKey,model:st.elModel||'eleven_flash_v2_5',ts:Date.now()},{merge:true});else await fs.doc('config/tts').set({key:'',ts:Date.now()},{merge:true});await fs.doc('config/public').set({voices:st.elVoiceList||[],ready:st.elReady||[],ts:Date.now()},{merge:true});}catch(e){}};
   window.__fsMarkReady=async(voice)=>{if(!uid||!isAdmin())return;try{await fs.doc('config/public').set({ready:firebase.firestore.FieldValue.arrayUnion(voice),ts:Date.now()},{merge:true});if(!(S.settings.elReady||[]).includes(voice)){S.settings.elReady=[...(S.settings.elReady||[]),voice];save();fillVoiceSel();}}catch(e){}};
-  window.__fsConfigGet=async()=>{if(!uid)return;try{const d=await fs.doc('config/public').get();const c=d.exists?d.data():{};if(Array.isArray(c.ready)&&c.ready.length){const prev=JSON.stringify(S.settings.elReady||[]);S.settings.elReady=c.ready;if(prev!==JSON.stringify(c.ready)){save();fillVoiceSel();}}if(!isAdmin()){if(S.settings.elKeyShared){S.settings.elKeyShared='';save();}return;}if(S.settings.elKey)return;const dt=await fs.doc('config/tts').get();if(dt.exists)Object.assign(c,dt.data());const changed=(S.settings.elKeyShared||'')!==(c.key||'');S.settings.elKeyShared=c.key||'';if(c.key){if(!(S.settings.elVoiceList||[]).length&&(c.voices||[]).length)S.settings.elVoiceList=c.voices;if(!S.settings.elVoice)elFillPreset();}if(changed){save();fillVoiceSel();}}catch(e){}};
+  window.__fsConfigGet=async()=>{if(!uid)return;try{const d=await fs.doc('config/public').get();const c=d.exists?d.data():{};
+    /* 고쳐서 다시 만든 음성: 이 기기에 저장된 옛 음성을 지워 새 음성을 받게 함 */
+    try{const fx=c.fixed||{};let seen={};try{seen=JSON.parse(localStorage.getItem('verse-sheet-audiofix')||'{}');}catch(e){}let ch=false;for(const [k,ts] of Object.entries(fx)){if((seen[k]||0)<ts){await TTS.evict(k);seen[k]=ts;ch=true;}}if(ch)localStorage.setItem('verse-sheet-audiofix',JSON.stringify(seen));}catch(e){}if(Array.isArray(c.ready)&&c.ready.length){const prev=JSON.stringify(S.settings.elReady||[]);S.settings.elReady=c.ready;if(prev!==JSON.stringify(c.ready)){save();fillVoiceSel();}}if(!isAdmin()){if(S.settings.elKeyShared){S.settings.elKeyShared='';save();}return;}if(S.settings.elKey)return;const dt=await fs.doc('config/tts').get();if(dt.exists)Object.assign(c,dt.data());const changed=(S.settings.elKeyShared||'')!==(c.key||'');S.settings.elKeyShared=c.key||'';if(c.key){if(!(S.settings.elVoiceList||[]).length&&(c.voices||[]).length)S.settings.elVoiceList=c.voices;if(!S.settings.elVoice)elFillPreset();}if(changed){save();fillVoiceSel();}}catch(e){}};
   window.__fsAudioGet=async k=>{if(!uid)return null;const d=await fs.doc('audio/'+k).get();return d.exists?d.data():null;};
   window.__fsAudioPut=async(k,data)=>{if(!uid||!isAdmin())return;if((data.b64||'').length>900000)return;await fs.doc('audio/'+k).set(data);};
   async function backupDaily(force){
