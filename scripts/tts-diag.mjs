@@ -33,12 +33,13 @@ for (const v of list) {
     const b = []; for (let k = 0; k < cs.length - 1; k++) { const c = ent.cuts[k + 1]; const old = Math.min(buf.duration, tAt(ends[k]) + 0.12);
       b.push({ after: cs[k].label.slice(-6), next: cs[k + 1].label.slice(0, 6), cut: +c.toFixed(3), tail: +(rms(c - 0.03, c) / loud).toFixed(3), head: +(rms(c, c + 0.02) / loud).toFixed(3), oldCut: +old.toFixed(3), oldTail: +(rms(old - 0.05, old) / loud).toFixed(3) }); }
     let files = null; if (keep) { files = []; for (const c of cs) { const ab = await c.blob.arrayBuffer(); let s = ''; const uu = new Uint8Array(ab); for (let i = 0; i < uu.length; i += 8192) s += String.fromCharCode.apply(null, uu.subarray(i, i + 8192)); files.push({ label: c.label, b64: btoa(s) }); } }
-    return { dur: +buf.duration.toFixed(2), hasAl: !!al, alOk: !!al && al.length === v.full.length, pre: v.full.slice(0, pre), preEnd: +tAt(pre).toFixed(2), b, files };
+    return { dur: +buf.duration.toFixed(2), hasAl: !!al, alOk: !!al && al.length === v.full.length, preTimes: al ? [...v.full.slice(0, pre)].map((c, i) => c + ':' + al[i]).join(' ') : '', pre: v.full.slice(0, pre), preEnd: +tAt(pre).toFixed(2), b, files };
   }, { v, b64, al, keep: !!REF });
   rows.push({ ref: v.ref, ...r });
   if (REF) { fs.writeFileSync('out/full.mp3', Buffer.from(b64, 'base64')); r.files.forEach((f, i) => fs.writeFileSync(`out/chunk${String(i).padStart(2, '0')}.wav`, Buffer.from(f.b64, 'base64'))); fs.writeFileSync('out/labels.json', JSON.stringify(r.files.map(f => f.label))); console.log(JSON.stringify({ ...r, files: undefined }, null, 1)); }
 }
 await browser.close();
+console.log('시각표 없는 구절: ' + rows.filter(r => !r.alOk).map(r => r.ref).join(', '));
 const all = rows.flatMap(r => r.b.map(x => ({ ref: r.ref, ...x })));
 const bad = all.filter(x => x.tail > 0.2 || x.head > 0.2), oldBad = all.filter(x => x.oldTail > 0.2);
 console.log(`SUMMARY 구절 ${rows.length}, 음성 없음 ${miss}, 시각표 없음 ${rows.filter(r => !r.alOk).length}, 경계 ${all.length}, 새 방식 소리 남는 경계 ${bad.length}, 예전 방식 소리 남던 경계 ${oldBad.length}`);
