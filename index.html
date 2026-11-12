@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v69">
+<meta name="app-build" content="v70">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -219,7 +219,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v69</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v70</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -314,6 +314,7 @@ label{font-size:13px}
         <li><b>주소만</b> — 시험과 똑같이 주소와 첫 어절만 보고 씁니다. 첫 어절은 입력칸 앞에 고정되어 있고 이어서 치면 됩니다.</li>
       </ol>
       <h3>복습: 간격을 벌려 가며</h3>
+      <p><b>구절 찾아보기</b> — 학습 탭 왼쪽 표에서 구절을 누르면 그 구절의 본문이 바로 보입니다. 「본문 가리고 써 보기」를 누르면 가린 채로 써 볼 수 있고, 이 자유 연습은 일정·기록에 반영되지 않습니다.</p>
       <p>네 단계를 마친 구절은 <span data-g="ints">다음 날, 그다음은 3일·7일·14일·30일</span> 뒤에 다시 나옵니다. 복습은 먼저 본문 앞부분을 보고 <b>주소를 맞힌 뒤</b> 「주소만」으로 씁니다(주소도 함께 외워지고, 틀린 주소는 오답 노트 「주소」 유형에 쌓입니다). 한 글자라도 틀리면 1일 간격으로 돌아가고, 바로 다시 써서 맞혀야 넘어갑니다. 14일 간격까지 올라간 구절을 「숙달」로 셉니다.</p>
       <h3>듣기는 언제</h3>
       <p>「따라 쓰기」(처음 익힐 때)에만 「🔊 듣기」가 있고, 그 뒤 단계와 복습에서는 답을 쓰기 전에 들을 수 없습니다. 암송은 기억에서 꺼내는 연습이라, 듣고 받아쓰면 효과가 없기 때문입니다. 채점 결과 옆의 「🔊 정답 듣기」로 방금 꺼낸 기억을 바른 소리로 굳히세요.</p>
@@ -374,7 +375,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v69</p>
+    <p class="note" style="margin:0;text-align:right">v70</p>
   </div>
 </div>
 
@@ -877,7 +878,7 @@ function renderWork(){
   const sub=cur.kind==='review'?`복습 ${P(cur.ref).box}단계`:free?'자유 연습 · 일정에 반영 안 됨':cur.kind==='drill'?(cur.rx?'코치 처방 · '+RX_LABEL[cur.rx]:'약점 집중 연습'):'새 구절 학습';
   w.innerHTML=`${etaLine()}${cur.rx?'':coachLine()}
     <div class="steps ${free?'free':''}">${single&&!free?`<span class="step on" style="flex:1">${kindLabel(cur.kind)} · ${STAGES[cur.stage]}</span>`:steps}</div>
-    <div class="cue"><div class="ref">${needAddr(cur)?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${rxNote(cur)}${warnLine(cur)}<div class="txt">${needAddr(cur)?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div></div>
+    <div class="cue"><div class="ref">${needAddr(cur)?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${rxNote(cur)}${warnLine(cur)}<div class="txt">${needAddr(cur)?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div>${free?(cur.peek?`<div class="txt" id="peekTxt" style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--grid)">${esc(verseOf(cur.ref).text)}</div><p style="margin:6px 0 0"><button class="link" id="peekBtn">본문 가리고 써 보기</button></p>`:`<p style="margin:6px 0 0"><button class="link" id="peekBtn">본문 보기</button></p>`):''}</div>
     ${needAddr(cur)?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
     <div class="answrap" ${needAddr(cur)?'hidden':''}>${cur.stage===3?`<span class="prefix">${esc(prefixOf(cur))}</span>`:''}<textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="${cur.stage===3?(cur.pre>1?'앞부분에 이어서 뒷부분을 입력 후 Enter':'첫 어절에 이어서 입력 후 Enter'):'입력 후 Enter'}" ${cur.stage===3?`data-prefix="${esc(prefixOf(cur))}"`:''}></textarea></div>
     <div class="acts" ${needAddr(cur)?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button>${cur.kind==='learn'&&cur.stage===0?'<button class="btn" id="hear" title="보고 들으며 익히기 (처음 익힐 때만)">🔊 듣기</button>':''}<span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
@@ -1425,6 +1426,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v70','2026-11-13','학습 탭 표에서 구절을 누르면 본문이 바로 보임 · 「본문 가리고 써 보기」로 가린 채 연습'],
  ['v69','2026-11-13','하루 분량은 새 구절 → 복습, 밀린 복습이 있으면 그것부터 · 코치 처방은 오답 노트 탭에서 원할 때만 · 당겨서 새로고침이 패드(트랙패드·입력칸 위)에서도 동작'],
  ['v68','2026-11-13','학습 순서 변경 — 새 구절을 먼저 익히고 복습·코치 처방은 그 뒤에'],
  ['v67','2026-11-13','코치 처방은 한 번 마치면 되풀이하지 않음 — 그 뒤 같은 종류로 새로 틀렸을 때만 다시 나옴'],
@@ -1839,8 +1841,10 @@ $('ttsVoiceSel').onchange=e=>{const v=e.target.value;if(v==='browser'){S.setting
 $('ttsEcho').onchange=e=>{S.settings.ttsGap=e.target.checked?'echo':1;save();const g=$('ttsGap');if(g)g.value=e.target.checked?'echo':'1';};$('ttsSpeed').onchange=e=>{S.settings.ttsRate=+e.target.value;save();const a=$('ttsAudio');try{a.playbackRate=S.settings.ttsRate;}catch(x){}};
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}$('cover').onclick=toggleCover;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();toggleCover();}});
-$('rows').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)return;cur=makeItem(tr.dataset.ref,'free',3);lastFb=null;renderAll();});
-$('rows').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('tr')){cur=makeItem(e.target.dataset.ref,'free',3);lastFb=null;renderAll();}});
+$('rows').addEventListener('click',e=>{const tr=e.target.closest('tr');if(!tr)return;cur=makeItem(tr.dataset.ref,'free',3);cur.peek=true;lastFb=null;renderAll();});
+/* 표에서 고른 구절: 본문 보기/가리기 (화면이 다시 그려져도 살아 있도록 문서 단위 연결) */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#peekBtn');if(!b||!cur||cur.kind!=='free')return;const ta=$('ans');const v=ta?ta.value:'';cur.peek=!cur.peek;renderWork();const t2=$('ans');if(t2&&v)t2.value=v;});
+$('rows').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('tr')){cur=makeItem(e.target.dataset.ref,'free',3);cur.peek=true;lastFb=null;renderAll();}});
 
 $('today').textContent=today().replace(/-/g,'.');
 
