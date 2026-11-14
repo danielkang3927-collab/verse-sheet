@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v72">
+<meta name="app-build" content="v73">
 <link rel="apple-touch-icon" href="icon.svg">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -220,7 +220,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v72</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" title="앱 버전">v73</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -354,7 +354,7 @@ label{font-size:13px}
       <h3>새로고침</h3>
       <p>화면 맨 위에서 아래로 당겼다 놓으면 저장을 먼저 보낸 뒤 새로 불러옵니다(입력칸 위에서 당겨도 됩니다). 패드에 키보드·트랙패드를 붙여 쓸 때는 맨 위에서 두 손가락으로 계속 위쪽으로 밀면 됩니다. 왼쪽 위 아이콘이나 「구절 검토 시트」 제목을 눌러도 같습니다.</p>
       <h3>단축키</h3>
-      <ul><li><b>Enter</b> 채점 · <b>Tab</b> 다음 어절 힌트(복습에서 쓰면 간격이 늘지 않음) · <b>Esc</b> 화면 가리기(시험지 화면에서는 돌아가기)</li></ul>
+      <ul><li><b>Enter</b> 채점 · <b>Tab</b> 다음 어절 힌트(새 구절을 익힐 때와 연습에서만 — 복습에서는 쓸 수 없음) · <b>Esc</b> 화면 가리기(시험지 화면에서는 돌아가기)</li></ul>
       <h3>음성과 타이핑</h3>
       <p>시험이 글로 쓰는 방식이라 글자 단위로 채점되는 타이핑을 주력으로 씁니다. 출퇴근길처럼 칠 수 없을 때는 암송카드로 소리 내어 외우고, 시험 한두 주 전에는 종이 시험지로 손글씨 시험을 치러 보세요.</p>
     </div>
@@ -376,7 +376,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v72</p>
+    <p class="note" style="margin:0;text-align:right">v73</p>
   </div>
 </div>
 
@@ -882,9 +882,9 @@ function renderWork(){
     <div class="cue"><div class="ref">${needAddr(cur)?'<span style="color:var(--muted)">주소 ?</span>':esc(cur.ref)}<span>${sub}</span></div>${verseOf(cur.ref).note?`<div class="why">${esc(verseOf(cur.ref).note)}</div>`:''}${rxNote(cur)}${warnLine(cur)}<div class="txt">${needAddr(cur)?`<span class="first">${esc(verseOf(cur.ref).text.split(' ').slice(0,3).join(' '))}</span> <span class="m">…</span>`:cueHTML(cur)}</div>${free?(cur.peek?`<div class="txt" id="peekTxt" style="margin-top:8px;padding-top:8px;border-top:1px dashed var(--grid)">${esc(verseOf(cur.ref).text)}</div><p style="margin:6px 0 0"><button class="link" id="peekBtn">본문 가리고 써 보기</button></p>`:`<p style="margin:6px 0 0"><button class="link" id="peekBtn">본문 보기</button></p>`):''}</div>
     ${needAddr(cur)?`<div class="addrq"><span class="note">이 본문의 주소는?</span><input id="addrIn" placeholder="예: 요 3:16" autocomplete="off"><button class="btn primary" id="addrChk">확인<kbd>Enter</kbd></button><span class="note" id="addrMsg"></span></div>`:''}
     <div class="answrap" ${needAddr(cur)?'hidden':''}>${cur.stage===3?`<span class="prefix">${esc(prefixOf(cur))}</span>`:''}<textarea id="ans" rows="3" spellcheck="false" autocomplete="off" placeholder="${cur.stage===3?(cur.pre>1?'앞부분에 이어서 뒷부분을 입력 후 Enter':'첫 어절에 이어서 입력 후 Enter'):'입력 후 Enter'}" ${cur.stage===3?`data-prefix="${esc(prefixOf(cur))}"`:''}></textarea></div>
-    <div class="acts" ${needAddr(cur)?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button><button class="btn" id="hint">힌트<kbd>Tab</kbd></button>${cur.kind==='learn'&&cur.stage===0?'<button class="btn" id="hear" title="보고 들으며 익히기 (처음 익힐 때만)">🔊 듣기</button>':''}<span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
+    <div class="acts" ${needAddr(cur)?'hidden':''}><button class="btn primary" id="chk">채점<kbd>Enter</kbd></button>${noHint(cur)?'':'<button class="btn" id="hint">힌트<kbd>Tab</kbd></button>'}${cur.kind==='learn'&&cur.stage===0?'<button class="btn" id="hear" title="보고 들으며 익히기 (처음 익힐 때만)">🔊 듣기</button>':''}<span class="sp"></span>${free?'<button class="btn" id="back">오늘 학습으로</button>':cur.kind==='drill'?'<button class="btn" id="back">연습 그만</button>':'<button class="btn" id="skip">나중에</button>'}</div>
     ${fbHTML()}
-    <p class="tip">${cur.stage===0?'입술로 소리 없이 읽으면서 치면 더 잘 남습니다.':cur.stage===4?'점선 빈칸이 지난번에 틀린 자리입니다. 그 자리를 떠올려 전체를 쓰세요.':cur.stage===3?'떠오르지 않으면 Tab으로 다음 어절만 봅니다.':'가려진 곳을 떠올려 전체를 씁니다.'}</p>`;
+    <p class="tip">${cur.stage===0?'입술로 소리 없이 읽으면서 치면 더 잘 남습니다.':cur.stage===4?'점선 빈칸이 지난번에 틀린 자리입니다. 그 자리를 떠올려 전체를 쓰세요.':noHint(cur)?'복습에서는 힌트를 쓸 수 없습니다. 떠오르는 만큼 쓰고 채점하면 틀린 자리를 알려 줍니다.':cur.stage===3?'떠오르지 않으면 Tab으로 다음 어절만 봅니다.':'가려진 곳을 떠올려 전체를 씁니다.'}</p>`;
   const ai=$('addrIn');if(ai){const chk=()=>{const g=normRef(ai.value),want=normRef(cur.ref);const d=D();d.addrTries=(d.addrTries||0)+1;
       if(g===want){cur.addrOk=true;d.addrOk=(d.addrOk||0)+1;save();renderWork();}
       else{$('addrMsg').textContent='아닙니다. 정답: '+cur.ref;S.errors.push({ref:cur.ref,wi:-2,exp:cur.ref,got:ai.value.trim(),type:'주소',d:today(),m:'addr'});P(cur.ref).addrMiss=(P(cur.ref).addrMiss||0)+1;cur.addrOk=true;cur.addrFail=true;save();setTimeout(renderWork,1400);}};
@@ -892,7 +892,7 @@ function renderWork(){
   const ta=$('ans');attachEnter(ta,submit);
   ta.addEventListener('input',()=>{if(lastFb&&!lastFb.r.pass&&diffOpen){diffOpen=false;const fb=w.querySelector('.fb');if(fb)fb.outerHTML=fbHTML();bindOpenDiff();}});
   ta.addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();hint();}});
-  $('chk').onclick=submit;$('hint').onclick=hint;
+  $('chk').onclick=submit;{const hb=$('hint');if(hb)hb.onclick=hint;}
   const hb=$('hear');if(hb)hb.onclick=()=>hearRef(hb,cur.ref);
   if($('skip'))$('skip').onclick=()=>{const q=buildQueue();const pool=[...q.rev,...q.prog].filter(r=>r!==cur.ref);if(pool.length){const r=pool[0];cur=q.rev.includes(r)?makeItem(r,'review',3):makeItem(r,'learn',Math.min(P(r).stage,3));lastFb=null;renderAll();}};
   if($('back'))$('back').onclick=()=>{drill=null;cur=nextItem();lastFb=null;renderAll();};
@@ -904,7 +904,9 @@ function bindOpenDiff(){const b=$('openDiff');if(b)b.onclick=()=>{diffOpen=true;
 function renderAll(){renderSheet();renderWork();renderFbar();renderToday();}
 
 function withPrefix(ta){const p=ta.dataset.prefix;return p?p+' '+ta.value:ta.value;}
-function hint(){if(!cur||cur.stage===0)return;const n=verseOf(cur.ref).text.split(' ').length;if(cur.stage===3&&cur.hints<1)cur.hints=1;if(cur.hints<n){cur.hints++;$('work').querySelector('.cue .txt').innerHTML=cueHTML(cur);}$('ans').focus();}
+/* 복습에서는 힌트를 쓸 수 없음(힌트로 넘어가면 복습이 되지 않음) — 떠오르는 만큼 쓰고 채점해 틀린 자리를 확인 */
+const noHint=it=>!!it&&it.kind==='review';
+function hint(){if(!cur||cur.stage===0||noHint(cur))return;const n=verseOf(cur.ref).text.split(' ').length;if(cur.stage===3&&cur.hints<1)cur.hints=1;if(cur.hints<n){cur.hints++;$('work').querySelector('.cue .txt').innerHTML=cueHTML(cur);}$('ans').focus();}
 
 let lastSubmit=0;
 function attachEnter(ta,fn){
@@ -1427,6 +1429,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v73','2026-11-14','복습에서는 힌트를 쓸 수 없음 — 떠오르는 만큼 쓰고 채점해 틀린 자리 확인'],
  ['v72','2026-11-14','PC에서 마우스 휠·트랙패드로 페이지가 움직이지 않던 오류 수정(모든 탭)'],
  ['v71','2026-11-13','기록 탭 진도 수정 — 가장 최근에 익힌 구절과 실제 다음 차례 표시 · 새 버전 자동 반영을 더 빠르게(2분마다·탭 전환 때 확인, 쓰는 중에는 끊지 않음)'],
  ['v70','2026-11-13','학습 탭 표에서 구절을 누르면 본문이 바로 보임 · 「본문 가리고 써 보기」로 가린 채 연습'],
