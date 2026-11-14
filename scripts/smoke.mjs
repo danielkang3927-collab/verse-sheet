@@ -15,7 +15,7 @@ const r = await page.evaluate(async () => {
   // 탭 전부 열기
   for (const v of ['learn', 'cards', 'exam', 'log', 'notes', 'list', 'guide']) { show(v); out['tab_' + v] = !document.getElementById('v-' + v).hidden; }
   // 학습 흐름: 새 구절 1단계 → 채점 통과
-  show('learn'); cur = nextItem(); lastFb = null; renderWork(); const ta = document.getElementById('ans'); if (!ta) throw new Error('입력칸 없음');
+  show('learn'); cur = nextItem() || makeItem(S.verses[0].ref, 'learn', 0) /* 주일(쉬는 날)에는 오늘 분량이 없으므로 직접 지정 */; lastFb = null; renderWork(); const ta = document.getElementById('ans'); if (!ta) throw new Error('입력칸 없음');
   await new Promise(r => setTimeout(r, 700)); ta.value = verseOf(cur.ref).text; submit(); out.learnPass = !!(lastFb && lastFb.r.pass);
   // 끊어 읽기 표·사용법 자동 채움
   out.phrases = Object.keys(TTS.PHRASES).length; show('guide'); out.guideVer = document.querySelector('[data-g="ver"]').textContent;
