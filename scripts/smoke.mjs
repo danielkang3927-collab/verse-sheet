@@ -27,6 +27,12 @@ const r = await page.evaluate(async () => {
   const before = Object.keys(S.progress).length; const m = mergeState(S, { progress: {}, errors: [], stats: { days: {}, badges: {} }, verses: S.verses, settings: S.settings, daily: {} }); out.mergeKeeps = Object.keys(m.progress).length >= before;
   return out;
 });
+// 마우스 휠로 페이지가 움직이는지(스크롤 막대로만 움직이던 오류 재발 방지) + 휴대폰 너비에서 가로 넘침 없음
+await page.evaluate(() => { show('guide'); window.scrollTo(0, 0); }); await page.mouse.move(500, 400);
+for (let i = 0; i < 4; i++) { await page.mouse.wheel(0, 120); await page.waitForTimeout(40); } await page.waitForTimeout(150);
+r.wheelScroll = await page.evaluate(() => Math.round(window.scrollY));
+await page.setViewportSize({ width: 390, height: 800 }); await page.evaluate(() => show('learn')); await page.waitForTimeout(150);
+r.phoneOverflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
 await browser.close();
 console.log(JSON.stringify(r));
 const bad = [];
@@ -36,6 +42,8 @@ if (r.phrases < 160) bad.push('끊어 읽기 표 부족');
 if (!/^v\d+$/.test(r.guideVer)) bad.push('사용법 버전 자동 채움 실패');
 if (r.sheetPages < 2 || r.sheetOverflow) bad.push('종이 시험지 쪽 나누기 실패');
 if (!r.mergeKeeps) bad.push('합치기가 기록을 줄임');
+if (!(r.wheelScroll > 100)) bad.push('마우스 휠로 페이지가 움직이지 않음');
+if (r.phoneOverflow > 1) bad.push('휴대폰 너비에서 가로로 넘침');
 if (errors.length) bad.push(...errors);
 if (bad.length) { console.error('연기 테스트 실패:\n' + bad.join('\n')); process.exit(1); }
 console.log('연기 테스트 통과');
