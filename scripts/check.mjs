@@ -38,4 +38,10 @@ if (/match \/users\/\{uid\}\/\{[a-z]+=\*\*\}/.test(rules)) fail('users 아래 �
 const guide = html.slice(html.indexOf('id="v-guide"'), html.indexOf('</section>', html.indexOf('id="v-guide"')));
 [['오답 코치', '오답 코치'], ['학습 시간', '학습 시간'], ['예상 완료일', '예상 완료일'], ['따라 말하기', '따라 말하기'], ['종이 시험지', '종이 시험지'], ['PDF', 'PDF']].forEach(([k, l]) => { if (!guide.includes(k)) fail('사용법에 「' + l + '」 설명이 없습니다'); });
 ok('사용법 키워드 확인');
+// 6) 새로워진 것·기능 한눈에 보기: 표가 서로 맞는지
+{ const fid = [...html.matchAll(/\{id:'([a-z]+)',t:'/g)].map(m => m[1]); const wn = html.slice(html.indexOf('const WHATSNEW=['), html.indexOf('];', html.indexOf('const WHATSNEW=[')));
+  const refs = [...wn.matchAll(/f:'([a-z]+)'/g)].map(m => m[1]); const vs = [...wn.matchAll(/\{v:(\d+)/g)].map(m => +m[1]); const tabs = [...html.matchAll(/tab:'([a-z]+)'/g)].map(m => m[1]);
+  if (fid.length < 8) fail('FEATURES 항목을 찾지 못했습니다'); refs.forEach(r => { if (!fid.includes(r)) fail('WHATSNEW가 없는 기능을 가리킵니다: ' + r); });
+  const cur = +(html.match(/name="app-build" content="v(\d+)"/) || [])[1]; vs.forEach(v => { if (v > cur) fail('WHATSNEW의 버전이 현재 버전보다 큽니다: v' + v); });
+  tabs.forEach(t => { if (!['learn', 'cards', 'exam', 'log', 'notes', 'list', 'guide'].includes(t)) fail('없는 탭: ' + t); }); ok('새로워진 것·기능 표 확인 (' + fid.length + '개 기능, ' + vs.length + '개 소식)'); }
 if (process.exitCode) { console.error('점검 실패 — 배포 중단'); } else console.log('점검 통과');

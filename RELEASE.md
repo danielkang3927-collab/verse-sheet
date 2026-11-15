@@ -13,5 +13,6 @@ main에 올리면 GitHub Actions가 ① 점검 ② 배포 ③ 실제 사이트 �
 ## 버전 올릴 때 반드시
 1. meta app-build / `>vNN<` 두 곳 / CHANGELOG 한 줄
 2. 기능이 바뀌면 사용법·해당 탭 안내 문구를 같은 커밋에서 수정
-3. 새 CSS 클래스·id는 파일 전체 중복 검색
+3. 사용자가 알아야 할 변화면 `WHATSNEW`에 한 줄(v 번호 포함), 기능 자체가 생기거나 위치가 바뀌면 `FEATURES`도 수정 — 로그인 뒤 「새로워진 것」 창과 사용법 「기능 한눈에 보기」에 자동 반영
+3-1. 새 CSS 클래스·id는 파일 전체 중복 검색
 4. 로컬: `node scripts/check.mjs`, 가능하면 smoke 테스트
