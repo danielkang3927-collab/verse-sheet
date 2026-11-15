@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v78">
+<meta name="app-build" content="v79">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -154,7 +154,7 @@ textarea{width:100%;font:inherit;font-size:17px;line-height:1.7;padding:10px 12p
 .spm{color:var(--warn);font-family:var(--mono)} .spx{color:var(--warn);font-weight:600}
 .legend{font-size:12px;color:var(--muted)}
 .wnov{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.45);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) 14px 16px;overflow:auto}
-.wnov[hidden]{display:none}.wncard{background:var(--surface);border:1px solid var(--grid);max-width:560px;width:100%;padding:18px 18px 14px;display:flex;flex-direction:column;gap:10px;margin:auto 0}
+.wnov[hidden]{display:none}.wnpill{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:45;display:flex;align-items:center;background:var(--accent);color:#fff;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.25);font-size:14px}.wnpill[hidden]{display:none}.wnpill button{background:none;border:0;color:inherit;font:inherit;padding:10px 14px;cursor:pointer}.wnpill #wnBackX{padding:10px 12px 10px 4px;opacity:.8}.wncard{background:var(--surface);border:1px solid var(--grid);max-width:560px;width:100%;padding:18px 18px 14px;display:flex;flex-direction:column;gap:10px;margin:auto 0}
 .wncard h2{font-size:16px;margin:0}.ftitem{border-top:1px solid var(--grid);padding:9px 0 2px}.ftitem b{font-size:14px}.ftitem .fw{font-size:12px;color:var(--accent);margin:1px 0 2px}.ftitem p{margin:0;font-size:13px;line-height:1.55}
 .vnitem{border-top:1px solid var(--grid);padding:10px 0}.vnitem:first-child{border-top:0}.vnitem .ref{font-family:var(--mono);color:var(--accent);font-weight:600}.vnitem .vt{font-size:16px;line-height:1.75;margin:4px 0;word-break:keep-all}
 .vnw{color:var(--err);font-weight:600;border-bottom:2px dotted var(--err);cursor:pointer}.vnhide .vnw:not(.show){color:transparent;user-select:none}
@@ -225,7 +225,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline dotted" title="새로워진 것·기능 한눈에 보기">v78</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline dotted" title="새로워진 것·기능 한눈에 보기">v79</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -381,12 +381,13 @@ label{font-size:13px}
 </nav>
 
 <div class="wnov" id="wnOv" hidden><div class="wncard" id="wnCard" role="dialog" aria-modal="true" aria-label="새로워진 것"></div></div>
+<div class="wnpill" id="wnPill" hidden><button id="wnBack">← 안내로 돌아가기</button><button id="wnBackX" aria-label="안내 닫기">✕</button></div>
 <div id="gate">
   <div class="card">
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v78</p>
+    <p class="note" style="margin:0;text-align:right">v79</p>
   </div>
 </div>
 
@@ -1448,6 +1449,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v79','2026-11-15','안내 창에서 「가 보기」로 다녀와도 「← 안내로 돌아가기」로 이어서 볼 수 있음'],
  ['v78','2026-11-15','로그인하면 지난번 뒤에 바뀐 것을 「새로워진 것」 창으로 알림 · 사용법 탭 맨 위와 버전 표시에 「기능 한눈에 보기」'],
  ['v77','2026-11-15','오답 노트 탭에 「시험장용 오답 노트」 추가 — 약한 구절만 훑어보기·풀어 보기·종이로 뽑기'],
  ['v76','2026-11-15','함께 보기에 예상 완료일 추가'],
@@ -1651,6 +1653,7 @@ const FEATURES=[
  {id:'safe',t:'새로고침·자동 업데이트·기록 보관',w:'어느 화면에서나 / 구절 목록·설정 탭',d:'화면을 아래로 당기거나 제목을 누르면 새로고침됩니다. 새 버전은 자동으로 반영되고, 기록은 계정에 저장되며 「내 기록 파일로 내보내기」로 따로 보관할 수 있습니다.',tab:'list'}
 ];
 const WHATSNEW=[
+ {v:79,t:'안내를 이어서 보기',d:'「가 보기」로 다른 탭에 다녀와도 화면 아래 「← 안내로 돌아가기」를 누르면 보던 안내로 돌아옵니다.'},
  {v:77,f:'venue'},
  {v:76,t:'함께 보기에 예상 완료일',d:'기록 탭 「함께 보기」 표에 각자의 예상 완료일이 함께 나옵니다.',tab:'log'},
  {v:75,f:'listen'},
@@ -1664,11 +1667,15 @@ const WHATSNEW=[
 const buildNo=()=>parseInt((((document.querySelector('meta[name=app-build]')||{}).content)||'v0').slice(1),10)||0;
 function featHTML(x,go){return `<div class="ftitem"><b>${esc(x.t)}</b>${x.v?` <span class="note">v${x.v}</span>`:''}${x.w?`<div class="fw">${esc(x.w)}</div>`:''}<p>${esc(x.d)}${go&&x.tab?` <button class="link" data-go="${x.tab}">가 보기</button>`:''}</p></div>`;}
 function wnItems(seen){return WHATSNEW.filter(x=>x.v>seen).map(x=>{const f=x.f&&FEATURES.find(y=>y.id===x.f);return f?Object.assign({},f,{v:x.v}):x;});}
-function wnOpen(mode,seen){const ov=$('wnOv'),c=$('wnCard');if(!ov||!c)return;const n=buildNo();
+/* 「가 보기」로 다른 탭에 다녀와도 안내를 이어 볼 수 있게: 창은 잠시 접고 「← 안내로 돌아가기」를 띄움(보던 위치 기억) */
+let wnState=null;
+function wnPark(){const ov=$('wnOv');if(!ov||ov.hidden||!wnState)return;wnState.scroll=ov.scrollTop;ov.hidden=true;$('wnPill').hidden=false;}
+function wnResume(){if(!wnState)return;const sc=wnState.scroll||0;wnOpen(wnState.mode,wnState.seen);$('wnOv').scrollTop=sc;}
+function wnOpen(mode,seen){const ov=$('wnOv'),c=$('wnCard');if(!ov||!c)return;const n=buildNo();wnState={mode,seen,scroll:0};$('wnPill').hidden=true;
   if(mode==='new'){const it=wnItems(seen).slice(0,8);c.innerHTML=`<h2>새로워진 것</h2><p class="note" style="margin:0">지난번 접속 뒤에 바뀐 것만 모았습니다 (현재 v${n}).</p>${it.map(x=>featHTML(x,true)).join('')}<div class="acts" style="margin-top:6px"><button class="btn primary" id="wnOk">확인</button><button class="btn" id="wnAll">기능 한눈에 보기</button></div>`;}
   else c.innerHTML=`<h2>${mode==='first'?'처음 오셨네요 — ':''}기능 한눈에 보기</h2><p class="note" style="margin:0">자주 쓰는 기능과 있는 곳입니다. 사용법 탭 맨 위와 화면 위 버전 표시(v${n})에서 언제든 다시 볼 수 있습니다.</p>${FEATURES.map(x=>featHTML(x,true)).join('')}<div class="acts" style="margin-top:6px"><button class="btn primary" id="wnOk">확인</button></div>`;
   ov.hidden=false;ov.scrollTop=0;}
-function wnClose(){const ov=$('wnOv');if(ov)ov.hidden=true;if(S&&S.settings&&S.settings.seenBuild!==buildNo()){S.settings.seenBuild=buildNo();save();}}
+function wnClose(){const ov=$('wnOv');if(ov)ov.hidden=true;wnState=null;{const pl=$('wnPill');if(pl)pl.hidden=true;}if(S&&S.settings&&S.settings.seenBuild!==buildNo()){S.settings.seenBuild=buildNo();save();}}
 /* 로그인해 기록을 불러온 직후 한 번: 처음 온 사람은 기능 안내, 쓰던 사람은 마지막으로 본 버전 뒤에 바뀐 것만 */
 window.__whatsNew=function(){try{const n=buildNo();let seen=S.settings.seenBuild;const used=Object.keys(S.progress||{}).length>0;
   if(seen==null){if(!used){wnOpen('first');return;}seen=62;}
@@ -1677,7 +1684,9 @@ document.addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
   if(t.closest('#verTag')){wnOpen('all');return;}
   if(t.id==='wnOv'||t.closest('#wnOk')){wnClose();return;}
   if(t.closest('#wnAll')){wnOpen('all');return;}
-  const g=t.closest('[data-go]');if(g&&(g.closest('#wnOv')||g.closest('#featList'))){const tab=g.dataset.go;if(!$('wnOv').hidden)wnClose();show(tab);window.scrollTo(0,0);}});
+  if(t.closest('#wnBack')){wnResume();return;}
+  if(t.closest('#wnBackX')){wnClose();return;}
+  const g=t.closest('[data-go]');if(g&&(g.closest('#wnOv')||g.closest('#featList'))){const tab=g.dataset.go;if(!$('wnOv').hidden)wnPark();show(tab);window.scrollTo(0,0);}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('wnOv')&&!$('wnOv').hidden){e.stopPropagation();wnClose();}else if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.id==='verTag'){e.preventDefault();wnOpen('all');}},true);
 /* 시험장용 오답 노트: 시험 직전·시험장에서 전체가 아니라 내 약점만 훑어보고 풀어 보는 목록.
    최근 60일 오답(최근 2주는 두 배)·남아 있는 약점 표시·복습에서 놓친 구절·낮은 정답률을 점수로 매겨 약한 순서로 뽑음 */
