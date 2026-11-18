@@ -20,6 +20,8 @@ jobs:
       - run: node scripts/smoke.mjs
       - name: 모든 버튼 연결·눌러 보기·기록 내보내기/합치기 왕복
         run: node scripts/clicks.mjs
+      - name: 암송카드 음성 재생기 (자동 넘어가기·잠금 화면 동작·반복)
+        run: node scripts/player.test.mjs
       - name: 보안 규칙 테스트 (에뮬레이터)
         run: |
           npm install --no-save firebase-tools@13 @firebase/rules-unit-testing@3 firebase@10

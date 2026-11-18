@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1e6b58">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="app-build" content="v81">
+<meta name="app-build" content="v82">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -225,7 +225,7 @@ label{font-size:13px}
 
 <div class="app">
   <header>
-    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline dotted" title="새로워진 것·기능 한눈에 보기">v81</span></div>
+    <div class="doc"><a href="./" id="homeBtn" title="학습 화면으로 돌아가며 새로고침" style="display:flex;align-items:center;gap:8px;color:inherit;text-decoration:none;cursor:pointer"><span class="ico" aria-hidden="true"></span><h1>구절 검토 시트</h1></a><span class="saved" id="saved">자동 저장됨</span><span class="sync" id="sync">이 기기에만 저장</span><span class="sync" id="verTag" role="button" tabindex="0" style="cursor:pointer;text-decoration:underline dotted" title="새로워진 것·기능 한눈에 보기">v82</span></div>
     <span class="sp"></span>
     <span class="meta" id="today"></span>
     <button class="btn" id="acct">Google로 로그인</button>
@@ -355,7 +355,7 @@ label{font-size:13px}
       <p>상단 「Google로 로그인」을 누르면 진도·오답 기록이 본인 계정에 저장되어 휴대폰·아이패드·노트북이 함께 갑니다. 같은 링크를 다른 사람이 열어 자기 Google 계정으로 로그인하면 그 사람의 기록이 따로 만들어지고, 서로의 기록은 볼 수 없습니다. 기기 간 기록이 다르면 지우지 않고 합치며, 매일 첫 접속과 하루 완료 때 계정에 자동 백업(30일 보관)되어 「설정」에서 되돌릴 수 있습니다. 상단 초록 점이 동기화 상태이고, 그 옆 v 숫자가 앱 버전입니다(지금 <span data-g="ver"></span>, <span data-g="rel"></span>). 새 버전이 올라오면 다음에 열 때 자동으로 바뀝니다.</p>
       <h3>암송카드</h3>
       <p>휴대폰으로 타이핑이 어려울 때 쓰는 탭입니다. 출제 순서대로 한 장씩 넘기며 소리 내어 읽습니다. 카드 <b>가운데</b>를 누르면 본문이 가려지고 다시 누르면 보이며, <b>오른쪽</b>을 누르면 다음, <b>왼쪽</b>을 누르면 이전 구절입니다(좌우로 밀어도 됩니다). 위쪽 목록에서 원하는 구절을 바로 고르거나 주소를 입력해 이동할 수 있고, 「오늘 학습·복습분」「약점 구절」로 범위를 바꿀 수 있습니다. 노트북에서는 ←→ 키와 스페이스를 씁니다. 탭을 다시 열면 마지막으로 보던 카드부터 이어집니다(범위별로 따로 기억, 기기 간 동기화).</p>
-      <p><b>음성 읽기</b> — 카드 위 「▶ 읽어 주기」를 누르면 주소부터 본문까지 읽어 줍니다. 「이 구절만 / 이어서 끝까지 / 전체 반복 / 이 구절 반복」(「이 구절 반복」은 한 바퀴를 음원 하나로 이어 붙여 되풀이하므로 화면을 꺼도 멈추지 않고, 멈춤을 누를 때까지 계속됩니다), 구절당 1~3번 반복, 빠르기(0.5배~3배속, 음높이 유지)를 고를 수 있고, 「따라 말하기」를 켜면 구절을 의미 단위(167구절 모두 사람이 미리 끊어 둔 호흡 단위)로 끊어 읽고 그만큼 쉬어 주어 따라 말할 수 있습니다(2번씩이면 마지막 회차는 전체를 이어 읽음). 목소리는 기기 내장 음성과 준비된 ElevenLabs 목소리(지금은 Alice, 12월부터 Brian 추가) 중에서 각자 고릅니다. 읽는 동안 카드가 따라 넘어갑니다. 목소리와 따라 말하기는 카드 위 재생 줄에서 각자 고르며(계정마다 따로 저장), 음성 엔진 세부 설정은 「설정」에 있습니다: 기기 내장 음성(무료·무제한)이 기본이고, ElevenLabs API 키를 넣으면 더 자연스러운 목소리로 읽습니다. ElevenLabs로 한 번 만든 음성은 계정 공용 저장소에 보관되어 어느 기기에서든 다시 만들지 않으며, 무료 월 1만 크레딧으로 Flash 모델 기준 전체 167구절을 한 번 만들 수 있습니다. ElevenLabs 음성은 화면을 끄거나 다른 앱으로 가도 이어서 재생되고 잠금 화면에서 멈춤·다음·이전을 누를 수 있습니다(기기 내장 음성은 화면을 끄면 멈춥니다). 「음성 미리 만들기」로 목록 전체를 한 번에 만들어 두면 끊김 없이 들을 수 있습니다.</p>
+      <p><b>음성 읽기</b> — 카드 위 「▶ 읽어 주기」를 누르면 주소부터 본문까지 읽어 줍니다. 「이 구절만 / 이어서 끝까지 / 전체 반복 / 이 구절 반복」(준비된 음성은 구절마다 음원을 미리 이어 붙여 두고 곧바로 갈아 끼우므로 화면을 꺼도 이어지고, 잠금 화면의 일시정지·재생·다음·이전도 됩니다. 「⏸ 잠시 멈춤」은 멈춘 자리에서 「▶ 이어 듣기」로 이어지고, 완전히 끝내려면 「■ 정지」), 구절당 1~3번 반복, 빠르기(0.5배~3배속, 음높이 유지)를 고를 수 있고, 「따라 말하기」를 켜면 구절을 의미 단위(167구절 모두 사람이 미리 끊어 둔 호흡 단위)로 끊어 읽고 그만큼 쉬어 주어 따라 말할 수 있습니다(2번씩이면 마지막 회차는 전체를 이어 읽음). 목소리는 기기 내장 음성과 준비된 ElevenLabs 목소리(지금은 Alice, 12월부터 Brian 추가) 중에서 각자 고릅니다. 읽는 동안 카드가 따라 넘어갑니다. 목소리와 따라 말하기는 카드 위 재생 줄에서 각자 고르며(계정마다 따로 저장), 음성 엔진 세부 설정은 「설정」에 있습니다: 기기 내장 음성(무료·무제한)이 기본이고, ElevenLabs API 키를 넣으면 더 자연스러운 목소리로 읽습니다. ElevenLabs로 한 번 만든 음성은 계정 공용 저장소에 보관되어 어느 기기에서든 다시 만들지 않으며, 무료 월 1만 크레딧으로 Flash 모델 기준 전체 167구절을 한 번 만들 수 있습니다. ElevenLabs 음성은 화면을 끄거나 다른 앱으로 가도 이어서 재생되고 잠금 화면에서 멈춤·다음·이전을 누를 수 있습니다(기기 내장 음성은 화면을 끄면 멈춥니다). 「음성 미리 만들기」로 목록 전체를 한 번에 만들어 두면 끊김 없이 들을 수 있습니다.</p>
       <h3>구절 목록 (관리자)</h3>
       <p>구절 본문·출제 가능성·「왜 외워야 하는가」는 관리자 계정으로 로그인했을 때만 「구절 목록·설정」 탭에서 고칠 수 있습니다. 다른 계정에는 「설정」만 보입니다.</p>
       <h3>이번 버전에서 바뀐 것</h3>
@@ -387,7 +387,7 @@ label{font-size:13px}
     <h2><span class="ico" aria-hidden="true" style="width:18px;height:18px;border:1.5px solid var(--accent);border-radius:3px;display:inline-block"></span>구절 검토 시트</h2>
     <p class="note" id="gateMsg">로그인하면 내 진도와 오답 기록이 계정에 저장되어 휴대폰·노트북에서 이어집니다. 기록은 사람마다 따로 보관됩니다.</p>
     <button class="btn primary" id="gateBtn" disabled>확인 중…</button>
-    <p class="note" style="margin:0;text-align:right">v81</p>
+    <p class="note" style="margin:0;text-align:right">v82</p>
   </div>
 </div>
 
@@ -1309,38 +1309,25 @@ const TTS=(()=>{
   async function speak(text,opt={}){const my=++speakSeq;if(!playing)stopFlag=false;const eng=opt.force||S.settings.ttsEngine||'browser';if(eng==='el'){const b=await elGenerate(text,opt.ref);if(my!==speakSeq||(stopFlag&&!opt.force))return;await playBlob(b.blob,opt.loop);/* loop이면 음원 자체를 되풀이(화면이 꺼져도 이어짐) — 멈춤을 누를 때까지 끝나지 않음 */}else{do{await speakBrowser(text);if(!opt.loop||my!==speakSeq)break;await new Promise(r=>setTimeout(r,600));}while(my===speakSeq);}}
   async function prefetch(text,ref){try{if((S.settings.ttsEngine||'browser')==='el')await elGenerate(text,ref);}catch(e){}}
   function sleep(ms){return new Promise(r=>{const t=setTimeout(r,ms);cur={timer:t,res:r};});}
-  function stop(){speakSeq++;stopFlag=true;playing=false;q=[];loopOn=null;try{navigator.mediaSession.playbackState='none';}catch(e){}try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}const a=$('ttsAudio');try{a.pause();a.loop=false;a.onended=null;a.onerror=null;a.src='';}catch(e){}if(cur&&cur.timer){clearTimeout(cur.timer);cur.res&&cur.res();}uiState();}
-  function uiState(msg){const on=playing;$('ttsPlay').textContent=on?'⏸ 잠시 멈춤':'▶ 읽어 주기';$('ttsStop').disabled=!on;$('player').classList.toggle('on',on);if(msg!==undefined)$('ttsMsg').textContent=msg;}
+  function stop(){speakSeq++;goSeq++;stopFlag=true;playing=false;loopOn=null;userPaused=false;isPaused=false;try{navigator.mediaSession.playbackState='none';}catch(e){}try{speechSynthesis&&speechSynthesis.cancel();}catch(e){}const a=$('ttsAudio');try{a.pause();a.loop=false;a.onended=null;a.onerror=null;a.src='';}catch(e){}if(cur&&cur.timer){clearTimeout(cur.timer);cur.res&&cur.res();}uiState();}
+  function uiState(msg){const on=playing;$('ttsPlay').textContent=on?(isPaused?'▶ 이어 듣기':'⏸ 잠시 멈춤'):'▶ 읽어 주기';$('ttsStop').disabled=!on;$('player').classList.toggle('on',on);if(msg!==undefined)$('ttsMsg').textContent=msg;}
   /* 무음 WAV (구절 사이 쉼을 타이머 대신 오디오로 이어 붙여 백그라운드에서도 끊기지 않게) */
   const silence=new Map();function silentBlob(ms){const k=Math.round(ms);if(silence.has(k))return silence.get(k);const sr=8000,n=Math.max(1,Math.round(sr*k/1000));const buf=new ArrayBuffer(44+n);const dv=new DataView(buf);const w=(o,str)=>{for(let i=0;i<str.length;i++)dv.setUint8(o+i,str.charCodeAt(i));};
     w(0,'RIFF');dv.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,sr,true);dv.setUint32(28,sr,true);dv.setUint16(32,1,true);dv.setUint16(34,8,true);w(36,'data');dv.setUint32(40,n,true);for(let i=0;i<n;i++)dv.setUint8(44+i,128);
     const bl=new Blob([buf],{type:'audio/wav'});silence.set(k,bl);return bl;}
   function textOf(ref){return (S.settings.ttsAddr!==false?spokenRef(ref)+'. ':'')+verseOf(ref).text;}
-  function mediaSession(ref,i,n){try{if(!('mediaSession' in navigator))return;navigator.mediaSession.metadata=new MediaMetadata({title:ref,artist:'성경 암송 '+(i+1)+'/'+n,album:'구절 검토 시트'});navigator.mediaSession.playbackState='playing';
-    navigator.mediaSession.setActionHandler('play',()=>{const a=$('ttsAudio');a.play().catch(()=>{});});navigator.mediaSession.setActionHandler('pause',()=>{$('ttsAudio').pause();});
-    navigator.mediaSession.setActionHandler('stop',()=>stop());navigator.mediaSession.setActionHandler('nexttrack',()=>{q.length=0;qi++;step();});navigator.mediaSession.setActionHandler('previoustrack',()=>{q.length=0;qi=Math.max(0,qi-1);step();});}catch(e){}}
-  /* ElevenLabs 경로: 오디오 요소 하나에 '끝남' 이벤트로 다음 조각을 이어 붙이는 방식 (화면을 꺼도 이어짐) */
-  let q=[],qi=0,qlist=[],qmode='seq',qreps=1,qgap=1000,lastDur=3000;
-  function gapNow(){const g=S.settings.ttsGap;return g==='echo'?Math.max(1500,lastDur+500):(+(g??1))*1000;}
-  async function buildVerse(i){qreps=+$('ttsRep').value||qreps;const ref=qlist[i];const segs=[];const full=textOf(ref);const echo=S.settings.ttsGap==='echo';
-    for(let r=0;r<qreps;r++){const chunked=echo&&(qreps===1||r<qreps-1);
-      if(chunked){try{const ent=await elGenerate(full,ref);const pre=S.settings.ttsAddr!==false?(spokenRef(ref)+'. ').length:0;const cs=await chunkBlobs(ent,full,pre,ref);cs.forEach((c,idx)=>{segs.push({kind:'chunk',ref,blob:c.blob,label:c.label,idx,n:cs.length,i,r});segs.push({kind:'gap',echo:true});});continue;}catch(e){/* 끊기 실패 시 통째로 */}}
-      segs.push({kind:'speech',ref,text:full,i,r});segs.push({kind:'gap'});}
-    return segs;}
-  async function step(){if(stopFlag)return;const a=$('ttsAudio');
-    if(!q.length){if(qi>=qlist.length){if(qmode==='loop')qi=0;else{playing=false;uiState('끝');try{navigator.mediaSession.playbackState='none';}catch(e){}return;}}
-      q=await buildVerse(qi);cardI=qi;renderCards();
-      for(let k=1;k<=3;k++){const j=qi+k;if(j>=qlist.length&&qmode!=='loop')break;const nx=qlist[j%qlist.length];if(nx&&(qmode==='seq'||qmode==='loop'))prefetch(textOf(nx),nx);}}
-    const seg=q.shift();let blob;
-    if(seg.kind==='chunk'){blob=seg.blob;uiState(`${seg.i+1}/${qlist.length} · ${seg.ref} · 끊어 읽기 ${seg.idx+1}/${seg.n}`);mediaSession(seg.ref,seg.i,qlist.length);}
-    else if(seg.kind==='gap'){blob=silentBlob(seg.echo?Math.max(1200,lastDur+400):gapNow());uiState(`${seg.i!==undefined?'':''}${$('ttsMsg').textContent.replace(/ · (쉼|따라 말하기).*$/,'')} · ${S.settings.ttsGap==='echo'?'따라 말하기':'쉼'}`);}else{uiState(`${seg.i+1}/${qlist.length} · ${seg.ref}${qreps>1?` (${seg.r+1}/${qreps})`:''}`);mediaSession(seg.ref,seg.i,qlist.length);try{blob=(await elGenerate(seg.text,seg.ref)).blob;}catch(e){playing=false;uiState('오류: '+(e.message||e));return;}}
-    if(stopFlag)return;
-    if(!q.length){if(qmode==='one'){qi=qlist.length;qmode='one_end';}else if(qmode==='rone'){/* 같은 구절 */}else qi++;}
-    if(cur&&cur.url)URL.revokeObjectURL(cur.url);const url=URL.createObjectURL(blob);cur={url};a.loop=false;loopOn=null;a.onended=()=>{if(seg.kind!=='gap')lastDur=(a.duration||0)*1000/(a.playbackRate||1);step();};a.preservesPitch=true;a.playbackRate=seg.kind!=='gap'?(S.settings.ttsRate||1):1;a.onerror=()=>{uiState('재생 오류');playing=false;};a.src=url;
-    try{await a.play();a.playbackRate=seg.kind!=='gap'?(S.settings.ttsRate||1):1;}catch(e){playing=false;uiState('재생이 막혔습니다. ▶ 버튼을 다시 누르세요.');}}
-  /* 「이 구절 반복」 전용: 한 바퀴(반복 횟수·따라 말하기 쉼 포함)를 음원 하나로 이어 붙여 그 파일 자체를 되풀이 재생.
-     조각마다 다음 것을 불러 붙이는 방식은 화면이 꺼진 동안 조각 사이에서 브라우저가 페이지를 재워 멈출 수 있음 — 파일 하나를 loop로 틀면 스크립트가 할 일이 없어 끊기지 않음 */
-  let loopOn=null;   // {ref}
+  /* ── Alice 등 준비된 음성의 재생기 (v82) ──
+     구절 하나의 한 바퀴(반복 횟수·쉼·따라 말하기 포함)를 음원 하나로 미리 이어 붙여 둔다(verseFile).
+     · 구절이 끝나면 '미리 만들어 둔 다음 음원'으로 그 자리에서 곧바로(기다림 없이) 갈아 끼운다.
+       기다림(저장소·네트워크)이 끼면 화면이 꺼진 동안 브라우저가 페이지를 재워 재생이 멈추기 때문.
+     · 잠금 화면의 재생·일시정지·다음·이전도 같은 방식으로 즉시 처리한다.
+     · 「이 구절 반복」은 그 음원 하나를 loop로 튼다. */
+  let qlist=[],qmode='seq',vi=0,userPaused=false,isPaused=false,loopOn=null,goSeq=0,startSeq=0,rawUrl=null;
+  const ready=new Map(),building=new Map();
+  const isEl=()=>(S.settings.ttsEngine||'browser')==='el';
+  const sig=()=>[S.settings.elVoice,S.settings.elModel,S.settings.ttsRate||1,S.settings.ttsGap,+$('ttsRep').value||1,S.settings.ttsAddr!==false].join('|');
+  const rkey=ref=>ref+'|'+sig();
+  function keep(k,f){ready.delete(k);ready.set(k,f);let guard=0;while(ready.size>4&&guard++<12){const [ok,of]=ready.entries().next().value;ready.delete(ok);if(cur&&cur.file===of){ready.set(ok,of);continue;}try{URL.revokeObjectURL(of.url);}catch(e){}}}
   async function loopFile(ref){const full=textOf(ref);const ent=await elGenerate(full,ref);const buf=await ctx().decodeAudioData(await ent.blob.slice(0).arrayBuffer());
     const sr=buf.sampleRate,R=S.settings.ttsRate||1,echo=S.settings.ttsGap==='echo',reps=+$('ttsRep').value||1,whole=buf.getChannelData(0);const parts=[];let total=0;
     const push=a=>{parts.push(a);total+=a.length;},sil=sec=>push(new Float32Array(Math.max(1,Math.round(sec*sr))));
@@ -1348,19 +1335,52 @@ const TTS=(()=>{
     /* 쉼은 재생 빠르기(R)에 맞춰 파일 길이를 정함: 실제로 쉬는 시간 = 파일 길이 ÷ R */
     for(let r=0;r<reps;r++){if(echo&&cuts&&cuts.length>2&&(reps===1||r<reps-1)){const n=cuts.length-1;for(let k=0;k<n;k++){const seg=fadeEdges(buf,cuts[k],cuts[k+1],k?0.006:0,k<n-1?0.02:0).getChannelData(0);push(seg);const d=seg.length/sr;sil(Math.max(1.2*R,d+0.4*R));}}
       else{push(whole);sil(echo?Math.max(1.5*R,buf.duration+0.5*R):Math.max(0.05,(+(S.settings.ttsGap??1))*R));}}
-    if(total/sr>900)throw new Error('too long');const out=new Float32Array(total);let o=0;for(const a of parts){out.set(a,o);o+=a.length;}
-    return {blob:wavFrom({sampleRate:sr,getChannelData:()=>out},0,total/sr),sec:total/sr};}
-  async function runLoop(ref,i,n){uiState(`${ref} · 반복 준비 중…`);const f=await loopFile(ref);if(stopFlag)return true;const a=$('ttsAudio');if(cur&&cur.url)URL.revokeObjectURL(cur.url);const url=URL.createObjectURL(f.blob);cur={url};
-    a.onended=null;a.onerror=()=>{uiState('재생 오류');playing=false;loopOn=null;};a.loop=true;a.preservesPitch=true;a.playbackRate=S.settings.ttsRate||1;a.src=url;loopOn={ref};mediaSession(ref,i,n);
-    try{await a.play();a.playbackRate=S.settings.ttsRate||1;uiState(`${i+1}/${n} · ${ref} · 이 구절 반복 (멈춤을 누를 때까지)`);}catch(e){playing=false;loopOn=null;uiState('재생이 막혔습니다. ▶ 버튼을 다시 누르세요.');}return true;}
-  /* 반복 중에 빠르기·반복 횟수·따라 말하기를 바꾸면 그 설정으로 다시 이어 붙여 재생 */
-  function reloop(){if(playing&&loopOn){const a=$('ttsAudio');try{a.pause();}catch(e){}loopOn=null;run();}}
+    if(total/sr>900)throw new Error('too long');let out=new Float32Array(total);let o=0;for(const a of parts){out.set(a,o);o+=a.length;}let osr=sr;
+    /* 아주 긴 한 바퀴(2분 초과)는 기기 메모리를 아끼려고 표본 수를 절반으로 */
+    if(total/sr>120&&sr>=32000){const m=total>>1,h=new Float32Array(m);for(let x=0;x<m;x++){const c=2*x;h[x]=0.25*(out[c-1]||0)+0.5*out[c]+0.25*(out[c+1]||0);}out=h;osr=sr/2;}
+    return {blob:wavFrom({sampleRate:osr,getChannelData:()=>out},0,out.length/osr),sec:out.length/osr,ref};}
+  function verseFile(ref){const k=rkey(ref);if(ready.has(k))return Promise.resolve(ready.get(k));if(building.has(k))return building.get(k);
+    const pr=(async()=>{const f=await loopFile(ref);f.url=URL.createObjectURL(f.blob);keep(k,f);return f;})();building.set(k,pr);pr.then(()=>building.delete(k),()=>building.delete(k));return pr;}
+  const wrapIdx=i=>{const n=qlist.length;return ((i%n)+n)%n;};
+  function nextIdx(i){if(qmode==='loop')return wrapIdx(i+1);return i+1<qlist.length?i+1:null;}
+  function label(i){return `${i+1}/${qlist.length} · ${qlist[i]}${qmode==='rone'?' · 이 구절 반복':''}`;}
+  /* 다음·이전 구절 음원을 미리 만들어 둠(현재 구절이 재생되는 동안) */
+  function ahead(i){if(qlist.length<2)return;const order=[wrapIdx(i+1),wrapIdx(i-1)];(async()=>{for(const j of order){if(stopFlag||!playing)return;try{await verseFile(qlist[j]);}catch(e){}}
+      /* 그다음 두 구절은 원본 음성만 기기 메모리에 올려 둠 — 「다음」을 연달아 눌러도 기다림 없이 소리가 나게 */
+      for(const j of [wrapIdx(i+2),wrapIdx(i+3)]){if(stopFlag||!playing)return;try{await elGenerate(textOf(qlist[j]),qlist[j]);}catch(e){}}})();}
+  function finish(msg){playing=false;isPaused=false;loopOn=null;uiState(msg);try{navigator.mediaSession.playbackState='none';}catch(e){}}
+  function startAudio(url,i,loop,what){const a=$('ttsAudio');const tok=++startSeq;vi=i;userPaused=false;isPaused=false;a.onerror=()=>{if(!stopFlag){uiState('재생 오류');playing=false;}};a.onended=onEnded;a.loop=!!loop;a.preservesPitch=true;a.src=url;a.playbackRate=S.settings.ttsRate||1;
+    const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{if(!stopFlag&&playing&&tok===startSeq){isPaused=true;uiState(label(i)+' · 멈춤 — ▶ 이어 듣기를 누르세요');}});
+    try{a.playbackRate=S.settings.ttsRate||1;}catch(e){}
+    cardI=i;try{renderCards();}catch(e){}uiState(label(i)+(what||''));mediaSession(qlist[i],i,qlist.length);ahead(i);}
+  function setFile(f,i){cur={file:f};loopOn=qmode==='rone'?{ref:qlist[i]}:null;startAudio(f.url,i,qmode==='rone');}
+  /* 아직 이어 붙인 음원이 없을 때의 다리: 기기에 있는 원본 음성을 그대로(쉼 없이) 한 번 틀어 소리가 끊기지 않게 함 */
+  function playRaw(blob,i){if(rawUrl){try{URL.revokeObjectURL(rawUrl);}catch(e){}}rawUrl=URL.createObjectURL(blob);cur={raw:true};loopOn=null;startAudio(rawUrl,i,false);}
+  /* i번째 구절로 '즉시' 넘어감. 준비된 음원 → 원본 음성 → (둘 다 없을 때만) 기다렸다 재생 */
+  function go(i){const my=++goSeq;const ref=qlist[i];if(!ref)return;const f=ready.get(rkey(ref));if(f){setFile(f,i);return;}
+    const ent=mem.get(keyOf(textOf(ref)));if(ent&&ent.blob){playRaw(ent.blob,i);verseFile(ref).catch(()=>{});return;}
+    vi=i;uiState(label(i)+' · 준비 중…');verseFile(ref).then(f2=>{if(stopFlag||my!==goSeq||!playing)return;setFile(f2,i);},async()=>{try{const e2=await elGenerate(textOf(ref),ref);if(stopFlag||my!==goSeq||!playing)return;playRaw(e2.blob,i);}catch(e){playing=false;uiState('오류: '+(e.message||e));}});}
+  function onEnded(){if(stopFlag||!playing)return;if(qmode==='one'){finish('끝');return;}if(qmode==='rone'){go(vi);return;}const j=nextIdx(vi);if(j==null){finish('끝');return;}go(j);}
+  function pauseNow(byUser){const a=$('ttsAudio');userPaused=!!byUser;try{a.pause();}catch(e){}isPaused=true;try{navigator.mediaSession.playbackState='paused';}catch(e){}uiState(label(vi)+' · 일시정지');}
+  function resumeNow(){const a=$('ttsAudio');userPaused=false;if(!a.src||(!cur||(!cur.file&&!cur.raw))){go(vi);return;}const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{});isPaused=false;try{navigator.mediaSession.playbackState='playing';}catch(e){}uiState(label(vi));}
+  function mediaSession(ref,i,n){try{if(!('mediaSession' in navigator))return;navigator.mediaSession.metadata=new MediaMetadata({title:ref,artist:'성경 암송 '+(i+1)+'/'+n,album:'구절 검토 시트'});navigator.mediaSession.playbackState='playing';
+    const H=(k,fn)=>{try{navigator.mediaSession.setActionHandler(k,fn);}catch(e){}};
+    H('play',()=>{if(playing&&isEl())resumeNow();else{const a=$('ttsAudio');a.play().catch(()=>{});}});
+    H('pause',()=>{if(playing&&isEl())pauseNow(true);else $('ttsAudio').pause();});
+    H('stop',()=>stop());H('nexttrack',()=>{if(playing&&isEl())go(wrapIdx(vi+1));});H('previoustrack',()=>{if(playing&&isEl())go(wrapIdx(vi-1));});}catch(e){}}
+  /* 시스템이 소리를 끊었을 때(전화·다른 앱 등)와 다시 이어질 때 화면·잠금 화면 표시를 맞추고, 앱으로 돌아오면 스스로 이어 재생 */
+  (function(){const a=$('ttsAudio');if(!a||a.__vp)return;a.__vp=true;
+    a.addEventListener('pause',()=>setTimeout(()=>{if(!playing||!isEl()||!cur||(!cur.file&&!cur.raw))return;if(a.paused&&!a.ended&&a.src){isPaused=true;try{navigator.mediaSession.playbackState='paused';}catch(e){}uiState(label(vi)+' · 일시정지');}},0));
+    a.addEventListener('playing',()=>{if(!playing||!isEl()||!cur||(!cur.file&&!cur.raw))return;isPaused=false;try{navigator.mediaSession.playbackState='playing';}catch(e){}uiState(label(vi));});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden||!playing||!isEl()||userPaused)return;if(a.paused&&cur&&(cur.file||cur.raw)&&a.src){const pr=a.play();if(pr&&pr.catch)pr.catch(()=>{});}});})();
+  /* 재생 중에 빠르기·반복 횟수·따라 말하기를 바꾸면 그 설정으로 지금 구절을 다시 이어 붙여 이어 감 */
+  function reloop(){if(!playing||!isEl())return;const i=vi,my=++goSeq;verseFile(qlist[i]).then(f=>{if(stopFlag||!playing||my!==goSeq)return;setFile(f,i);},()=>{});}
   async function run(){const list=cardOrder();if(!list.length)return;stopFlag=false;playing=true;uiState('');
     const mode=$('ttsMode').value,reps=+$('ttsRep').value||1,gap=S.settings.ttsGap==='echo'?'echo':(+(S.settings.ttsGap??1))*1000;S.settings.ttsMode=mode;S.settings.ttsRep=reps;save();
-    if((S.settings.ttsEngine||'browser')==='el'){try{ctx();}catch(e){}qlist=list;qmode=mode==='one'?'one':mode;qreps=reps;qgap=gap;qi=cardI;q=[];
-      if(mode==='rone'){try{if(await runLoop(list[cardI],cardI,list.length))return;}catch(e){/* 이어 붙이기에 실패하면 예전 방식으로 */loopOn=null;if(stopFlag)return;}}
-      if(qmode==='one'){q=await buildVerse(qi);cardI=qi;renderCards();qi=qlist.length;qmode='one_end';}
-      step();return;}
+    if(isEl()){try{ctx();}catch(e){}qlist=list;qmode=mode;vi=Math.min(cardI,list.length-1);goSeq++;const my=goSeq,i0=vi;uiState(label(i0)+' · 준비 중…');
+      try{const f=await verseFile(list[i0]);if(stopFlag||my!==goSeq)return;setFile(f,i0);}
+      catch(e){/* 이어 붙이기 실패 → 원본 음성으로 */try{const ent=await elGenerate(textOf(list[i0]),list[i0]);if(stopFlag||my!==goSeq)return;playRaw(ent.blob,i0);}catch(e2){playing=false;uiState('오류: '+(e2.message||e2));}}
+      return;}
     try{let i=cardI;while(!stopFlag){cardI=i;renderCards();const ref=list[i],v=verseOf(ref);
         for(let r=0;r<reps&&!stopFlag;r++){uiState(`${i+1}/${list.length} · ${ref}${reps>1?` (${r+1}/${reps})`:''}`);
           if(S.settings.ttsGap==='echo'&&(reps===1||r<reps-1)){const parts=[...(S.settings.ttsAddr!==false?[spokenRef(ref)]:[]),...chunkWords(v.text,ref)];for(const pt of parts){if(stopFlag)break;const t1=Date.now();await speak(pt,{ref});if(stopFlag)break;await sleep(Math.max(1200,Date.now()-t1+400));}}
@@ -1380,9 +1400,10 @@ const TTS=(()=>{
     for(const r of list){try{const t=textOf(r);if(!(await cacheGet(keyOf(t,voice)))){await elGenerate(t,r,voice);made++;}}catch(e){fail++;msg('오류: '+(e.message||e));if(/401|quota|limit|exceed/i.test(e.message||'')){if(btn)btn.disabled=false;return;}}done++;msg(`${vname} 만드는 중 ${done}/${list.length} (새로 ${made}개${fail?', 실패 '+fail:''})`);}
     if(!fail&&window.__fsMarkReady)window.__fsMarkReady(voice);msg(`${vname} 완료: 새로 ${made}개${fail?', 실패 '+fail:''}. 이제 모든 기기에서 바로 재생됩니다.`);if(btn)btn.disabled=false;}
   async function evict(k){mem.delete(k);try{if(self.caches){const c=await caches.open('tts-v1');await c.delete('/tts/'+k);await c.delete('/tts/'+k+'.al');}}catch(e){}}
-  function toggle(){if(playing){stop();return;}run();}
+  /* 큰 버튼: 준비된 음성은 진짜 '잠시 멈춤/이어 듣기'(멈춘 자리에서 이어짐), 완전히 끝내려면 ■ 정지. 기기 내장 음성은 멈춘 자리에서 잇지 못하므로 예전처럼 정지 */
+  function toggle(){if(playing){if(isEl()&&cur&&(cur.file||cur.raw)){if(isPaused)resumeNow();else pauseNow(true);return;}stop();return;}run();}
   function isPlaying(){return playing;}
-  return {reloop,_loopFile:loopFile,speak,run,stop,toggle,isPlaying,uiState,prebuild,elKey,textOf,PHRASES,evict,_quietCut:quietCut,_chunkBlobs:chunkBlobs,_elGenerate:elGenerate};
+  return {reloop,_dbg:()=>({vi,qmode,isPaused,userPaused,ready:[...ready.keys()].map(k=>k.split('|')[0]),cur:cur&&(cur.file?'file':cur.raw?'raw':'other')}),_go:i=>go(i),_ms:()=>({pause:()=>pauseNow(true),play:()=>resumeNow(),next:()=>go(wrapIdx(vi+1)),prev:()=>go(wrapIdx(vi-1))}),speak,run,stop,toggle,isPlaying,uiState,prebuild,elKey,textOf,PHRASES,evict,_quietCut:quietCut,_chunkBlobs:chunkBlobs,_elGenerate:elGenerate};
 })();
 let cardI=0,cardHide=false,cardBig=false,cardMode='all';
 function cardOrder(){
@@ -1467,6 +1488,7 @@ window.addEventListener('popstate',()=>{if(window.__closePrint)window.__closePri
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const ov=$('printOv');if(ov&&!ov.hidden){e.stopImmediatePropagation();const c=$('pClose');if(c)c.click();}}},true);
 /* 사용법 자동 갱신: 숫자·날짜·버전은 코드 상수에서, 최근 변경은 CHANGELOG에서 채움 */
 const CHANGELOG=[
+ ['v82','2026-11-18','암송카드 음성 재생기를 다시 만듦 — 화면을 꺼도·잠금 화면에서 일시정지/재생/다음/이전을 눌러도 끊기지 않게, 큰 버튼은 잠시 멈춤/이어 듣기'],
  ['v81','2026-11-18','암송카드 「이 구절 반복」이 화면을 꺼도 중간에 멈추지 않게 — 한 바퀴를 음원 하나로 이어 붙여 되풀이'],
  ['v80','2026-11-16','당겨서 새로고침이 실수로 되지 않게 — 길게 당겨 잠깐 멈춘 뒤 놓아야 하고, 트랙패드는 버튼을 눌러야 새로고침'],
  ['v79','2026-11-15','안내 창에서 「가 보기」로 다녀와도 「← 안내로 돌아가기」로 이어서 볼 수 있음'],
@@ -1673,7 +1695,7 @@ const FEATURES=[
  {id:'safe',t:'새로고침·자동 업데이트·기록 보관',w:'어느 화면에서나 / 구절 목록·설정 탭',d:'화면을 아래로 길게 당겨 잠깐 멈췄다 놓거나 제목을 누르면 새로고침됩니다. 새 버전은 자동으로 반영되고, 기록은 계정에 저장되며 「내 기록 파일로 내보내기」로 따로 보관할 수 있습니다.',tab:'list'}
 ];
 const WHATSNEW=[
- {v:81,t:'「이 구절 반복」이 화면을 꺼도 끊기지 않음',d:'암송카드에서 「이 구절 반복」으로 틀어 두면, 한 바퀴를 음원 하나로 이어 붙여 되풀이하므로 화면을 끄거나 다른 앱을 써도 중간에 멈추지 않습니다(Alice 음성).',tab:'cards'},
+ {v:82,t:'암송카드 음성 — 화면을 꺼도, 잠금 화면에서도 끊기지 않게',d:'구절마다 음원을 미리 이어 붙여 두고 곧바로 갈아 끼우는 방식으로 바꿨습니다. 화면을 끄거나 잠금 화면에서 일시정지·재생·다음·이전을 눌러도 이어집니다. 큰 버튼은 「잠시 멈춤 / 이어 듣기」(멈춘 자리에서 이어짐), 완전히 끝내려면 「■ 정지」입니다(Alice 음성).',tab:'cards'},
  {v:80,t:'당겨서 새로고침이 덜 민감해짐',d:'실수로 새로고침되지 않도록, 길게 당긴 뒤 「놓으면 새로고침」이 보일 때까지 잠깐 멈췄다가 놓아야 새로고침됩니다.'},
  {v:79,t:'안내를 이어서 보기',d:'「가 보기」로 다른 탭에 다녀와도 화면 아래 「← 안내로 돌아가기」를 누르면 보던 안내로 돌아옵니다.'},
  {v:77,f:'venue'},
