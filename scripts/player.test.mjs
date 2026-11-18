@@ -14,18 +14,18 @@ const r=await p.evaluate(async()=>{document.getElementById('gate').hidden=true;c
  TTS.toggle();await W(500);o.start=[D().vi,!a.paused,D().cur,+a.duration.toFixed(2),$('ttsPlay').textContent,$('ttsMsg').textContent];
  await W(3300);o.auto=[D().vi,!a.paused,trans.slice()];                                     // 1.3초짜리 구절 → 두세 번 저절로 넘어감
  // ── 잠금 화면에서: 일시정지 → (암송) → 재생 → 다음 → 이후에도 계속 이어지는지
- const ms=TTS._ms();ms.pause();await W(100);const t1=a.currentTime;const v1=D().vi;o.paused=[a.paused,D().isPaused,$('ttsPlay').textContent,$('ttsMsg').textContent];
- await W(1500);o.stillPaused=[a.paused,a.currentTime===t1];
- ms.play();await W(250);o.resumed=[!a.paused,D().vi===v1,a.currentTime>=t1];
+ const ms=TTS._ms();const tBefore=a.currentTime,srcBefore=a.src;ms.pause();await W(100);const t1=D().softT;const v1=D().vi;o.paused=[D().soft&&!a.paused&&a.src!==srcBefore&&a.loop,D().isPaused,$('ttsPlay').textContent,$('ttsMsg').textContent,Math.abs(t1-tBefore)<0.2];
+ await W(1500);o.stillPaused=[D().soft&&!a.paused,D().softT===t1,D().vi===v1];   // 일시정지 동안: 무음이 돌며 자리를 지킴(구절·위치 그대로)
+ ms.play();await W(250);o.resumed=[!a.paused&&!D().soft&&a.src===srcBefore,D().vi===v1,a.currentTime>=t1-0.05&&a.currentTime<t1+0.6];
  ms.next();const vn=D().vi;o.nextImmediate=[vn===v1+1,!a.paused||a.readyState<3,D().cur];await W(300);o.nextPlaying=[!a.paused,D().vi];
  const nT=trans.length;await W(3200);o.continues=[D().vi>vn,!a.paused,trans.length-nT];        // 다음 뒤에도 계속 자동으로 넘어감
  ms.prev();await W(250);o.prev=[!a.paused,D().cur];
  // ── 앱의 큰 버튼: 잠시 멈춤 / 이어 듣기, 정지
- TTS.toggle();await W(100);o.btnPause=[a.paused,$('ttsPlay').textContent,TTS.isPlaying()];TTS.toggle();await W(250);o.btnResume=[!a.paused,$('ttsPlay').textContent];
+ TTS.toggle();await W(100);o.btnPause=[D().soft,$('ttsPlay').textContent,TTS.isPlaying()];TTS.toggle();await W(250);o.btnResume=[!a.paused,$('ttsPlay').textContent];
  $('ttsStop').click();await W(100);o.stopped=[a.paused||!a.src,TTS.isPlaying(),$('ttsPlay').textContent];
  // ── 이 구절 반복: 파일 하나를 되풀이, 잠금 화면 '다음'은 다음 구절로 가서 그 구절을 되풀이
  $('ttsMode').value='rone';$('ttsMode').dispatchEvent(new Event('change'));TTS.toggle();await W(600);const vr=D().vi;let wraps=0,lt=0;const tu=()=>{if(a.currentTime<lt-0.2)wraps++;lt=a.currentTime;};a.addEventListener('timeupdate',tu);
- await W(3000);o.rone=[a.loop,!a.paused,wraps>=1,D().vi===vr,$('ttsMsg').textContent];TTS._ms().pause();await W(1200);TTS._ms().play();await W(200);TTS._ms().next();await W(400);wraps=0;lt=0;await W(3000);o.roneNext=[D().vi===vr+1,a.loop,!a.paused,wraps>=1];
+ await W(3000);o.rone=[a.loop,!a.paused,wraps>=1,D().vi===vr,$('ttsMsg').textContent];TTS._ms().pause();await W(1200);o.ronePauseKeeps=[D().soft,D().vi===vr];TTS._ms().pause();/* 일시정지 중에 '일시정지'가 또 와도 이어 듣기 */await W(250);o.roneToggle=[!D().soft,!a.paused,a.loop];TTS._ms().pause();await W(300);TTS._ms().play();await W(200);TTS._ms().next();await W(400);wraps=0;lt=0;await W(3000);o.roneNext=[D().vi===vr+1,a.loop,!a.paused,wraps>=1];
  // 재생 중 빠르기 변경 → 이어짐
  $('ttsSpeed').value='1.5';$('ttsSpeed').dispatchEvent(new Event('change',{bubbles:true}));await W(700);o.speed=[!a.paused,a.playbackRate,a.loop];TTS.stop();
  // ── 한 구절만: 끝나면 멈춤
@@ -35,7 +35,7 @@ const r=await p.evaluate(async()=>{document.getElementById('gate').hidden=true;c
 await b.close();console.log(JSON.stringify(r));
 const bad=[];const T=(c,m)=>{if(!c)bad.push(m);};
 T(r.start[1]&&r.start[2]==='file','처음 재생이 준비된 음원으로 시작하지 않음');T(r.auto[0]>=2&&r.auto[1],'저절로 다음 구절로 넘어가지 않음');T(r.auto[2].every(x=>x.kind==='file'),'넘어갈 때 준비된 음원을 쓰지 못함');
-T(r.paused[0]&&r.paused[2]==='▶ 이어 듣기','일시정지 실패');T(r.stillPaused[0]&&r.stillPaused[1],'일시정지 중 위치가 움직임');T(r.resumed.every(Boolean),'재생으로 이어지지 않음');
+T(r.paused[0]&&r.paused[1]&&r.paused[2]==='▶ 이어 듣기'&&r.paused[4],'일시정지 실패(무음으로 자리를 지키지 못함)');T(r.ronePauseKeeps.every(Boolean)&&r.roneToggle.every(Boolean),'일시정지 중 다시 누르면 이어 듣기 실패');T(r.stillPaused.every(Boolean),'일시정지 중 위치가 움직임');T(r.resumed.every(Boolean),'재생으로 이어지지 않음');
 T(r.nextImmediate[0]&&r.nextImmediate[2]==='file'&&r.nextPlaying[0],'다음 구절로 즉시 넘어가지 않음');T(r.continues[0]&&r.continues[1],'다음을 누른 뒤 이어서 넘어가지 않음');T(r.prev[0],'이전 구절 재생 실패');
 T(r.btnPause[0]&&r.btnPause[2]&&r.btnResume[0],'큰 버튼 잠시 멈춤/이어 듣기 실패');T(r.stopped[0]&&!r.stopped[1],'정지 실패');
 T(r.rone.slice(0,4).every(Boolean),'이 구절 반복 실패');T(r.roneNext.every(Boolean),'이 구절 반복 중 다음 구절로 넘어가 되풀이하지 못함');T(r.speed[0]&&r.speed[1]===1.5,'재생 중 빠르기 변경 뒤 이어지지 않음');T(!r.one[0]&&r.one[1]==='끝','한 구절만: 끝나고 멈추지 않음');
